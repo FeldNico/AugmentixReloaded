@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig>
+    <Tracking>
+        <ImageTarget name="tangible3" size="0.060000 0.060000"/>
+        <ImageTarget name="tangible2" size="0.060000 0.060000"/>
+        <ImageTarget name="tangible1" size="0.060000 0.060000"/>
+        <ImageTarget name="pickup" size="0.060000 0.060000"/>
+        <ImageTarget name="map" size="0.180000 0.120000"/>
+        <ImageTarget name="Pen.Bottom" size="0.070000 0.070000"/>
+        <ImageTarget name="Pen.Top" size="0.070000 0.070000"/>
+        <ImageTarget name="Pen.Front" size="0.070000 0.070000"/>
+        <ImageTarget name="Pen.Back" size="0.070000 0.070000"/>
+        <ImageTarget name="Pen.Right" size="0.070000 0.070000"/>
+        <ImageTarget name="Pen.Left" size="0.070000 0.070000"/>
+        <MultiTarget name="Pen">
+            <Part name="Pen.Left" translation="-0.03500000014901161 0 0" rotation="AD: 0 1 0 -90"/>
+            <Part name="Pen.Right" translation="0.03500000014901161 0 0" rotation="AD: 0 1 0 90"/>
+            <Part name="Pen.Front" translation="0 0 0.03500000014901161" rotation="AD: 1 0 0 0"/>
+            <Part name="Pen.Back" translation="0 0 -0.03500000014901161" rotation="AD: 0 1 0 180"/>
+            <Part name="Pen.Top" translation="0 0.03500000014901161 0" rotation="AD: 1 0 0 -90"/>
+            <Part name="Pen.Bottom" translation="0 -0.03500000014901161 0" rotation="AD: 1 0 0 90"/>
+        </MultiTarget>
+    </Tracking>
+</QCARConfig>
