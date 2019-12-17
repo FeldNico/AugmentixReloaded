@@ -60,6 +60,7 @@ public class HandModel : HandModelBase
         {
 #if UNITY_WSA
             _fingers[i].transform.position = _leapOffset.transform.TransformPoint( _hand.Fingers[i].TipPosition.ToVector3());
+            //_fingers[i].transform.localPosition = _hand.Fingers[i].TipPosition.ToVector3();
 #elif UNITY_STANDALONE_WIN
             _fingers[i].transform.position =  _hand.Fingers[i].TipPosition.ToVector3();
 #endif

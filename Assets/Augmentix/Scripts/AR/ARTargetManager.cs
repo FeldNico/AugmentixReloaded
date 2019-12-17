@@ -20,6 +20,7 @@ namespace Augmentix.Scripts.AR
     {
 #if UNITY_WSA
         public Transform LeapMotionOffset;
+        public Transform AdditionalOffset;
         public int Port = 1337;
         [HideInInspector] public SynchedHandModelManager HandManager = null;
 
@@ -28,7 +29,7 @@ namespace Augmentix.Scripts.AR
         private EndPoint epFrom = new IPEndPoint(IPAddress.Any, 0);
         private const int bufSize = 64 * 1024;
         private AsyncCallback recv;
-        private ConcurrentStack<Frame> _frameQueue = new ConcurrentStack<Frame>();
+        private ConcurrentStack<Frame> _frameStack = new ConcurrentStack<Frame>();
 
         private class State
         {
@@ -49,7 +50,7 @@ namespace Augmentix.Scripts.AR
                 State so = (State) ar.AsyncState;
                 _server.EndReceiveFrom(ar, ref epFrom);
                 _server.BeginReceiveFrom(so.buffer, 0, bufSize, SocketFlags.None, ref epFrom, recv, so);
-                _frameQueue.Push((Frame) Frame.Deserialize(so.buffer));
+                _frameStack.Push((Frame) Frame.Deserialize(so.buffer));
             }, state);
 
             OnConnection += () => { PhotonNetwork.SetInterestGroups((byte) Groups.LEAP_MOTION, true); };
@@ -57,24 +58,16 @@ namespace Augmentix.Scripts.AR
 #endif
         public override void OnEvent(EventData photonEvent)
         {
-            switch (photonEvent.Code)
-            {
-                default:
-                {
-                    Debug.Log("Unkown Event recieved: " + photonEvent.Code + " " + photonEvent.CustomData);
-                    break;
-                }
-            }
         }
 #if UNITY_WSA
 
         private long _currentTimestamp = 0;
         void FixedUpdate()
         {
-            if (!_frameQueue.IsEmpty && HandManager != null)
+            if (!_frameStack.IsEmpty && HandManager != null)
             {
                 var frame = new Frame();
-                if (_frameQueue.TryPop(out frame))
+                if (_frameStack.TryPop(out frame))
                 {
                     if (frame.Timestamp > _currentTimestamp)
                     {

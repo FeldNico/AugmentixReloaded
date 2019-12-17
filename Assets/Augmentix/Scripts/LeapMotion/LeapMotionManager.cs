@@ -45,6 +45,7 @@ public class LeapMotionManager : TargetManager
                 .Instantiate("Hand Models", Vector3.zero, Quaternion.identity)
                 .GetComponent<SynchedHandModelManager>();
             _handManager.transform.parent = FindObjectOfType<XRHeightOffset>().transform;
+            _handManager.transform.position = Vector3.zero;
             _handManager.leapProvider = FindObjectOfType<LeapProvider>();
         };
     }
@@ -99,11 +100,6 @@ public class LeapMotionManager : TargetManager
                 _socket.Connect(ip,port);
                 _handManager.DoSynchronize = true;
                 Debug.Log("Connected to "+ip+":"+port);
-                break;
-            }
-            default:
-            {
-                Debug.Log("Unkown Event recieved: "+photonEvent.Code+" "+photonEvent.CustomData);
                 break;
             }
         }

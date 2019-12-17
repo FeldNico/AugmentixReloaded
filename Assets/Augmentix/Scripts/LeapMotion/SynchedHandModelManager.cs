@@ -53,14 +53,30 @@ namespace Augmentix.Scripts.LeapMotion
 
             InteractionManager.InteractionSourceDetected += args =>
             {
-                if (_leftHand.gameObject.activeSelf ^ _rightHand.gameObject.activeSelf)
+                if ((_leftHand.gameObject.activeSelf || _rightHand.gameObject.activeSelf) &&
+                    args.state.source.handedness != InteractionSourceHandedness.Unknown &&
+                    args.state.sourcePose.positionAccuracy == InteractionSourcePositionAccuracy.High)
                 {
+                    var activeHand = args.state.source.handedness == InteractionSourceHandedness.Left
+                        ? _leftHand
+                        : _rightHand;
+
+                    var rot = Quaternion.identity;
+                    args.state.sourcePose.TryGetRotation(out rot);
+                    
                     Debug.Log("Pose estimated");
                     args.state.sourcePose.TryGetPosition(out _estimatedHandPosition);
-                    var activeHand = _leftHand.gameObject.activeSelf ? _leftHand : _rightHand;
+
                     var leapPalmPosition =
-                        _leapOffset.TransformPoint(activeHand.GetLeapHand().PalmPosition.ToVector3());
+                        _leapOffset.TransformPoint(activeHand.GetLeapHand().Basis.translation.ToVector3());
                     _leapOffset.position -= leapPalmPosition - _estimatedHandPosition;
+
+                    /*
+                    var leapPalmRotation =
+                        _leapOffset.TransformRotation(activeHand.GetLeapHand().Basis.rotation.ToQuaternion());
+                    _leapOffset.rotation *= Quaternion.Inverse(leapPalmRotation * Quaternion.Inverse(rot));
+                    */
+                    
 
                     hololenPalm.transform.position = _estimatedHandPosition;
                 }
@@ -109,7 +125,6 @@ namespace Augmentix.Scripts.LeapMotion
         public void OnFrameReceived(Frame frame)
         {
             CurrentFrame = frame;
-            Debug.Log("Frame " + CurrentFrame.Hands.Count);
             if (graphicsEnabled)
                 OnUpdateFrame(CurrentFrame);
             else if (physicsEnabled)
@@ -122,10 +137,11 @@ namespace Augmentix.Scripts.LeapMotion
 #if UNITY_WSA
             if (TargetManager.Instance.Type == TargetManager.PlayerType.Primary)
             {
-                var targetManager = ((ARTargetManager) TargetManager.Instance);
+                var targetManager = (ARTargetManager) TargetManager.Instance;
                 targetManager.HandManager = this;
                 transform.parent = targetManager.LeapMotionOffset;
                 transform.localPosition = Vector3.zero;
+                transform.localRotation = Quaternion.identity;
 
                 var ipAdress = "";
                 var host = Dns.GetHostEntry(Dns.GetHostName());

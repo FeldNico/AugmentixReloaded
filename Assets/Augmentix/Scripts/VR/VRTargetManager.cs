@@ -26,14 +26,6 @@ namespace Augmentix.Scripts.VR
 
         public override void OnEvent(EventData photonEvent)
         {
-            switch (photonEvent.Code)
-            {
-                default:
-                {
-                    Debug.Log("Unkown Event recieved: "+photonEvent.Code+" "+photonEvent.CustomData);
-                    break;
-                }
-            }
         }
     }
 }
