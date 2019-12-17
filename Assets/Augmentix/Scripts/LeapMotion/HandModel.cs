@@ -19,13 +19,17 @@ public class HandModel : HandModelBase
 
     private Hand _hand;
     private SynchedHandModelManager _handManager = null;
+#if UNITY_WSA
     private Transform _leapOffset;
+#endif
     private GameObject[] _fingers = new GameObject[5];
 
     public void Awake()
     {
         _handManager = FindObjectOfType<SynchedHandModelManager>();
+#if UNITY_WSA
         _leapOffset = ((ARTargetManager) TargetManager.Instance).LeapMotionOffset;
+#endif
         for (int i = 0; i < _fingers.Length; i++)
         {
             var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -51,10 +55,16 @@ public class HandModel : HandModelBase
     }
     public override void UpdateHand()
     {
+
         for (int i = 0; i < _fingers.Length; i++)
         {
-            _fingers[i].transform.position = _leapOffset.transform.TransformPoint( _hand.Fingers[i].TipPosition.ToVector3()) + ((ARTargetManager)TargetManager.Instance).PalmOffset.localPosition;
+#if UNITY_WSA
+            _fingers[i].transform.position = _leapOffset.transform.TransformPoint( _hand.Fingers[i].TipPosition.ToVector3());
+#elif UNITY_STANDALONE_WIN
+            _fingers[i].transform.position =  _hand.Fingers[i].TipPosition.ToVector3();
+#endif
         }
+
     }
 
     public override Hand GetLeapHand()

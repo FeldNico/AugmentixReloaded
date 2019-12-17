@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using ExitGames.Client.Photon;
 using Photon.Pun;
 using UnityEngine;
 
@@ -21,6 +22,18 @@ namespace Augmentix.Scripts.VR
 
             };
             
+        }
+
+        public override void OnEvent(EventData photonEvent)
+        {
+            switch (photonEvent.Code)
+            {
+                default:
+                {
+                    Debug.Log("Unkown Event recieved: "+photonEvent.Code+" "+photonEvent.CustomData);
+                    break;
+                }
+            }
         }
     }
 }
