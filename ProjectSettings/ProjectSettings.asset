@@ -700,7 +700,8 @@ PlayerSettings:
   scriptingRuntimeVersion: 1
   gcIncremental: 0
   gcWBarrierValidation: 0
-  apiCompatibilityLevelPerPlatform: {}
+  apiCompatibilityLevelPerPlatform:
+    Windows Store Apps: 3
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
   metroPackageName: com.Sintar.AugmentixReloaded
@@ -712,30 +713,30 @@ PlayerSettings:
   metroCertificateNotAfter: 804f4aa722cbd601
   metroApplicationDescription: ImageTargets, ModelTargets, and VuMarks on HoloLens
   wsaImages:
-    65636: Assets/Common/Icons/UWP/StoreLogo.scale-100.png
-    65661: Assets/Common/Icons/UWP/StoreLogo.scale-125.png
-    65686: Assets/Common/Icons/UWP/StoreLogo.scale-150.png
-    65736: Assets/Common/Icons/UWP/StoreLogo.scale-200.png
-    65936: Assets/Common/Icons/UWP/StoreLogo.scale-400.png
+    65636: 
+    65661: 
+    65686: 
+    65736: 
+    65936: 
     131172: Assets/Common/Icons/UWP/SplashScreen.scale-100.png
     131197: Assets/Common/Icons/UWP/SplashScreen.scale-125.png
     131222: Assets/Common/Icons/UWP/SplashScreen.scale-150.png
     131272: Assets/Common/Icons/UWP/SplashScreen.scale-200.png
-    2031632: Assets/Common/Icons/UWP/Square44x44Logo.targetsize-16.png
-    2031640: Assets/Common/Icons/UWP/Square44x44Logo.targetsize-24.png
-    2031648: Assets/Common/Icons/UWP/Square44x44Logo.targetsize-32.png
-    2031664: Assets/Common/Icons/UWP/Square44x44Logo.targetsize-48.png
-    2031716: Assets/Common/Icons/UWP/Square44x44Logo.scale-100.png
-    2031741: Assets/Common/Icons/UWP/Square44x44Logo.scale-125.png
-    2031766: Assets/Common/Icons/UWP/Square44x44Logo.scale-150.png
-    2031816: Assets/Common/Icons/UWP/Square44x44Logo.scale-200.png
-    2031872: Assets/Common/Icons/UWP/Square44x44Logo.targetsize-256.png
-    2032016: Assets/Common/Icons/UWP/Square44x44Logo.scale-400.png
-    2162788: Assets/Common/Icons/UWP/Square150x150Logo.scale-100.png
-    2162813: Assets/Common/Icons/UWP/Square150x150Logo.scale-125.png
-    2162838: Assets/Common/Icons/UWP/Square150x150Logo.scale-150.png
-    2162888: Assets/Common/Icons/UWP/Square150x150Logo.scale-200.png
-    2163088: Assets/Common/Icons/UWP/Square150x150Logo.scale-400.png
+    2031632: 
+    2031640: 
+    2031648: 
+    2031664: 
+    2031716: 
+    2031741: 
+    2031766: 
+    2031816: 
+    2031872: 
+    2032016: 
+    2162788: 
+    2162813: 
+    2162838: 
+    2162888: 
+    2163088: 
     2293860: Assets/Common/Icons/UWP/Wide310x150Logo.scale-100.png
     2293885: Assets/Common/Icons/UWP/Wide310x150Logo.scale-125.png
     2293910: Assets/Common/Icons/UWP/Wide310x150Logo.scale-150.png
@@ -764,11 +765,11 @@ PlayerSettings:
       CodeGeneration: False
       Contacts: False
       EnterpriseAuthentication: False
-      GazeInput: False
+      GazeInput: True
       HumanInterfaceDevice: False
       InputInjectionBrokered: False
       InternetClient: True
-      InternetClientServer: False
+      InternetClientServer: True
       Location: False
       LowLevelDevices: False
       Microphone: True
@@ -778,15 +779,15 @@ PlayerSettings:
       PhoneCall: False
       PhoneCallHistoryPublic: False
       PicturesLibrary: False
-      PointOfService: False
-      PrivateNetworkClientServer: False
+      PointOfService: True
+      PrivateNetworkClientServer: True
       Proximity: False
       RecordedCallsFolder: False
-      RemoteSystem: False
+      RemoteSystem: True
       RemovableStorage: False
       SharedUserCertificates: False
       SpatialPerception: True
-      SystemManagement: False
+      SystemManagement: True
       UserAccountInformation: False
       UserDataTasks: False
       UserNotificationListener: False

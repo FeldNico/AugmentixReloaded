@@ -384,10 +384,10 @@ MonoBehaviour:
   _physicsExtrapolation: 1
   _physicsExtrapolationTime: 0.011111111
   _workerThreadProfiling: 0
-  _deviceOffsetMode: 0
-  _deviceOffsetYAxis: 0
+  _deviceOffsetMode: 1
+  _deviceOffsetYAxis: 0.06
   _deviceOffsetZAxis: 0.12
-  _deviceTiltXAxis: 5
+  _deviceTiltXAxis: 0
   _deviceOrigin: {fileID: 0}
   _temporalWarpingMode: 3
   _customWarpAdjustment: 17
@@ -405,8 +405,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _roomScaleHeightOffset: 0
-  recenterOnUserPresence: 0
-  recenterOnStart: 0
+  recenterOnUserPresence: 1
+  recenterOnStart: 1
   recenterOnKey: 0
   recenterKey: 114
   enableRuntimeAdjustment: 0

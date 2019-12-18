@@ -5,8 +5,8 @@ using Augmentix.Scripts.AR;
 using Augmentix.Scripts.LeapMotion;
 using Leap;
 using Leap.Unity;
-#if UNITY_EDITOR
 using Augmentix.Scripts;
+#if UNITY_EDITOR
 using UnityEditor;
 #endif
 using UnityEngine;
@@ -55,12 +55,14 @@ public class HandModel : HandModelBase
     }
     public override void UpdateHand()
     {
-
         for (int i = 0; i < _fingers.Length; i++)
         {
 #if UNITY_WSA
-            _fingers[i].transform.position = _leapOffset.transform.TransformPoint( _hand.Fingers[i].TipPosition.ToVector3());
-            //_fingers[i].transform.localPosition = _hand.Fingers[i].TipPosition.ToVector3();
+            if (_handManager.CalibrationState == SynchedHandModelManager.CalibrationStateEnum.Calibrated)
+            {
+                _fingers[i].transform.position = _leapOffset.transform.TransformPoint( _hand.Fingers[i].TipPosition.ToVector3());
+                //_fingers[i].transform.localPosition = _hand.Fingers[i].TipPosition.ToVector3();
+            }
 #elif UNITY_STANDALONE_WIN
             _fingers[i].transform.position =  _hand.Fingers[i].TipPosition.ToVector3();
 #endif

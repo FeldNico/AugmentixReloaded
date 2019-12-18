@@ -41,7 +41,7 @@ namespace Augmentix.Scripts
 
         protected const string gameVersion = "1";
 
-        void Awake()
+        public void Awake()
         {
             if (Instance == null)
                 Instance = this;

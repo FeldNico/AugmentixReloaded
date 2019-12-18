@@ -109,7 +109,7 @@ namespace Augmentix.Scripts.Editor
             }
             else if (type == typeof(LeapMotionManager))
             {
-                filename = Application.productName + ".exe";
+                filename = "LeapMotionProvider.exe";
             }
 
             BuildPipeline.BuildPlayer(levels, Path.Combine(newManager._buildPath, filename), target, options);
@@ -147,7 +147,7 @@ namespace Augmentix.Scripts.Editor
             
             if (type == typeof(ARBuildManager))
             {
-                PlayerSettings.vuforiaEnabled = true;
+                //PlayerSettings.vuforiaEnabled = true;
                 PlayerSettings.virtualRealitySupported = true;
             } else if (type == typeof(VRBuildManager))
             {

@@ -170,6 +170,7 @@ MonoBehaviour:
     IsRightToBeSpawned: 0
     IsEnabled: 1
     CanDuplicate: 0
+  CalibrationState: 0
 --- !u!114 &5669603410904286930
 MonoBehaviour:
   m_ObjectHideFlags: 0
