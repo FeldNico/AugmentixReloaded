@@ -36,11 +36,6 @@ namespace Augmentix.Scripts.AR
                 if (!DebugText.text.EndsWith(message+"\n"))
                     DebugText.text += message + "\n";
 
-                if (DebugText.text.Length > 2000)
-                {
-                    DebugText.text = DebugText.text.Substring(DebugText.text.Length - 2000, 2000);
-                }
-                
             };
             base.Awake();
         }
@@ -50,7 +45,7 @@ namespace Augmentix.Scripts.AR
             base.Start();
             
             Server = new UDPServer(Port);
-            //Server.Connect();
+            Server.Connect();
 
             OnConnection += () => { PhotonNetwork.SetInterestGroups((byte) Groups.LEAP_MOTION, true); };
         }
@@ -63,6 +58,11 @@ namespace Augmentix.Scripts.AR
         private long _currentTimestamp = 0;
         void FixedUpdate()
         {
+            if (DebugText.isTextOverflowing)
+            {
+                DebugText.text = DebugText.text.Substring(DebugText.text.IndexOf("\n"));
+            }
+            
             if (HandManager != null && Server.ContainsMessage() && Server.CheckUpdate())
             {
                 HandManager.OnFrameReceived(Server.ProcessLatestMessage(bytes => (Frame)Frame.Deserialize(bytes)));
