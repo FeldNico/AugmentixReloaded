@@ -23,14 +23,7 @@ public class LeapMotionManager : TargetManager
     public float CheckUpdateRate = 0.5f;
     private SynchedHandModelManager _handManager;
 
-    private Socket _socket { get; } = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-    private State state = new State();
-    private const int bufSize = 64 * 1024;
-    
-    private class State
-    {
-        public byte[] buffer = new byte[bufSize];
-    }
+    public UDPClient Client = new UDPClient();
 
     new public void Start()
     {
@@ -80,11 +73,7 @@ public class LeapMotionManager : TargetManager
 
     public void SendFrame(Frame frame)
     {
-        var data = Frame.Serialize(frame);
-        _socket.BeginSend(data, 0, data.Length, SocketFlags.None, (ar) =>
-        {
-            _socket.EndSend(ar);
-        }, state);
+        Client.Send(frame, f => { return Frame.Serialize(f); });
     }
 
 
@@ -97,7 +86,7 @@ public class LeapMotionManager : TargetManager
             {
                 var ip = (string) ((object[]) photonEvent.CustomData)[0];
                 var port = (int) ((object[]) photonEvent.CustomData)[1];
-                _socket.Connect(ip,port);
+                Client.Connect(ip,port);
                 _handManager.DoSynchronize = true;
                 Debug.Log("Connected to "+ip+":"+port);
                 break;

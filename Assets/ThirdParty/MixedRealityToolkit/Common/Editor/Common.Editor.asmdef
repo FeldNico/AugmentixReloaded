@@ -1,10 +1,10 @@
 {
     "name": "Common.Editor",
     "references": [
-        "GUID:2b68dca5f1e1dbe4fa3ff9d16acf4edf"
+        "GUID:77f19ae77f6722b408803f7c3b971232"
     ],
     "includePlatforms": [
-        "Editor"
+        "XboxOne"
     ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

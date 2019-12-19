@@ -430,7 +430,7 @@ PlayerSettings:
   openGLRequireES31: 0
   openGLRequireES31AEP: 0
   openGLRequireES32: 0
-  vuforiaEnabled: 1
+  vuforiaEnabled: 0
   m_TemplateCustomTags: {}
   mobileMTRendering:
     Android: 1
@@ -718,10 +718,10 @@ PlayerSettings:
     65686: 
     65736: 
     65936: 
-    131172: Assets/Common/Icons/UWP/SplashScreen.scale-100.png
-    131197: Assets/Common/Icons/UWP/SplashScreen.scale-125.png
-    131222: Assets/Common/Icons/UWP/SplashScreen.scale-150.png
-    131272: Assets/Common/Icons/UWP/SplashScreen.scale-200.png
+    131172: 
+    131197: 
+    131222: 
+    131272: 
     2031632: 
     2031640: 
     2031648: 
@@ -737,11 +737,11 @@ PlayerSettings:
     2162838: 
     2162888: 
     2163088: 
-    2293860: Assets/Common/Icons/UWP/Wide310x150Logo.scale-100.png
-    2293885: Assets/Common/Icons/UWP/Wide310x150Logo.scale-125.png
-    2293910: Assets/Common/Icons/UWP/Wide310x150Logo.scale-150.png
-    2293960: Assets/Common/Icons/UWP/Wide310x150Logo.scale-200.png
-    2294160: Assets/Common/Icons/UWP/Wide310x150Logo.scale-400.png
+    2293860: 
+    2293885: 
+    2293910: 
+    2293960: 
+    2294160: 
   metroTileShortName: VuforiaHoloLens
   metroTileShowName: 0
   metroMediumTileShowName: 1
@@ -749,7 +749,7 @@ PlayerSettings:
   metroWideTileShowName: 1
   metroSupportStreamingInstall: 0
   metroLastRequiredScene: 0
-  metroDefaultTileSize: 1
+  metroDefaultTileSize: 0
   metroTileForegroundText: 1
   metroTileBackgroundColor: {r: 0.4117647, g: 0.7490196, b: 0.2901961, a: 1}
   metroSplashScreenBackgroundColor: {r: 0, g: 0, b: 0, a: 1}
@@ -779,15 +779,15 @@ PlayerSettings:
       PhoneCall: False
       PhoneCallHistoryPublic: False
       PicturesLibrary: False
-      PointOfService: True
+      PointOfService: False
       PrivateNetworkClientServer: True
       Proximity: False
       RecordedCallsFolder: False
-      RemoteSystem: True
+      RemoteSystem: False
       RemovableStorage: False
       SharedUserCertificates: False
       SpatialPerception: True
-      SystemManagement: True
+      SystemManagement: False
       UserAccountInformation: False
       UserDataTasks: False
       UserNotificationListener: False

@@ -40,7 +40,10 @@ namespace Augmentix.Scripts.LeapMotion
 #elif UNITY_STANDALONE_WIN
         [HideInInspector]
         public bool DoSynchronize = false;
+
+        private LeapMotionManager _leapMotionManager;
 #endif
+
         private void Awake()
         {
             graphicsEnabled = false;
@@ -112,6 +115,8 @@ namespace Augmentix.Scripts.LeapMotion
             };
     */
 
+#elif UNITY_STANDALONE_WIN
+            _leapMotionManager = FindObjectOfType<LeapMotionManager>();
 #endif
         }
 
@@ -190,9 +195,9 @@ namespace Augmentix.Scripts.LeapMotion
         private void FixedUpdate()
         {
 #if UNITY_STANDALONE_WIN
-            if (DoSynchronize && CurrentFrame != null)
+            if (DoSynchronize && CurrentFrame != null && _leapMotionManager.Client.CheckUpdate())
             {
-                ((LeapMotionManager)TargetManager.Instance).SendFrame(CurrentFrame);
+                _leapMotionManager.SendFrame(CurrentFrame);
             }
 #endif
         }
@@ -231,22 +236,10 @@ namespace Augmentix.Scripts.LeapMotion
                 transform.localPosition = Vector3.zero;
                 transform.localRotation = Quaternion.identity;
 
-                var ipAdress = "";
-                var host = Dns.GetHostEntry(Dns.GetHostName());
-                foreach (var ip in host.AddressList)
-                {
-                    if (ip.AddressFamily == AddressFamily.InterNetwork)
-                    {
-                        ipAdress = ip.ToString();
-                        break;
-                    }
-                }
-
-                var port = ((ARTargetManager) TargetManager.Instance).Port;
-                PhotonNetwork.RaiseEvent((byte) TargetManager.EventCode.SEND_IP, new object[] {ipAdress, port},
+                PhotonNetwork.RaiseEvent((byte) TargetManager.EventCode.SEND_IP, new object[] {targetManager.Server.IP, targetManager.Server.Port},
                     new RaiseEventOptions {Receivers = ReceiverGroup.Others}, new SendOptions {Reliability = true});
                 
-                Debug.Log("Raised ServerEvent: "+ipAdress+":"+port);
+                //Debug.Log("Raised ServerEvent: "+targetManager.Server.IP+":"+targetManager.Server.Port);
                 
             }
 #endif

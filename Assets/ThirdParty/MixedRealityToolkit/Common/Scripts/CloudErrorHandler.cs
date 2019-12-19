@@ -5,6 +5,7 @@ Vuforia is a trademark of PTC Inc., registered in the United States and other
 countries.
 ===============================================================================*/
 using UnityEngine;
+#if UNITY_WSA
 using Vuforia;
 
 public class CloudErrorHandler : MonoBehaviour, IObjectRecoEventHandler
@@ -154,3 +155,4 @@ public class CloudErrorHandler : MonoBehaviour, IObjectRecoEventHandler
 
     #endregion PRIVATE_METHODS
 }
+#endif
