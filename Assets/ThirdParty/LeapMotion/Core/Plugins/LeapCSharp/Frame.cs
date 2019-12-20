@@ -85,12 +85,20 @@ namespace Leap
         
         public static object Deserialize(byte[] arg)
         {
-            using (var ms = new MemoryStream())
+            try
             {
-                BinaryFormatter bf = new BinaryFormatter();
-                ms.Write(arg, 0, arg.Length);
-                ms.Seek(0, SeekOrigin.Begin);
-                return (Frame) bf.Deserialize(ms);
+                using (var ms = new MemoryStream())
+                {
+                    BinaryFormatter bf = new BinaryFormatter();
+                    ms.Write(arg, 0, arg.Length);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    return (Frame) bf.Deserialize(ms);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
             }
         }
 

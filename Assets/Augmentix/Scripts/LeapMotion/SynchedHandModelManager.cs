@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using Augmentix.Scripts.AR;
@@ -192,15 +193,40 @@ namespace Augmentix.Scripts.LeapMotion
 #endif
         }
 
+        private bool stop = false;
+#if UNITY_STANDALONE_WIN
         private void FixedUpdate()
         {
-#if UNITY_STANDALONE_WIN
-            if (DoSynchronize && CurrentFrame != null && _leapMotionManager.Client.CheckUpdate())
+
+            if (DoSynchronize)
             {
-                _leapMotionManager.SendFrame(CurrentFrame);
+                if (CurrentFrame != null)
+                {
+                    if (_leapMotionManager.Client.CheckUpdate())
+                    {
+                        _leapMotionManager.SendFrame(CurrentFrame);
+                        
+                        if (CurrentFrame.Hands.Count > 1 && !stop)
+                        {
+                            File.WriteAllBytes("frame.bytes", Frame.Serialize(CurrentFrame));
+                            File.WriteAllText("frame.json",JsonUtility.ToJson(CurrentFrame));
+                            stop = true;
+                        }
+                        
+                    }
+                }
+                else
+                {
+                    Debug.Log("CurrentFrame == null");
+                }
             }
-#endif
+            else
+            {
+                Debug.Log("No Synchronize");
+            }
+
         }
+#endif
 
         protected new virtual void OnEnable()
         {
@@ -217,6 +243,12 @@ namespace Augmentix.Scripts.LeapMotion
 #if UNITY_WSA
         public void OnFrameReceived(Frame frame)
         {
+            if (frame == null)
+            {
+                Debug.Log("Frame discarded");
+                return;
+            }
+            
             CurrentFrame = frame;
             if (graphicsEnabled)
                 OnUpdateFrame(CurrentFrame);

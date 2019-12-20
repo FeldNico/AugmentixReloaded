@@ -50,7 +50,8 @@ public class UDPServer
 #elif UNITY_WSA && !UNITY_EDITOR
         private DatagramSocket _server;
 #endif
-    private ConcurrentStack<byte[]> _dataStack = new ConcurrentStack<byte[]>();
+    //private ConcurrentStack<byte[]> _dataStack = new ConcurrentStack<byte[]>();
+    private Stack<byte[]> _dataStack = new Stack<byte[]>();
 
     public UDPServer(int port)
     {
@@ -72,30 +73,29 @@ public class UDPServer
         }, state);
 
 #elif UNITY_WSA && !UNITY_EDITOR
-            _server = new DatagramSocket();
-            _server.MessageReceived += (sender, args) => { 
-                Stream streamIn = args.GetDataStream().AsStreamForRead();
-                MemoryStream ms = ToMemoryStream(streamIn);
-                _dataStack.Push(ms.ToArray());
-            };
+        _server = new DatagramSocket();
+        _server.MessageReceived += (sender, args) => { 
+            Debug.Log("Message recieved");
+            Stream streamIn = args.GetDataStream().AsStreamForRead();
+            MemoryStream ms = ToMemoryStream(streamIn);
+            _dataStack.Push(ms.ToArray());
+        };
+        try
+        {
+            var icp = NetworkInformation.GetInternetConnectionProfile();
 
-            try
-            {
-                var icp = NetworkInformation.GetInternetConnectionProfile();
-
-                HostName IP = Windows.Networking.Connectivity.NetworkInformation.GetHostNames().SingleOrDefault(hn =>
-                    hn.IPInformation?.NetworkAdapter != null 
-                        && hn.IPInformation.NetworkAdapter.NetworkAdapterId == icp.NetworkAdapter.NetworkAdapterId);
-                Debug.Log("Bind Server "+IP+":"+Port);
-
-                await _server.BindEndpointAsync(IP,Port.ToString());
-            }
-            catch (Exception e)
-            {
-                Debug.Log(e.ToString());
-                Debug.Log(Windows.Networking.Sockets.SocketError.GetStatus(e.HResult).ToString());
-                return;
-            }
+            HostName IP = Windows.Networking.Connectivity.NetworkInformation.GetHostNames().SingleOrDefault(hn =>
+                hn.IPInformation?.NetworkAdapter != null 
+                    && hn.IPInformation.NetworkAdapter.NetworkAdapterId == icp.NetworkAdapter.NetworkAdapterId);
+            await _server.BindEndpointAsync(IP,Port.ToString());
+            Debug.Log("Bind Server "+IP+":"+Port);
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e.ToString());
+            Debug.Log(Windows.Networking.Sockets.SocketError.GetStatus(e.HResult).ToString());
+            return;
+        }
 #endif
     }
 
@@ -120,6 +120,8 @@ public class UDPServer
 
     public T ProcessLatestMessage<T>(Func<byte[], T> serializeMethod)
     {
+        return serializeMethod.Invoke(_dataStack.Pop());
+        /*
         byte[] data = new byte[UDPManager.BUFSIZE];
         if (_dataStack.TryPop(out data))
         {
@@ -127,11 +129,13 @@ public class UDPServer
         }
 
         return default;
+        */
     }
 
     public bool ContainsMessage()
     {
-        return !_dataStack.IsEmpty;
+        return _dataStack.Count != 0;
+        //return !_dataStack.IsEmpty;
     }
 
     public bool CheckUpdate()

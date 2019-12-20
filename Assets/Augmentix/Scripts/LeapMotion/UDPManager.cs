@@ -11,8 +11,8 @@ using UnityEngine;
 
 public class UDPManager
 {
-    public const int BUFSIZE = 64 * 2014;
-    public const float UpdateFrame = 0.1f;
+    public const int BUFSIZE = 12 * 1024;
+    public const float UpdateFrame = 0.2f;
 
 #if UNITY_WSA && UNITY_EDITOR || UNITY_STANDALONE_WIN
     public class State

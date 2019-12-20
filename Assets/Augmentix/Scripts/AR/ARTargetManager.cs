@@ -8,6 +8,7 @@ using ExitGames.Client.Photon;
 using UnityEngine;
 using UnityEngine.Events;
 #if UNITY_WSA
+using System.Collections;
 using Leap;
 using Photon.Pun;
 using TMPro;
@@ -29,21 +30,47 @@ namespace Augmentix.Scripts.AR
 
         public UDPServer Server;
 
+        public TextAsset FrameFile;
+        private Frame _staticFrame;
+
         new public void Awake()
         {
+            _staticFrame = (Frame) Frame.Deserialize(FrameFile.bytes);
+
+            if (_staticFrame == null || _staticFrame.Hands.Count <= 0)
+            {
+                Debug.LogError("NOOSDJASDJSDL");
+            }
+
             Application.logMessageReceived += (message, trace, type) =>
             {
-                if (!DebugText.text.EndsWith(message+"\n"))
+                if (!DebugText.text.EndsWith(message + "\n"))
                     DebugText.text += message + "\n";
 
+                int count = 0;
+                foreach (char c in DebugText.text)
+                    if (c == '\n')
+                        count++;
+
+                count = count - 35;
+                if (count > 0)
+                {
+                    var index = 0;
+                    for (int i = 0; i < count; i++)
+                    {
+                        index = DebugText.text.IndexOf('\n', index + 1);
+                    }
+
+                    DebugText.text = DebugText.text.Substring(index);
+                }
             };
             base.Awake();
         }
-        
+
         new void Start()
         {
             base.Start();
-            
+
             Server = new UDPServer(Port);
             Server.Connect();
 
@@ -58,24 +85,15 @@ namespace Augmentix.Scripts.AR
         private long _currentTimestamp = 0;
         void FixedUpdate()
         {
-            if (DebugText.isTextOverflowing)
-            {
-                DebugText.text = DebugText.text.Substring(DebugText.text.IndexOf("\n"));
-            }
-            
             if (HandManager != null && Server.ContainsMessage() && Server.CheckUpdate())
+                HandManager.OnFrameReceived(Server.ProcessLatestMessage(bytes =>
+                    (Frame) Frame.Deserialize(bytes)));
+            /*
+            if (HandManager != null && Server.CheckUpdate())
             {
-                HandManager.OnFrameReceived(Server.ProcessLatestMessage(bytes => (Frame)Frame.Deserialize(bytes)));
+                HandManager.OnFrameReceived(_staticFrame);
             }
-            else
-            {
-                /*
-                if (HandManager == null)
-                    Debug.Log("HandManager == null");
-                else
-                    Debug.Log("Empty");
-                    */
-            }
+            */
         }
 #endif
     }

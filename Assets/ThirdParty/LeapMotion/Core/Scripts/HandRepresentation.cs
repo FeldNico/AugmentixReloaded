@@ -71,7 +71,8 @@ namespace Leap.Unity {
     }
 
     /** Calls Updates in HandModelBases that are part of this HandRepresentation */
-    public void UpdateRepresentation(Hand hand) {
+    public void UpdateRepresentation(Hand hand)
+    {
       MostRecentHand = hand;
       if (handModels != null) {
         for (int i = 0; i < handModels.Count; i++) {

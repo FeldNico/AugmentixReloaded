@@ -147,7 +147,7 @@ namespace Augmentix.Scripts.Editor
             
             if (type == typeof(ARBuildManager))
             {
-                //PlayerSettings.vuforiaEnabled = true;
+                PlayerSettings.vuforiaEnabled = true;
                 PlayerSettings.virtualRealitySupported = true;
             } else if (type == typeof(VRBuildManager))
             {
