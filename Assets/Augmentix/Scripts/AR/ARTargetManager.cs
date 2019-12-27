@@ -23,24 +23,13 @@ namespace Augmentix.Scripts.AR
 #if UNITY_WSA
         public Transform LeapMotionOffset;
         public int Port = 1337;
-        [HideInInspector] public SynchedHandModelManager HandManager = null;
+        public ARHands Hands;
         public bool DoCalibrate = false;
         public Vector3 FirstCalibrationVector, SecondCalibrationVector;
         public TMP_Text DebugText;
 
-        public UDPServer Server;
-
-        public TextAsset FrameFile;
-        private Frame _staticFrame;
-
         new public void Awake()
         {
-            _staticFrame = (Frame) Frame.Deserialize(FrameFile.bytes);
-
-            if (_staticFrame == null || _staticFrame.Hands.Count <= 0)
-            {
-                Debug.LogError("NOOSDJASDJSDL");
-            }
 
             Application.logMessageReceived += (message, trace, type) =>
             {
@@ -71,30 +60,12 @@ namespace Augmentix.Scripts.AR
         {
             base.Start();
 
-            Server = new UDPServer(Port);
-            Server.Connect();
-
             OnConnection += () => { PhotonNetwork.SetInterestGroups((byte) Groups.LEAP_MOTION, true); };
         }
 #endif
         public override void OnEvent(EventData photonEvent)
         {
         }
-#if UNITY_WSA
 
-        private long _currentTimestamp = 0;
-        void FixedUpdate()
-        {
-            if (HandManager != null && Server.ContainsMessage() && Server.CheckUpdate())
-                HandManager.OnFrameReceived(Server.ProcessLatestMessage(bytes =>
-                    (Frame) Frame.Deserialize(bytes)));
-            /*
-            if (HandManager != null && Server.CheckUpdate())
-            {
-                HandManager.OnFrameReceived(_staticFrame);
-            }
-            */
-        }
-#endif
     }
 }

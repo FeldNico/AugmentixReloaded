@@ -11,9 +11,9 @@ public class UDPClient
 {
 #if UNITY_WSA && UNITY_EDITOR || UNITY_STANDALONE_WIN
     private Socket _socket { get; } = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-    private UDPManager.State state = new UDPManager.State();
+    private LMProtocol.State state = new LMProtocol.State();
 #endif
-    private int _currentFrame = 0;
+
     public void Connect(string ip, int port)
     {
 #if UNITY_WSA && UNITY_EDITOR || UNITY_STANDALONE_WIN
@@ -32,15 +32,4 @@ public class UDPClient
 #endif
     }
     
-    public bool CheckUpdate()
-    {
-        if (_currentFrame > 1f / UDPManager.UpdateFrame)
-        {
-            _currentFrame = 0;
-            return true;
-        }
-
-        _currentFrame++;
-        return false;
-    }
 }

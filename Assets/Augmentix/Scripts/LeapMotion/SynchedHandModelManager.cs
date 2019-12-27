@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using Augmentix.Scripts.AR;
+using Augmentix.Scripts.LeapMotion.Networking.Messages;
 using ExitGames.Client.Photon;
 using Leap;
 using Leap.Unity;
@@ -17,7 +20,7 @@ using UnityEngine.XR.WSA.Input;
 
 namespace Augmentix.Scripts.LeapMotion
 {
-    public class SynchedHandModelManager : HandModelManager, IPunInstantiateMagicCallback
+    public class SynchedHandModelManager : HandModelManager
     {
 #if UNITY_WSA
         Vector3 _estimatedHandPosition = new Vector3();
@@ -193,27 +196,59 @@ namespace Augmentix.Scripts.LeapMotion
 #endif
         }
 
-        private bool stop = false;
+        private Dictionary<bool,bool> _handStatus = new Dictionary<bool, bool>{ {true,false},{false,false} };
+        private List<byte[]> _messages = new List<byte[]>();
 #if UNITY_STANDALONE_WIN
         private void FixedUpdate()
         {
-
             if (DoSynchronize)
             {
                 if (CurrentFrame != null)
                 {
-                    if (_leapMotionManager.Client.CheckUpdate())
+                    _messages.Clear();
+                    if (CurrentFrame.Hands.Count != 2)
                     {
-                        _leapMotionManager.SendFrame(CurrentFrame);
-                        
-                        if (CurrentFrame.Hands.Count > 1 && !stop)
+                        if (CurrentFrame.Hands.Count == 0)
                         {
-                            File.WriteAllBytes("frame.bytes", Frame.Serialize(CurrentFrame));
-                            File.WriteAllText("frame.json",JsonUtility.ToJson(CurrentFrame));
-                            stop = true;
+                            foreach (var key in _handStatus.Keys)
+                                if (_handStatus[key])
+                                {
+                                    _handStatus[key] = false;
+                                    PhotonNetwork.RaiseEvent((byte)TargetManager.EventCode.HAND_LOST, new object[] {key},
+                                        RaiseEventOptions.Default,SendOptions.SendReliable);
+                                }
+                        } else
+                        {
+                            var hand = CurrentFrame.Hands[0];
+                            if (_handStatus[hand.IsRight])
+                            {
+                                _handStatus[hand.IsRight] = false;
+                                PhotonNetwork.RaiseEvent((byte)TargetManager.EventCode.HAND_LOST, new object[] {hand.IsRight},
+                                    RaiseEventOptions.Default,SendOptions.SendReliable);
+                            }
+                        }
+                    }
+                    
+                    foreach (var hand in CurrentFrame.Hands)
+                    {
+                        var msg = new LMPositionMessage();
+                        msg.IsRight = hand.IsRight;
+                        msg.IndexPosition = hand.GetIndex().TipPosition.ToVector3();
+                        msg.ThumbPosition = hand.GetThumb().TipPosition.ToVector3();
+                        _messages.Add(msg.ConvertToBytes());
+                    }
+
+                    if (_messages.Count != 0)
+                    {
+                        var bytes = new byte[0];
+                        foreach (var message in _messages)
+                        {
+                            bytes = bytes.Union(message).ToArray();
                         }
                         
+                        
                     }
+
                 }
                 else
                 {
@@ -224,7 +259,7 @@ namespace Augmentix.Scripts.LeapMotion
             {
                 Debug.Log("No Synchronize");
             }
-
+            
         }
 #endif
 
@@ -243,6 +278,8 @@ namespace Augmentix.Scripts.LeapMotion
 #if UNITY_WSA
         public void OnFrameReceived(Frame frame)
         {
+            Debug.Log("frame "+frame.Hands.Count);
+            
             if (frame == null)
             {
                 Debug.Log("Frame discarded");
@@ -256,25 +293,5 @@ namespace Augmentix.Scripts.LeapMotion
                 OnFixedFrame(CurrentFrame);
         }
 #endif
-
-        public void OnPhotonInstantiate(PhotonMessageInfo info)
-        {
-#if UNITY_WSA
-            if (TargetManager.Instance.Type == TargetManager.PlayerType.Primary)
-            {
-                var targetManager = (ARTargetManager) TargetManager.Instance;
-                targetManager.HandManager = this;
-                transform.parent = targetManager.LeapMotionOffset;
-                transform.localPosition = Vector3.zero;
-                transform.localRotation = Quaternion.identity;
-
-                PhotonNetwork.RaiseEvent((byte) TargetManager.EventCode.SEND_IP, new object[] {targetManager.Server.IP, targetManager.Server.Port},
-                    new RaiseEventOptions {Receivers = ReceiverGroup.Others}, new SendOptions {Reliability = true});
-                
-                //Debug.Log("Raised ServerEvent: "+targetManager.Server.IP+":"+targetManager.Server.Port);
-                
-            }
-#endif
-        }
     }
 }

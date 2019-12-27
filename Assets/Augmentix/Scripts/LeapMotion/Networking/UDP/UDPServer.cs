@@ -35,7 +35,6 @@ public class UDPServer
                     }
                 }
             }
-
             return _ip;
         }
     }
@@ -44,14 +43,14 @@ public class UDPServer
 
 #if UNITY_WSA && UNITY_EDITOR || UNITY_STANDALONE_WIN
     private Socket _server = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-    private UDPManager.State state = new UDPManager.State();
+    private LMProtocol.State state = new LMProtocol.State();
     private EndPoint epFrom = new IPEndPoint(IPAddress.Any, 0);
     private AsyncCallback recv;
 #elif UNITY_WSA && !UNITY_EDITOR
         private DatagramSocket _server;
 #endif
     //private ConcurrentStack<byte[]> _dataStack = new ConcurrentStack<byte[]>();
-    private Stack<byte[]> _dataStack = new Stack<byte[]>();
+    private Stack<byte[]> _messageStack = new Stack<byte[]>();
 
     public UDPServer(int port)
     {
@@ -64,12 +63,12 @@ public class UDPServer
         _server.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.ReuseAddress, true);
         _server.Bind(new IPEndPoint(IPAddress.Any, Port));
 
-        _server.BeginReceiveFrom(state.buffer, 0, UDPManager.BUFSIZE, SocketFlags.None, ref epFrom, recv = (ar) =>
+        _server.BeginReceiveFrom(state.buffer, 0, LMProtocol.BUFSIZE, SocketFlags.None, ref epFrom, recv = (ar) =>
         {
-            UDPManager.State so = (UDPManager.State) ar.AsyncState;
+            LMProtocol.State so = (LMProtocol.State) ar.AsyncState;
             _server.EndReceiveFrom(ar, ref epFrom);
-            _server.BeginReceiveFrom(so.buffer, 0, UDPManager.BUFSIZE, SocketFlags.None, ref epFrom, recv, so);
-            _dataStack.Push(so.buffer);
+            _server.BeginReceiveFrom(so.buffer, 0, LMProtocol.BUFSIZE, SocketFlags.None, ref epFrom, recv, so);
+            _messageStack.Push(so.buffer);
         }, state);
 
 #elif UNITY_WSA && !UNITY_EDITOR
@@ -78,7 +77,7 @@ public class UDPServer
             Debug.Log("Message recieved");
             Stream streamIn = args.GetDataStream().AsStreamForRead();
             MemoryStream ms = ToMemoryStream(streamIn);
-            _dataStack.Push(ms.ToArray());
+            _messageStack.Push(ms.ToArray());
         };
         try
         {
@@ -118,35 +117,16 @@ public class UDPServer
         }
     }
 
-    public T ProcessLatestMessage<T>(Func<byte[], T> serializeMethod)
+    public byte[] GetCurrentMessageArray()
     {
-        return serializeMethod.Invoke(_dataStack.Pop());
-        /*
-        byte[] data = new byte[UDPManager.BUFSIZE];
-        if (_dataStack.TryPop(out data))
-        {
-            return serializeMethod.Invoke(data);
-        }
-
-        return default;
-        */
+        var bytes = _messageStack.Pop();
+        _messageStack.Clear();
+        return bytes;
     }
 
     public bool ContainsMessage()
     {
-        return _dataStack.Count != 0;
-        //return !_dataStack.IsEmpty;
+        return _messageStack.Count != 0;
     }
-
-    public bool CheckUpdate()
-    {
-        if (_currentFrame > 1f / UDPManager.UpdateFrame)
-        {
-            _currentFrame = 0;
-            return true;
-        }
-
-        _currentFrame++;
-        return false;
-    }
+    
 }

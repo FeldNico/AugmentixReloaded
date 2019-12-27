@@ -27,7 +27,8 @@ namespace Augmentix.Scripts
 
         public enum EventCode : byte
         {
-            SEND_IP = 0x42
+            SEND_IP = 0x42,
+            HAND_LOST = 0x43,
         }
     
         public static TargetManager Instance { protected set; get; }
