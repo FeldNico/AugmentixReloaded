@@ -63,9 +63,6 @@ namespace Augmentix.Scripts.AR
             OnConnection += () => { PhotonNetwork.SetInterestGroups((byte) Groups.LEAP_MOTION, true); };
         }
 #endif
-        public override void OnEvent(EventData photonEvent)
-        {
-        }
 
     }
 }

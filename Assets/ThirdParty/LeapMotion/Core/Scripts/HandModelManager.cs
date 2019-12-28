@@ -39,7 +39,7 @@ namespace Leap.Unity {
     protected bool graphicsEnabled = true;
     protected bool physicsEnabled = true;
 
-    public Frame CurrentFrame { protected set; get; } = null;
+    public Frame CurrentFrame { private set; get; } = null;
     
     public bool GraphicsEnabled {
       get {

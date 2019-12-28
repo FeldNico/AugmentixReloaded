@@ -3,12 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Photon.Pun;
 using UnityEngine;
 
-public class LMProtocol: MonoBehaviour
+public abstract class LMProtocol: MonoBehaviour
 {
     public const int BUFSIZE = 12 * 1024;
-    public const float UpdateFrequenz = 2;
+    public const int UpdateFrequenz = 2;
     public static Dictionary<LeapMotionMessageType,Type> TypeDict { get; } = new Dictionary<LeapMotionMessageType, Type>();
     
     
@@ -16,7 +17,7 @@ public class LMProtocol: MonoBehaviour
     
     public enum LeapMotionMessageType : byte
     {
-        PositionUpdate = 0x1,
+        Update = 0x1,
         Detected = 0x2,
     }
     
@@ -27,7 +28,8 @@ public class LMProtocol: MonoBehaviour
     }
 #endif
 
-    protected void Indexing()
+    
+    void Awake()
     {
         foreach(var asm in AppDomain.CurrentDomain.GetAssemblies())
         {
@@ -42,7 +44,7 @@ public class LMProtocol: MonoBehaviour
             }
         }
     }
-    
+
     private static List<ILMMessage> _messageList = new List<ILMMessage>();
     public static ILMMessage[] ConvertBytesToMessageArray(byte[] data)
     {
@@ -63,7 +65,7 @@ public class LMProtocol: MonoBehaviour
     
     public bool CheckUpdate()
     {
-        if (_currentFrame > 1f / LMProtocol.UpdateFrequenz)
+        if (_currentFrame >= UpdateFrequenz)
         {
             _currentFrame = 0;
             return true;
@@ -71,6 +73,16 @@ public class LMProtocol: MonoBehaviour
 
         _currentFrame++;
         return false;
+    }
+    
+    public void OnEnable()
+    {
+        PhotonNetwork.AddCallbackTarget(this);
+    }
+
+    public void OnDisable()
+    {
+        PhotonNetwork.RemoveCallbackTarget(this);
     }
 
 }

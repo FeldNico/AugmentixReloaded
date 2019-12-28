@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Augmentix/Scenes/LeapMotion.unity
-    guid: f29244603d76c4244b5227076aead7b3
+    path: Assets/Augmentix/Scenes/AR.unity
+    guid: cc92b752adf36a74aa666f937c31b3c6
   m_configObjects: {}

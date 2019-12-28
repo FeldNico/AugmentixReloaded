@@ -195,73 +195,7 @@ namespace Augmentix.Scripts.LeapMotion
             }
 #endif
         }
-
-        private Dictionary<bool,bool> _handStatus = new Dictionary<bool, bool>{ {true,false},{false,false} };
-        private List<byte[]> _messages = new List<byte[]>();
-#if UNITY_STANDALONE_WIN
-        private void FixedUpdate()
-        {
-            if (DoSynchronize)
-            {
-                if (CurrentFrame != null)
-                {
-                    _messages.Clear();
-                    if (CurrentFrame.Hands.Count != 2)
-                    {
-                        if (CurrentFrame.Hands.Count == 0)
-                        {
-                            foreach (var key in _handStatus.Keys)
-                                if (_handStatus[key])
-                                {
-                                    _handStatus[key] = false;
-                                    PhotonNetwork.RaiseEvent((byte)TargetManager.EventCode.HAND_LOST, new object[] {key},
-                                        RaiseEventOptions.Default,SendOptions.SendReliable);
-                                }
-                        } else
-                        {
-                            var hand = CurrentFrame.Hands[0];
-                            if (_handStatus[hand.IsRight])
-                            {
-                                _handStatus[hand.IsRight] = false;
-                                PhotonNetwork.RaiseEvent((byte)TargetManager.EventCode.HAND_LOST, new object[] {hand.IsRight},
-                                    RaiseEventOptions.Default,SendOptions.SendReliable);
-                            }
-                        }
-                    }
-                    
-                    foreach (var hand in CurrentFrame.Hands)
-                    {
-                        var msg = new LMPositionMessage();
-                        msg.IsRight = hand.IsRight;
-                        msg.IndexPosition = hand.GetIndex().TipPosition.ToVector3();
-                        msg.ThumbPosition = hand.GetThumb().TipPosition.ToVector3();
-                        _messages.Add(msg.ConvertToBytes());
-                    }
-
-                    if (_messages.Count != 0)
-                    {
-                        var bytes = new byte[0];
-                        foreach (var message in _messages)
-                        {
-                            bytes = bytes.Union(message).ToArray();
-                        }
-                        
-                        
-                    }
-
-                }
-                else
-                {
-                    Debug.Log("CurrentFrame == null");
-                }
-            }
-            else
-            {
-                Debug.Log("No Synchronize");
-            }
-            
-        }
-#endif
+        
 
         protected new virtual void OnEnable()
         {
@@ -274,24 +208,5 @@ namespace Augmentix.Scripts.LeapMotion
             if (TargetManager.Instance.Type == TargetManager.PlayerType.LeapMotion)
                 base.OnDisable();
         }
-
-#if UNITY_WSA
-        public void OnFrameReceived(Frame frame)
-        {
-            Debug.Log("frame "+frame.Hands.Count);
-            
-            if (frame == null)
-            {
-                Debug.Log("Frame discarded");
-                return;
-            }
-            
-            CurrentFrame = frame;
-            if (graphicsEnabled)
-                OnUpdateFrame(CurrentFrame);
-            else if (physicsEnabled)
-                OnFixedFrame(CurrentFrame);
-        }
-#endif
     }
 }

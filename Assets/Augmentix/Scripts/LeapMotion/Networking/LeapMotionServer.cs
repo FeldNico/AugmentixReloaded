@@ -1,33 +1,61 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Augmentix.Scripts;
 using Augmentix.Scripts.AR;
 using ExitGames.Client.Photon;
+using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 
 #if UNITY_WSA
 public class LeapMotionServer : LMProtocol, IOnEventCallback
 {
-
+    public float CheckUpdateRate = 0.5f;
+    
     private UDPServer _server;
     private ARTargetManager _targetManager;
-
-    private void Awake()
-    {
-        Indexing();
-    }
 
     // Start is called before the first frame update
     void Start()
     {
         _targetManager = (ARTargetManager) TargetManager.Instance;
         _server = new UDPServer(_targetManager.Port);
+
+        TargetManager.Instance.OnConnection += () =>
+            {
+                StartCoroutine(CheckForSecondary());
+
+                IEnumerator CheckForSecondary()
+                {
+                    Debug.Log("Waiting for LeapMotion");
+                    while (true)
+                    {
+                        var primary = PhotonNetwork.PlayerListOthers.FirstOrDefault(
+                            player => (string) player.CustomProperties["Class"] == TargetManager.PlayerType.LeapMotion.ToString());
+
+                        if (primary != null)
+                        {
+                            var options = new RaiseEventOptions();
+                            options.Receivers = ReceiverGroup.Others;
+                            options.InterestGroup = (byte) TargetManager.Groups.LEAP_MOTION;
+                            PhotonNetwork.RaiseEvent((byte) TargetManager.EventCode.SEND_IP,
+                                new object[] {_server.IP, _server.Port}, RaiseEventOptions.Default, SendOptions.SendReliable);
+                            Debug.Log("Sent IP Event "+(byte) TargetManager.EventCode.SEND_IP+" "+_server.IP+":"+_server.Port);
+                            break;
+                        }
+
+                        yield return new WaitForSeconds(CheckUpdateRate);
+                    }
+                    
+                }
+                
+               
+            };
     }
 
     
-#if UNITY_WSA
     void FixedUpdate()
     {
         if (_server.ContainsMessage())
@@ -39,7 +67,7 @@ public class LeapMotionServer : LMProtocol, IOnEventCallback
             }
         }
     }
-#endif
+
     public void OnEvent(EventData photonEvent)
     {
         switch (photonEvent.Code)

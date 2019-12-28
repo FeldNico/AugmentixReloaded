@@ -12,20 +12,13 @@ namespace Augmentix.Scripts.VR
         public float TeleportFadeDuration = 0.1f;
 
         public float MinMoveDistance = 1f;
-        
+
         new void Start()
         {
             base.Start();
 
-            OnConnection += () =>
-            {
+            OnConnection += () => { };
 
-            };
-            
-        }
-
-        public override void OnEvent(EventData photonEvent)
-        {
         }
     }
 }

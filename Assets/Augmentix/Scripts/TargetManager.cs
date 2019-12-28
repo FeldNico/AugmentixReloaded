@@ -10,7 +10,7 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace Augmentix.Scripts
 {
-    public abstract class TargetManager : MonoBehaviourPunCallbacks, IOnEventCallback
+    public abstract class TargetManager : MonoBehaviourPunCallbacks
     {
         public enum PlayerType
         {
@@ -81,7 +81,5 @@ namespace Augmentix.Scripts
                 OnConnection.Invoke();
             }
         }
-
-        public abstract void OnEvent(EventData photonEvent);
     }
 }

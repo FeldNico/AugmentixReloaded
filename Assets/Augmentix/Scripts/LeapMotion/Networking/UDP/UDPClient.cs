@@ -21,11 +21,10 @@ public class UDPClient
 #endif
     }
 
-    public void Send<T>(T data, Func<T,byte[]> serializeFunc)
+    public void Send(byte[] data)
     {
 #if UNITY_WSA && UNITY_EDITOR || UNITY_STANDALONE_WIN
-        byte[] bytes = serializeFunc(data);
-        _socket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, (ar) =>
+        _socket.BeginSend(data, 0, data.Length, SocketFlags.None, (ar) =>
         {
             _socket.EndSend(ar);
         }, state);

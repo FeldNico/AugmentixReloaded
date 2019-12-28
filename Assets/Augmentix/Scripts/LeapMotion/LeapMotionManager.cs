@@ -21,9 +21,6 @@ public class LeapMotionManager : TargetManager
 
     public bool WaitForPrimary = true;
     public float CheckUpdateRate = 0.5f;
-    private SynchedHandModelManager _handManager;
-
-    public UDPClient Client = new UDPClient();
 
     new public void Start()
     {
@@ -34,12 +31,6 @@ public class LeapMotionManager : TargetManager
         OnConnection += () =>
         {
             Camera.main.backgroundColor = Color.green;
-            _handManager = PhotonNetwork
-                .Instantiate("Hand Models", Vector3.zero, Quaternion.identity)
-                .GetComponent<SynchedHandModelManager>();
-            _handManager.transform.parent = FindObjectOfType<XRHeightOffset>().transform;
-            _handManager.transform.position = Vector3.zero;
-            _handManager.leapProvider = FindObjectOfType<LeapProvider>();
         };
     }
 
@@ -69,30 +60,6 @@ public class LeapMotionManager : TargetManager
             Debug.Log("Primary found!");
             base.OnJoinedRoom();
         }
-    }
-
-    public void SendFrame(Frame frame)
-    {
-        Client.Send(frame, f => { return Frame.Serialize(f); });
-    }
-
-
-    public override void OnEvent(EventData photonEvent)
-    {
-#if UNITY_STANDALONE_WIN
-        switch (photonEvent.Code)
-        {
-            case (byte) EventCode.SEND_IP:
-            {
-                var ip = (string) ((object[]) photonEvent.CustomData)[0];
-                var port = (int) ((object[]) photonEvent.CustomData)[1];
-                Client.Connect(ip,port);
-                _handManager.DoSynchronize = true;
-                Debug.Log("Connected to "+ip+":"+port);
-                break;
-            }
-        }
-#endif
     }
 
 }
