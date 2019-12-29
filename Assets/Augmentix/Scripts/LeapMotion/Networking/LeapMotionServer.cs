@@ -22,6 +22,7 @@ public class LeapMotionServer : LMProtocol, IOnEventCallback
     {
         _targetManager = (ARTargetManager) TargetManager.Instance;
         _server = new UDPServer(_targetManager.Port);
+        _server.Connect();
 
         TargetManager.Instance.OnConnection += () =>
             {

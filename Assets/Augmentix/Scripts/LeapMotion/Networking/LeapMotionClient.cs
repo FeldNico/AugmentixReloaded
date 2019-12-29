@@ -15,10 +15,13 @@ public class LeapMotionClient : LMProtocol, IOnEventCallback
 {
     public HandModelManager HandManager;
     public bool DoSynchronize { private set; get; }
-    
+
     private UDPClient _client { get; } = new UDPClient();
-    private Dictionary<Chirality,bool> _prevHandStatus { get; } = new Dictionary<Chirality, bool>{ {Chirality.Left,false},{Chirality.Right,false} };
-    private List<byte[]> _messages  { get; } = new List<byte[]>();
+
+    private Dictionary<Chirality, bool> _prevHandStatus { get; } = new Dictionary<Chirality, bool>
+        {{Chirality.Left, false}, {Chirality.Right, false}};
+
+    private List<byte[]> _messages { get; } = new List<byte[]>();
 
     void FixedUpdate()
     {
@@ -32,71 +35,48 @@ public class LeapMotionClient : LMProtocol, IOnEventCallback
                     var options = new RaiseEventOptions();
                     options.Receivers = ReceiverGroup.Others;
                     options.InterestGroup = (byte) TargetManager.Groups.LEAP_MOTION;
-                    
-                    if (HandManager.CurrentFrame.Hands.Count == 0)
+
+                    if ((HandManager.CurrentFrame.Hands.Count == 0 || HandManager.CurrentFrame.Hands[0].IsLeft) &&
+                        _prevHandStatus[Chirality.Right])
                     {
-                        foreach (var key in _prevHandStatus.Keys)
-                            if (_prevHandStatus[key])
-                            {
-                                _prevHandStatus[key] = false;
-                                PhotonNetwork.RaiseEvent((byte) TargetManager.EventCode.HAND_LOST, new object[] {key == Chirality.Right},
-                                    options, SendOptions.SendReliable);
-                                Debug.Log("Raise HAND_LOST Event: "+ (key == Chirality.Right ? "Right" : "Left" ));
-                            }
+                        _prevHandStatus[Chirality.Right] = false;
+                        PhotonNetwork.RaiseEvent((byte) TargetManager.EventCode.HAND_LOST, new object[] {true},
+                            options, SendOptions.SendReliable);
+                        Debug.Log("Raise HAND_LOST Event: Right");
                     }
-                    else
+
+                    if ((HandManager.CurrentFrame.Hands.Count == 0 || HandManager.CurrentFrame.Hands[0].IsRight) &&
+                        _prevHandStatus[Chirality.Left])
                     {
-                        var hand = HandManager.CurrentFrame.Hands[0];
-                        if (hand.IsRight)
-                        {
-                            if (_prevHandStatus[Chirality.Right])
-                            {
-                                _prevHandStatus[Chirality.Right] = false;
-                                PhotonNetwork.RaiseEvent((byte) TargetManager.EventCode.HAND_LOST,
-                                    new object[] {hand.IsRight},
-                                    options, SendOptions.SendReliable);
-                                Debug.Log("Raise HAND_LOST Event: Right" );
-                            }
-                        }
-                        else
-                        {
-                            if (_prevHandStatus[Chirality.Left])
-                            {
-                                _prevHandStatus[Chirality.Left] = false;
-                                PhotonNetwork.RaiseEvent((byte) TargetManager.EventCode.HAND_LOST,
-                                    new object[] {hand.IsRight},
-                                    options, SendOptions.SendReliable);
-                                Debug.Log("Raise HAND_LOST Event: Left" );
-                            }
-                        }
+                        _prevHandStatus[Chirality.Left] = false;
+                        PhotonNetwork.RaiseEvent((byte) TargetManager.EventCode.HAND_LOST, new object[] {false},
+                            options, SendOptions.SendReliable);
+                        Debug.Log("Raise HAND_LOST Event: Left");
                     }
                 }
 
                 foreach (var hand in HandManager.CurrentFrame.Hands)
                 {
                     _prevHandStatus[hand.IsRight ? Chirality.Right : Chirality.Left] = true;
-                    var msg = new LMUpdateMessage();
-                    msg.IsRight = hand.IsRight;
-                    msg.PinchStrength = hand.PinchStrength;
-                    msg.IndexPosition = hand.GetIndex().TipPosition.ToVector3();
-                    msg.ThumbPosition = hand.GetThumb().TipPosition.ToVector3();
-                    Debug.Log("Added Update Message "+hand.IsRight);
+                    var msg = new LMUpdateMessage
+                    {
+                        IsRight = hand.IsRight,
+                        PinchStrength = hand.PinchStrength,
+                        IndexPosition = hand.GetIndex().TipPosition.ToVector3(),
+                        ThumbPosition = hand.GetThumb().TipPosition.ToVector3()
+                    };
                     _messages.Add(msg.ConvertToBytes());
                 }
 
                 if (_messages.Count != 0)
                 {
-                    var bytes = new byte[0];
-                    foreach (var message in _messages)
+                    var bytes = _messages[0];
+                    for (int i = 1; i < _messages.Count; i++)
                     {
-                        bytes = bytes.Union(message).ToArray();
+                        bytes = bytes.Union(_messages[i]).ToArray();
                     }
                     _client.Send(bytes);
                 }
-            }
-            else
-            {
-                Debug.Log("CurrentFrame == null");
             }
         }
     }
@@ -110,9 +90,9 @@ public class LeapMotionClient : LMProtocol, IOnEventCallback
             {
                 var ip = (string) ((object[]) photonEvent.CustomData)[0];
                 var port = (int) ((object[]) photonEvent.CustomData)[1];
-                _client.Connect(ip,port);
+                _client.Connect(ip, port);
                 DoSynchronize = true;
-                Debug.Log("Connected to "+ip+":"+port);
+                Debug.Log("Connected to " + ip + ":" + port);
                 break;
             }
         }

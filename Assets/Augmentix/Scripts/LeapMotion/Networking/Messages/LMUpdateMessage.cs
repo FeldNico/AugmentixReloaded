@@ -15,7 +15,7 @@ namespace Augmentix.Scripts.LeapMotion.Networking.Messages
         public int ConvertFromBytes(byte[] data, int startIndex)
         {
             IsRight = data[startIndex] == 0x0;
-            startIndex += sizeof(bool);
+            startIndex += sizeof(byte);
             PinchStrength = BitConverter.ToSingle(data, startIndex);
             startIndex += sizeof(float);
             ThumbPosition.x = BitConverter.ToSingle(data, startIndex + 0 * sizeof(float));
@@ -33,13 +33,13 @@ namespace Augmentix.Scripts.LeapMotion.Networking.Messages
             byte[] data = new byte[2*sizeof(byte)+7*sizeof(float)];
             data[0] = (byte) Type;
             data[1] = (byte) (IsRight ? 0x0 : 0x1);
-            Buffer.BlockCopy(BitConverter.GetBytes(PinchStrength), 0, data, 2 + 0 * sizeof(float), sizeof(float));
-            Buffer.BlockCopy(BitConverter.GetBytes(ThumbPosition.x), 0, data, 2 + 1 * sizeof(float), sizeof(float));
-            Buffer.BlockCopy(BitConverter.GetBytes(ThumbPosition.y), 0, data, 2 + 2 * sizeof(float), sizeof(float));
-            Buffer.BlockCopy(BitConverter.GetBytes(ThumbPosition.z), 0, data, 2 + 3 * sizeof(float), sizeof(float));
-            Buffer.BlockCopy(BitConverter.GetBytes(IndexPosition.x), 0, data, 2 + 4 * sizeof(float), sizeof(float));
-            Buffer.BlockCopy(BitConverter.GetBytes(IndexPosition.y), 0, data, 2 + 5 * sizeof(float), sizeof(float));
-            Buffer.BlockCopy(BitConverter.GetBytes(IndexPosition.z), 0, data, 2 + 6 * sizeof(float), sizeof(float));
+            Buffer.BlockCopy(BitConverter.GetBytes(PinchStrength), 0, data, 2*sizeof(byte) + 0 * sizeof(float), sizeof(float));
+            Buffer.BlockCopy(BitConverter.GetBytes(ThumbPosition.x), 0, data, 2*sizeof(byte) + 1 * sizeof(float), sizeof(float));
+            Buffer.BlockCopy(BitConverter.GetBytes(ThumbPosition.y), 0, data, 2*sizeof(byte) + 2 * sizeof(float), sizeof(float));
+            Buffer.BlockCopy(BitConverter.GetBytes(ThumbPosition.z), 0, data, 2*sizeof(byte) + 3 * sizeof(float), sizeof(float));
+            Buffer.BlockCopy(BitConverter.GetBytes(IndexPosition.x), 0, data, 2*sizeof(byte) + 4 * sizeof(float), sizeof(float));
+            Buffer.BlockCopy(BitConverter.GetBytes(IndexPosition.y), 0, data, 2*sizeof(byte) + 5 * sizeof(float), sizeof(float));
+            Buffer.BlockCopy(BitConverter.GetBytes(IndexPosition.z), 0, data, 2*sizeof(byte) + 6 * sizeof(float), sizeof(float));
             return data;
         }
         

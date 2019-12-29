@@ -59,7 +59,6 @@ namespace Augmentix.Scripts.AR
         new void Start()
         {
             base.Start();
-
             OnConnection += () => { PhotonNetwork.SetInterestGroups((byte) Groups.LEAP_MOTION, true); };
         }
 #endif

@@ -8,7 +8,7 @@ using UnityEngine;
 
 public abstract class LMProtocol: MonoBehaviour
 {
-    public const int BUFSIZE = 12 * 1024;
+    public const int BUFSIZE = 1 * 512;
     public const int UpdateFrequenz = 2;
     public static Dictionary<LeapMotionMessageType,Type> TypeDict { get; } = new Dictionary<LeapMotionMessageType, Type>();
     
@@ -17,6 +17,7 @@ public abstract class LMProtocol: MonoBehaviour
     
     public enum LeapMotionMessageType : byte
     {
+        Invalid = 0x0, //DO NOT USE!
         Update = 0x1,
         Detected = 0x2,
     }
@@ -52,11 +53,12 @@ public abstract class LMProtocol: MonoBehaviour
         var index = 0;
         while (index < data.Length)
         {
-            var type = TypeDict[(LeapMotionMessageType) data[index++]];
-            if (type == null) 
+            var type = (LeapMotionMessageType) data[index];
+            if (type == LeapMotionMessageType.Invalid || !TypeDict.ContainsKey(type))
                 break;
+            index += sizeof(byte);
             
-            var message = (ILMMessage) Activator.CreateInstance(type);
+            var message = (ILMMessage) Activator.CreateInstance(TypeDict[type]);
             index = message.ConvertFromBytes(data, index);
             _messageList.Add(message);
         }
