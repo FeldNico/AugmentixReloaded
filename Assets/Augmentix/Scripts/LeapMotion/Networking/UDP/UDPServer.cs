@@ -50,7 +50,7 @@ public class UDPServer
         private DatagramSocket _server;
 #endif
     //private ConcurrentStack<byte[]> _dataStack = new ConcurrentStack<byte[]>();
-    private Stack<byte[]> _messageStack = new Stack<byte[]>();
+    private ConcurrentStack<byte[]> _messageStack = new ConcurrentStack<byte[]>();
 
     public UDPServer(int port)
     {
@@ -74,7 +74,6 @@ public class UDPServer
 #elif UNITY_WSA && !UNITY_EDITOR
         _server = new DatagramSocket();
         _server.MessageReceived += (sender, args) => { 
-            Debug.Log("Message recieved");
             Stream streamIn = args.GetDataStream().AsStreamForRead();
             MemoryStream ms = ToMemoryStream(streamIn);
             _messageStack.Push(ms.ToArray());
@@ -96,6 +95,7 @@ public class UDPServer
             return;
         }
 #endif
+        Debug.Log("Server started");
     }
 
     private MemoryStream ToMemoryStream(Stream input)
@@ -103,7 +103,7 @@ public class UDPServer
         try
         {
             // Read and write in
-            byte[] block = new byte[0x1000]; // blocks of 4K.
+            byte[] block = new byte[512]; // blocks of 4K.
             MemoryStream ms = new MemoryStream();
             while (true)
             {
@@ -119,9 +119,13 @@ public class UDPServer
 
     public byte[] GetCurrentMessageArray()
     {
-        var bytes = _messageStack.Pop();
-        _messageStack.Clear();
-        return bytes;
+        var bytes = new byte[0];
+        if (_messageStack.TryPop(out bytes))
+        {
+            _messageStack.Clear();
+            return bytes;
+        }
+        return null;
     }
 
     public bool ContainsMessage()

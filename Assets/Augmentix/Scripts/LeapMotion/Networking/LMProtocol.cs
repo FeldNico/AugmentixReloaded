@@ -50,6 +50,9 @@ public abstract class LMProtocol: MonoBehaviour
     public static ILMMessage[] ConvertBytesToMessageArray(byte[] data)
     {
         _messageList.Clear();
+        if (data == null)
+            return _messageList.ToArray();
+        
         var index = 0;
         while (index < data.Length)
         {

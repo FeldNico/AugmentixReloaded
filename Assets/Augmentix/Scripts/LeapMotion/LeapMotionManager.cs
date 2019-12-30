@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Text;
 using Augmentix.Scripts;
 using Augmentix.Scripts.LeapMotion;
+using Augmentix.Scripts.LeapMotion.Networking.Messages;
 using ExitGames.Client.Photon;
 using Leap;
 using Leap.Unity;
@@ -27,7 +28,7 @@ public class LeapMotionManager : TargetManager
         base.Start();
         
         PhotonPeer.RegisterType(typeof(Frame), 42, Frame.Serialize, Frame.Deserialize);
-        
+
         OnConnection += () =>
         {
             Camera.main.backgroundColor = Color.green;

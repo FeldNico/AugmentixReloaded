@@ -29,6 +29,7 @@ public class LeapMotionClient : LMProtocol, IOnEventCallback
         {
             if (HandManager.CurrentFrame != null && CheckUpdate())
             {
+                var arraySize = 0;
                 _messages.Clear();
                 if (HandManager.CurrentFrame.Hands.Count != 2)
                 {
@@ -65,15 +66,19 @@ public class LeapMotionClient : LMProtocol, IOnEventCallback
                         IndexPosition = hand.GetIndex().TipPosition.ToVector3(),
                         ThumbPosition = hand.GetThumb().TipPosition.ToVector3()
                     };
-                    _messages.Add(msg.ConvertToBytes());
+                    var data = msg.ConvertToBytes();
+                    arraySize += data.Length;
+                    _messages.Add(data);
                 }
 
                 if (_messages.Count != 0)
                 {
-                    var bytes = _messages[0];
-                    for (int i = 1; i < _messages.Count; i++)
+                    var bytes = new byte[arraySize];
+                    var i = 0;
+                    foreach (var message in _messages)
                     {
-                        bytes = bytes.Union(_messages[i]).ToArray();
+                        Buffer.BlockCopy(message,0,bytes,i,message.Length);
+                        i += message.Length;
                     }
                     _client.Send(bytes);
                 }
