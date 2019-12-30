@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
@@ -29,6 +31,7 @@ namespace Augmentix.Scripts
         {
             SEND_IP = 0x42,
             HAND_LOST = 0x43,
+            EXTENDED = 0x44,
         }
     
         public static TargetManager Instance { protected set; get; }
@@ -79,6 +82,28 @@ namespace Augmentix.Scripts
                 yield return new WaitForSeconds(0.5f);
                 Connected = true;
                 OnConnection.Invoke();
+            }
+        }
+
+        public void WaitForPlayer(PlayerType playerType,float CheckUpdateRate, Action callback)
+        {
+            StartCoroutine(CheckForPrimary());
+
+            IEnumerator CheckForPrimary()
+            {
+                Player player = null;
+                while (true)
+                {
+                    player = PhotonNetwork.PlayerListOthers.FirstOrDefault(
+                        p => (string) p.CustomProperties["Class"] == playerType.ToString());
+
+                    if (player != null)
+                        break;
+
+                    yield return new WaitForSeconds(CheckUpdateRate);
+                }
+
+                callback.Invoke();
             }
         }
     }

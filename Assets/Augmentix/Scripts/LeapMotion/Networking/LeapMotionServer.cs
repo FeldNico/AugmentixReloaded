@@ -13,7 +13,8 @@ using UnityEngine;
 public class LeapMotionServer : LMProtocol, IOnEventCallback
 {
     public float CheckUpdateRate = 0.5f;
-    
+    public float MessageTimeout = 2;
+
     private UDPServer _server;
     private ARTargetManager _targetManager;
 
@@ -25,38 +26,23 @@ public class LeapMotionServer : LMProtocol, IOnEventCallback
         _server.Connect();
 
         TargetManager.Instance.OnConnection += () =>
+        {
+            TargetManager.Instance.WaitForPlayer(TargetManager.PlayerType.LeapMotion, CheckUpdateRate, () =>
             {
-                StartCoroutine(CheckForSecondary());
-
-                IEnumerator CheckForSecondary()
-                {
-                    Debug.Log("Waiting for LeapMotion");
-                    while (true)
-                    {
-                        var primary = PhotonNetwork.PlayerListOthers.FirstOrDefault(
-                            player => (string) player.CustomProperties["Class"] == TargetManager.PlayerType.LeapMotion.ToString());
-
-                        if (primary != null)
-                        {
-                            var options = new RaiseEventOptions();
-                            options.Receivers = ReceiverGroup.Others;
-                            options.InterestGroup = (byte) TargetManager.Groups.LEAP_MOTION;
-                            PhotonNetwork.RaiseEvent((byte) TargetManager.EventCode.SEND_IP,
-                                new object[] {_server.IP, _server.Port}, RaiseEventOptions.Default, SendOptions.SendReliable);
-                            Debug.Log("Sent IP Event "+(byte) TargetManager.EventCode.SEND_IP+" "+_server.IP+":"+_server.Port);
-                            break;
-                        }
-
-                        yield return new WaitForSeconds(CheckUpdateRate);
-                    }
-                    
-                }
-                
-               
-            };
+                var options = new RaiseEventOptions();
+                options.Receivers = ReceiverGroup.Others;
+                options.InterestGroup = (byte) TargetManager.Groups.LEAP_MOTION;
+                PhotonNetwork.RaiseEvent((byte) TargetManager.EventCode.SEND_IP,
+                    new object[] {_server.IP, _server.Port}, RaiseEventOptions.Default, SendOptions.SendReliable);
+                Debug.Log("Sent IP Event " + (byte) TargetManager.EventCode.SEND_IP + " " + _server.IP + ":" +
+                          _server.Port);
+            });
+        };
     }
 
-    
+
+
+    private List<TimeOutData> _timeoutCache = new List<TimeOutData>();
     void FixedUpdate()
     {
         if (_server.ContainsMessage())
@@ -65,6 +51,20 @@ public class LeapMotionServer : LMProtocol, IOnEventCallback
             foreach (var message in messages)
             {
                 message.HandleMessage();
+                message.HandleTimeout(_timeoutCache);
+            }
+
+            foreach (var data in new List<TimeOutData>(_timeoutCache))
+            {
+                if (data.Time > MessageTimeout)
+                {
+                    data.Message.OnTimeout();
+                    _timeoutCache.Remove(data);
+                }
+                else
+                {
+                    data.Time++;
+                }
             }
         }
     }
@@ -75,9 +75,18 @@ public class LeapMotionServer : LMProtocol, IOnEventCallback
         {
             case (byte) TargetManager.EventCode.HAND_LOST:
             {
-                var isRight = (bool) ((object[]) photonEvent.CustomData)[0];
+                var isRight = (bool) photonEvent.CustomData;
                 var hand = isRight ? _targetManager.Hands.Right : _targetManager.Hands.Left;
-                hand.OnLost.Invoke();
+                hand.IsDetected = false;
+                hand.OnLost?.Invoke();
+                break;
+            }
+            case (byte) TargetManager.EventCode.EXTENDED:
+            {
+                var isRight = (bool) photonEvent.CustomData;
+                var hand = isRight ? _targetManager.Hands.Right : _targetManager.Hands.Left;
+                hand.IsPointing = false;
+                hand.OnPointEnd?.Invoke();
                 break;
             }
         }

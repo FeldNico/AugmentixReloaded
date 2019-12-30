@@ -23,7 +23,6 @@ public class UDPClient
 
     public void Send(byte[] data)
     {
-        Debug.Log("Send "+data);
 #if UNITY_WSA && UNITY_EDITOR || UNITY_STANDALONE_WIN
         _socket.BeginSend(data, 0, data.Length, SocketFlags.None, (ar) =>
         {

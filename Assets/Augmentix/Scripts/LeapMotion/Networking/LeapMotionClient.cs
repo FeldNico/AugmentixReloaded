@@ -18,10 +18,22 @@ public class LeapMotionClient : LMProtocol, IOnEventCallback
 
     private UDPClient _client { get; } = new UDPClient();
 
-    private Dictionary<Chirality, bool> _prevHandStatus { get; } = new Dictionary<Chirality, bool>
-        {{Chirality.Left, false}, {Chirality.Right, false}};
+    private Dictionary<Chirality, HandStatus> _prevHandStatus { get; } = new Dictionary<Chirality, HandStatus>
+        {{Chirality.Left, new HandStatus()}, {Chirality.Right, new HandStatus()}};
 
     private List<byte[]> _messages { get; } = new List<byte[]>();
+
+    private class HandStatus
+    {
+        public bool Tracked = false;
+        public bool Extended = false;
+    }
+
+    private RaiseEventOptions _options = new RaiseEventOptions()
+    {
+        Receivers = ReceiverGroup.Others,
+        InterestGroup = (byte) TargetManager.Groups.LEAP_MOTION
+    };
 
     void FixedUpdate()
     {
@@ -30,45 +42,83 @@ public class LeapMotionClient : LMProtocol, IOnEventCallback
             if (HandManager.CurrentFrame != null && CheckUpdate())
             {
                 var arraySize = 0;
-                _messages.Clear();
                 if (HandManager.CurrentFrame.Hands.Count != 2)
                 {
-                    var options = new RaiseEventOptions();
-                    options.Receivers = ReceiverGroup.Others;
-                    options.InterestGroup = (byte) TargetManager.Groups.LEAP_MOTION;
-
                     if ((HandManager.CurrentFrame.Hands.Count == 0 || HandManager.CurrentFrame.Hands[0].IsLeft) &&
-                        _prevHandStatus[Chirality.Right])
+                        _prevHandStatus[Chirality.Right].Tracked)
                     {
-                        _prevHandStatus[Chirality.Right] = false;
-                        PhotonNetwork.RaiseEvent((byte) TargetManager.EventCode.HAND_LOST, new object[] {true},
-                            options, SendOptions.SendReliable);
+                        _prevHandStatus[Chirality.Right].Tracked = false;
+                        /*
+                        PhotonNetwork.RaiseEvent((byte) TargetManager.EventCode.HAND_LOST, true,
+                            _options, SendOptions.SendReliable);
                         Debug.Log("Raise HAND_LOST Event: Right");
+                        */
                     }
 
                     if ((HandManager.CurrentFrame.Hands.Count == 0 || HandManager.CurrentFrame.Hands[0].IsRight) &&
-                        _prevHandStatus[Chirality.Left])
+                        _prevHandStatus[Chirality.Left].Tracked)
                     {
-                        _prevHandStatus[Chirality.Left] = false;
-                        PhotonNetwork.RaiseEvent((byte) TargetManager.EventCode.HAND_LOST, new object[] {false},
-                            options, SendOptions.SendReliable);
+                        _prevHandStatus[Chirality.Left].Tracked = false;
+                        /*
+                        PhotonNetwork.RaiseEvent((byte) TargetManager.EventCode.HAND_LOST, false,
+                            _options, SendOptions.SendReliable);
                         Debug.Log("Raise HAND_LOST Event: Left");
+                        */
                     }
                 }
+                
 
                 foreach (var hand in HandManager.CurrentFrame.Hands)
                 {
-                    _prevHandStatus[hand.IsRight ? Chirality.Right : Chirality.Left] = true;
-                    var msg = new LMUpdateMessage
+                    var status = _prevHandStatus[hand.IsRight ? Chirality.Right : Chirality.Left];
+                    status.Tracked = true;
+                    var updatData = new LMUpdateMessage
                     {
                         IsRight = hand.IsRight,
                         PinchStrength = hand.PinchStrength,
                         IndexPosition = hand.GetIndex().TipPosition.ToVector3(),
                         ThumbPosition = hand.GetThumb().TipPosition.ToVector3()
-                    };
-                    var data = msg.ConvertToBytes();
-                    arraySize += data.Length;
-                    _messages.Add(data);
+                    }.ConvertToBytes();
+                    arraySize += updatData.Length;
+                    _messages.Add(updatData);
+
+                    if (!hand.GetPinky().IsExtended && !hand.GetRing().IsExtended && !hand.GetMiddle().IsExtended &&
+                        hand.GetIndex().IsExtended)
+                    {
+                        if (!status.Extended)
+                        {
+                            status.Extended = true;
+                            Debug.Log("Start Pointing");
+                            /*
+                            PhotonNetwork.RaiseEvent((byte) TargetManager.EventCode.EXTENDED, new object[] {hand.IsRight,true},
+                                _options, SendOptions.SendReliable);
+                            Debug.Log("Start pointing "+(hand.IsRight ? "Right" : "Left"));
+                            */
+                        }
+
+                        var pointingData = new LMPointingMessage()
+                        {
+                            IsRight = hand.IsRight,
+                            Direction = hand.GetIndex().Direction.ToVector3()
+                        }.ConvertToBytes();
+
+                        arraySize += pointingData.Length;
+                        _messages.Add(pointingData);
+                    }
+                    else
+                    {
+                        if (status.Extended)
+                        {
+                            status.Extended = false;
+                            
+                            Debug.Log("End Pointing");
+                            /*
+                            PhotonNetwork.RaiseEvent((byte) TargetManager.EventCode.EXTENDED, hand.IsRight,
+                                _options, SendOptions.SendReliable);
+                            Debug.Log("Stop pointing "+(hand.IsRight ? "Right" : "Left"));
+                            */
+                        }
+                    }
                 }
 
                 if (_messages.Count != 0)
@@ -81,6 +131,7 @@ public class LeapMotionClient : LMProtocol, IOnEventCallback
                         i += message.Length;
                     }
                     _client.Send(bytes);
+                    _messages.Clear();
                 }
             }
         }

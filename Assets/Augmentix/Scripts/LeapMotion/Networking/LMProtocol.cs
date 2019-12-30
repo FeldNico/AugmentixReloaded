@@ -20,6 +20,14 @@ public abstract class LMProtocol: MonoBehaviour
         Invalid = 0x0, //DO NOT USE!
         Update = 0x1,
         Detected = 0x2,
+        Pointing = 0x3,
+    }
+    
+    public class TimeOutData
+    {
+        public LeapMotionMessageType Type;
+        public ILMMessage Message;
+        public int Time;
     }
     
 #if UNITY_WSA && UNITY_EDITOR || UNITY_STANDALONE_WIN
@@ -75,7 +83,6 @@ public abstract class LMProtocol: MonoBehaviour
             _currentFrame = 0;
             return true;
         }
-
         _currentFrame++;
         return false;
     }

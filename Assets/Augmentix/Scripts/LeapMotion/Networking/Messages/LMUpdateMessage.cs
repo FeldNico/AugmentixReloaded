@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Augmentix.Scripts.AR;
+using Leap.Unity;
 using UnityEngine;
 
 namespace Augmentix.Scripts.LeapMotion.Networking.Messages
@@ -24,8 +26,7 @@ namespace Augmentix.Scripts.LeapMotion.Networking.Messages
             IndexPosition.x = BitConverter.ToSingle(data, startIndex + 3 * sizeof(float));
             IndexPosition.y = BitConverter.ToSingle(data, startIndex + 4 * sizeof(float));
             IndexPosition.z = BitConverter.ToSingle(data, startIndex + 5 * sizeof(float));
-            startIndex += 6 * sizeof(float);
-            return startIndex;
+            return startIndex + 6 * sizeof(float);
         }
 
         public byte[] ConvertToBytes()
@@ -48,12 +49,52 @@ namespace Augmentix.Scripts.LeapMotion.Networking.Messages
 #if UNITY_WSA
             var hands = ((ARTargetManager) TargetManager.Instance).Hands;
             var hand = IsRight ? hands.Right : hands.Left;
-            if (!hand.IsDetected)
-                hand.OnDetect.Invoke();
-            
             hand.Thumb.transform.localPosition = ThumbPosition;
             hand.IndexFinger.transform.localPosition = IndexPosition;
+            if (!hand.IsDetected)
+            {
+                hand.IsDetected = true;
+                hand.OnDetect?.Invoke();
+            }
 #endif
+        }
+
+        public void OnTimeout()
+        {
+#if UNITY_WSA
+            var hands = ((ARTargetManager) TargetManager.Instance).Hands;
+            var hand = IsRight ? hands.Right : hands.Left;
+            if (hand.IsDetected)
+            {
+                hand.IsDetected = false;
+                hand.OnLost?.Invoke();
+            }
+#endif
+        }
+
+        public void HandleTimeout(List<LMProtocol.TimeOutData> cache)
+        {
+            foreach (var outData in cache)
+            {
+                if (outData.Type == Type && ((LMUpdateMessage) outData.Message).IsRight == IsRight)
+                {
+                    outData.Message = this;
+                    outData.Time = 0;
+                    return;
+                }
+            }
+            var data = new LMProtocol.TimeOutData
+            {
+                Message = this,
+                Time = 0,
+                Type = Type
+            };
+            cache.Add(data);
+        }
+
+        public LMProtocol.LeapMotionMessageType GetMessageType()
+        {
+            return Type;
         }
     }
 }

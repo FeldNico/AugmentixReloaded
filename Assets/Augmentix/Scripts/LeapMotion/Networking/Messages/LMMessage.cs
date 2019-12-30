@@ -8,4 +8,7 @@ public interface ILMMessage
     int ConvertFromBytes(byte[] data,int startIndex);
     byte[] ConvertToBytes();
     void HandleMessage();
+    void OnTimeout();
+    void HandleTimeout(List<LMProtocol.TimeOutData> cache);
+    LMProtocol.LeapMotionMessageType GetMessageType();
 }
