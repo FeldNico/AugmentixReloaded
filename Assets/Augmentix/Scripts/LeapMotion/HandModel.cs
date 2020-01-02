@@ -28,7 +28,7 @@ public class HandModel : HandModelBase
     {
         _handManager = FindObjectOfType<SynchedHandModelManager>();
 #if UNITY_WSA
-        _leapOffset = ((ARTargetManager) TargetManager.Instance).LeapMotionOffset;
+        //_leapOffset = ((ARTargetManager) TargetManager.Instance).LeapMotionOffset;
 #endif
         for (int i = 0; i < _fingers.Length; i++)
         {

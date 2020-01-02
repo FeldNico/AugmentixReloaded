@@ -8,13 +8,12 @@ using UnityEngine;
 
 public abstract class LMProtocol: MonoBehaviour
 {
-    public const int BUFSIZE = 1 * 512;
-    public const int UpdateFrequenz = 2;
+    public static LMProtocol Instance { private set; get; }
     public static Dictionary<LeapMotionMessageType,Type> TypeDict { get; } = new Dictionary<LeapMotionMessageType, Type>();
     
-    
-    private int _currentFrame = 0;
-    
+    public int BufferSize = 4 * 64;
+    public int UpdateFrequenz = 1;
+
     public enum LeapMotionMessageType : byte
     {
         Invalid = 0x0, //DO NOT USE!
@@ -33,13 +32,30 @@ public abstract class LMProtocol: MonoBehaviour
 #if UNITY_WSA && UNITY_EDITOR || UNITY_STANDALONE_WIN
     public class State
     {
-        public byte[] buffer = new byte[BUFSIZE];
+        public byte[] buffer;
+
+        public State(int bufferSize)
+        {
+            buffer = new byte[bufferSize];
+        }
     }
 #endif
 
+    private int _currentFrame = 0;
+    public bool CheckUpdate()
+    {
+        if (_currentFrame >= UpdateFrequenz)
+        {
+            _currentFrame = 0;
+            return true;
+        }
+        _currentFrame++;
+        return false;
+    }
     
     void Awake()
     {
+        Instance = this;
         foreach(var asm in AppDomain.CurrentDomain.GetAssemblies())
         {
             foreach (var type in asm.GetTypes())
@@ -54,39 +70,6 @@ public abstract class LMProtocol: MonoBehaviour
         }
     }
 
-    private static List<ILMMessage> _messageList = new List<ILMMessage>();
-    public static ILMMessage[] ConvertBytesToMessageArray(byte[] data)
-    {
-        _messageList.Clear();
-        if (data == null)
-            return _messageList.ToArray();
-        
-        var index = 0;
-        while (index < data.Length)
-        {
-            var type = (LeapMotionMessageType) data[index];
-            if (type == LeapMotionMessageType.Invalid || !TypeDict.ContainsKey(type))
-                break;
-            index += sizeof(byte);
-            
-            var message = (ILMMessage) Activator.CreateInstance(TypeDict[type]);
-            index = message.ConvertFromBytes(data, index);
-            _messageList.Add(message);
-        }
-        return _messageList.ToArray();
-    }
-    
-    public bool CheckUpdate()
-    {
-        if (_currentFrame >= UpdateFrequenz)
-        {
-            _currentFrame = 0;
-            return true;
-        }
-        _currentFrame++;
-        return false;
-    }
-    
     public void OnEnable()
     {
         PhotonNetwork.AddCallbackTarget(this);

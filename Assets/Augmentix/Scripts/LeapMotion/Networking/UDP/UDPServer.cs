@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 #if UNITY_WSA && !UNITY_EDITOR
 using Windows.Networking.Sockets;
 using Windows.Networking.Connectivity;
@@ -39,18 +40,56 @@ public class UDPServer
         }
     }
 
+    private byte[] _currentMessage;
+    public byte[] CurrentMessage
+    {
+        get
+        {
+            /*
+            rwl.AcquireReaderLock(-1);
+            try
+            {
+                var tmp = _currentMessage;
+                _currentMessage = null;
+                return tmp;
+            }
+            finally
+            {
+                rwl.ReleaseReaderLock();
+            }
+            */
+            var tmp = _currentMessage;
+            _currentMessage = null;
+            return tmp;
+        }
+        private set
+        {
+            /*
+            rwl.AcquireWriterLock(-1);
+            try
+            {
+                _currentMessage = value;
+            }
+            finally
+            {
+                rwl.ReleaseWriterLock();
+            }
+            */
+            _currentMessage = value;
+        }
+    }
+
     private int _currentFrame = 0;
+    static ReaderWriterLock rwl = new ReaderWriterLock();
 
 #if UNITY_WSA && UNITY_EDITOR || UNITY_STANDALONE_WIN
     private Socket _server = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-    private LMProtocol.State state = new LMProtocol.State();
+    private LMProtocol.State state;
     private EndPoint epFrom = new IPEndPoint(IPAddress.Any, 0);
     private AsyncCallback recv;
 #elif UNITY_WSA && !UNITY_EDITOR
         private DatagramSocket _server;
 #endif
-    //private ConcurrentStack<byte[]> _dataStack = new ConcurrentStack<byte[]>();
-    private ConcurrentStack<byte[]> _messageStack = new ConcurrentStack<byte[]>();
 
     public UDPServer(int port)
     {
@@ -60,23 +99,27 @@ public class UDPServer
     public async void Connect()
     {
 #if UNITY_WSA && UNITY_EDITOR || UNITY_STANDALONE_WIN
+        state = new LMProtocol.State(LMProtocol.Instance.BufferSize);
         _server.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.ReuseAddress, true);
         _server.Bind(new IPEndPoint(IPAddress.Any, Port));
-
-        _server.BeginReceiveFrom(state.buffer, 0, LMProtocol.BUFSIZE, SocketFlags.None, ref epFrom, recv = (ar) =>
+        _server.BeginReceiveFrom(state.buffer, 0, LMProtocol.Instance.BufferSize, SocketFlags.None, ref epFrom, recv = (ar) =>
         {
             LMProtocol.State so = (LMProtocol.State) ar.AsyncState;
             _server.EndReceiveFrom(ar, ref epFrom);
-            _server.BeginReceiveFrom(so.buffer, 0, LMProtocol.BUFSIZE, SocketFlags.None, ref epFrom, recv, so);
-            _messageStack.Push(so.buffer);
+            _server.BeginReceiveFrom(so.buffer, 0, LMProtocol.Instance.BufferSize, SocketFlags.None, ref epFrom, recv, so);
+            CurrentMessage = (byte[]) so.buffer.Clone();
+            Array.Clear(so.buffer, 0, so.buffer.Length);
         }, state);
-
+        
 #elif UNITY_WSA && !UNITY_EDITOR
+        byte[] block = new byte[LMProtocol.Instance.BufferSize];
         _server = new DatagramSocket();
         _server.MessageReceived += (sender, args) => { 
             Stream streamIn = args.GetDataStream().AsStreamForRead();
-            MemoryStream ms = ToMemoryStream(streamIn);
-            _messageStack.Push(ms.ToArray());
+            Array.Clear(block, 0, block.Length);
+            streamIn.Read(block,0,LMProtocol.Instance.BufferSize);
+            CurrentMessage = block;
+            streamIn.Flush();
         };
         try
         {
@@ -98,39 +141,4 @@ public class UDPServer
         Debug.Log("Server started");
     }
 
-    private MemoryStream ToMemoryStream(Stream input)
-    {
-        try
-        {
-            // Read and write in
-            byte[] block = new byte[512]; // blocks of 4K.
-            MemoryStream ms = new MemoryStream();
-            while (true)
-            {
-                int bytesRead = input.Read(block, 0, block.Length);
-                if (bytesRead == 0) return ms;
-                ms.Write(block, 0, bytesRead);
-            }
-        }
-        finally
-        {
-        }
-    }
-
-    public byte[] GetCurrentMessageArray()
-    {
-        var bytes = new byte[0];
-        if (_messageStack.TryPop(out bytes))
-        {
-            _messageStack.Clear();
-            return bytes;
-        }
-        return null;
-    }
-
-    public bool ContainsMessage()
-    {
-        return _messageStack.Count != 0;
-    }
-    
 }

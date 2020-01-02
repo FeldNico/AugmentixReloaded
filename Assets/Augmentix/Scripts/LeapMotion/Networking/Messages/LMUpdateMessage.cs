@@ -91,10 +91,5 @@ namespace Augmentix.Scripts.LeapMotion.Networking.Messages
             };
             cache.Add(data);
         }
-
-        public LMProtocol.LeapMotionMessageType GetMessageType()
-        {
-            return Type;
-        }
     }
 }

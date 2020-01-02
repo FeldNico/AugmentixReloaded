@@ -56,7 +56,7 @@ namespace Augmentix.Scripts.LeapMotion
 #if UNITY_WSA
             _rightHand = (HandModel) ModelPool[0].RightModel;
             _leftHand = (HandModel) ModelPool[0].LeftModel;
-            _leapOffset = ((ARTargetManager) TargetManager.Instance).LeapMotionOffset;
+            //_leapOffset = ((ARTargetManager) TargetManager.Instance).LeapMotionOffset;
 
             /*
             leapMotionPalm = GameObject.CreatePrimitive(PrimitiveType.Sphere);

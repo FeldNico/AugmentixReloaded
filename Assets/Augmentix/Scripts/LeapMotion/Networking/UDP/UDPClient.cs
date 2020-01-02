@@ -11,13 +11,14 @@ public class UDPClient
 {
 #if UNITY_WSA && UNITY_EDITOR || UNITY_STANDALONE_WIN
     private Socket _socket { get; } = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-    private LMProtocol.State state = new LMProtocol.State();
+    private LMProtocol.State state;
 #endif
 
     public void Connect(string ip, int port)
     {
 #if UNITY_WSA && UNITY_EDITOR || UNITY_STANDALONE_WIN
         _socket.Connect(ip,port);
+        state = new LMProtocol.State(((LeapMotionClient) LMProtocol.Instance).BufferSize); 
 #endif
     }
 

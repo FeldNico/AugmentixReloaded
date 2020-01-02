@@ -21,7 +21,6 @@ namespace Augmentix.Scripts.AR
     public class ARTargetManager : TargetManager
     {
 #if UNITY_WSA
-        public Transform LeapMotionOffset;
         public int Port = 1337;
         public ARHands Hands;
         public bool DoCalibrate = false;
@@ -30,7 +29,11 @@ namespace Augmentix.Scripts.AR
 
         new public void Awake()
         {
-
+            if (Hands == null)
+                Hands = FindObjectOfType<ARHands>();
+            if (DebugText == null)
+                DebugText = FindObjectOfType<TMP_Text>();
+            
             Application.logMessageReceived += (message, trace, type) =>
             {
                 if (!DebugText.text.EndsWith(message + "\n"))

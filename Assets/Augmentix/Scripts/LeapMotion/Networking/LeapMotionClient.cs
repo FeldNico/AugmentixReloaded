@@ -15,12 +15,9 @@ public class LeapMotionClient : LMProtocol, IOnEventCallback
 {
     public HandModelManager HandManager;
     public bool DoSynchronize { private set; get; }
-
     private UDPClient _client { get; } = new UDPClient();
-
     private Dictionary<Chirality, HandStatus> _prevHandStatus { get; } = new Dictionary<Chirality, HandStatus>
         {{Chirality.Left, new HandStatus()}, {Chirality.Right, new HandStatus()}};
-
     private List<byte[]> _messages { get; } = new List<byte[]>();
 
     private class HandStatus
@@ -146,9 +143,11 @@ public class LeapMotionClient : LMProtocol, IOnEventCallback
             {
                 var ip = (string) ((object[]) photonEvent.CustomData)[0];
                 var port = (int) ((object[]) photonEvent.CustomData)[1];
+                UpdateFrequenz = (int) ((object[]) photonEvent.CustomData)[2];
+                BufferSize = (int) ((object[]) photonEvent.CustomData)[3];
                 _client.Connect(ip, port);
                 DoSynchronize = true;
-                Debug.Log("Connected to " + ip + ":" + port);
+                Debug.Log("Connected to " + ip + ":" + port+" with Updatefrequenz "+UpdateFrequenz+" and Buffersize "+BufferSize);
                 break;
             }
         }

@@ -80,9 +80,4 @@ public class LMPointingMessage : ILMMessage
         };
         cache.Add(data);
     }
-
-    public LMProtocol.LeapMotionMessageType GetMessageType()
-    {
-        return Type;
-    }
 }

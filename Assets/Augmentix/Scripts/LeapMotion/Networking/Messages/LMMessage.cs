@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,5 +11,4 @@ public interface ILMMessage
     void HandleMessage();
     void OnTimeout();
     void HandleTimeout(List<LMProtocol.TimeOutData> cache);
-    LMProtocol.LeapMotionMessageType GetMessageType();
 }
