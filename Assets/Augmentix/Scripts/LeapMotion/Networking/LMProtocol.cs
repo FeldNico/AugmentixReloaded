@@ -12,7 +12,7 @@ public abstract class LMProtocol: MonoBehaviour
     public static Dictionary<LeapMotionMessageType,Type> TypeDict { get; } = new Dictionary<LeapMotionMessageType, Type>();
     
     public int BufferSize = 4 * 64;
-    public int UpdateFrequenz = 1;
+    public int UpdateFrequenz = 0;
 
     public enum LeapMotionMessageType : byte
     {

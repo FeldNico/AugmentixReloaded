@@ -1878,7 +1878,7 @@ MonoBehaviour:
   BufferSize: 256
   UpdateFrequenz: 0
   CheckUpdateRate: 0.5
-  MessageTimeout: 10
+  MessageTimeout: 200
 --- !u!1 &1732639446
 GameObject:
   m_ObjectHideFlags: 0

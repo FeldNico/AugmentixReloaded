@@ -78,14 +78,16 @@ namespace Augmentix.Scripts.LeapMotion.Networking.Messages
             {
                 if (outData.Type == Type && ((LMUpdateMessage) outData.Message).IsRight == IsRight)
                 {
-                    outData.Message = this;
                     outData.Time = 0;
                     return;
                 }
             }
+            
+            var msg = (LMUpdateMessage) Activator.CreateInstance(typeof(LMUpdateMessage));
+            msg.IsRight = IsRight;
             var data = new LMProtocol.TimeOutData
             {
-                Message = this,
+                Message = msg,
                 Time = 0,
                 Type = Type
             };

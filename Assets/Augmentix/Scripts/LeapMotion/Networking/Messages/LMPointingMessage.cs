@@ -66,15 +66,16 @@ public class LMPointingMessage : ILMMessage
         {
             if (outData.Type == Type && ((LMPointingMessage) outData.Message).IsRight == IsRight)
             {
-                outData.Message = this;
                 outData.Time = 0;
                 return;
             }
         }
 
+        var msg = (LMPointingMessage) Activator.CreateInstance(typeof(LMPointingMessage));
+        msg.IsRight = IsRight;
         var data = new LMProtocol.TimeOutData
         {
-            Message = this,
+            Message = msg,
             Time = 0,
             Type = Type
         };

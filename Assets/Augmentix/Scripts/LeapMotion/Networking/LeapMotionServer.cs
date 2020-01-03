@@ -17,14 +17,14 @@ public class LeapMotionServer : LMProtocol
 
     private UDPServer _server;
     private ARTargetManager _targetManager;
-
+    
     // Start is called before the first frame update
     void Start()
     {
         _targetManager = (ARTargetManager) TargetManager.Instance;
         _server = new UDPServer(_targetManager.Port);
         _server.Connect();
-
+        
         TargetManager.Instance.OnConnection += () =>
         {
             TargetManager.Instance.WaitForPlayer(TargetManager.PlayerType.LeapMotion, CheckUpdateRate, () =>
@@ -39,11 +39,10 @@ public class LeapMotionServer : LMProtocol
             });
         };
     }
-
-
-
+    
     private List<TimeOutData> _timeoutCache = new List<TimeOutData>();
     private List<TimeOutData> _tmpCache = new List<TimeOutData>();
+    private Dictionary<LeapMotionMessageType,ILMMessage> _messageCache = new Dictionary<LeapMotionMessageType, ILMMessage>();
     void FixedUpdate()
     {
         if (CheckUpdate())
@@ -59,11 +58,18 @@ public class LeapMotionServer : LMProtocol
                         break;
                     index += sizeof(byte);
 
-                    var message = (ILMMessage) Activator.CreateInstance(TypeDict[type]);
+                    if (!_messageCache.ContainsKey(type))
+                    {
+                        _messageCache[type] = (ILMMessage) Activator.CreateInstance(TypeDict[type]);
+                    }
+
+                    var message = _messageCache[type];
                     index = message.ConvertFromBytes(msg, index);
                     message.HandleMessage();
                     message.HandleTimeout(_timeoutCache);
+                    
                 }
+                
             }
             _tmpCache.Clear();
             _tmpCache.AddRange(_timeoutCache);
@@ -79,6 +85,7 @@ public class LeapMotionServer : LMProtocol
                     data.Time++;
                 }
             }
+            
         }
     }
 }

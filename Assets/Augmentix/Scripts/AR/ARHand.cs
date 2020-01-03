@@ -50,6 +50,7 @@ public class ARHand : MonoBehaviour
     private bool _wasPinching = false;
     public void Update()
     {
+        /*
         if (IsPinching() ^ _wasPinching) 
         {
             if (_wasPinching)
@@ -72,7 +73,7 @@ public class ARHand : MonoBehaviour
         {
             _lineRenderer.SetPositions(new []{Vector3.zero, Vector3.zero});
         }
-        
+        */
     }
 
 

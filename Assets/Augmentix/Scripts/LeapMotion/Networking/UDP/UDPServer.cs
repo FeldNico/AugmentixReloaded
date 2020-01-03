@@ -58,9 +58,12 @@ public class UDPServer
                 rwl.ReleaseReaderLock();
             }
             */
+            /*
             var tmp = _currentMessage;
             _currentMessage = null;
             return tmp;
+            */
+            return _currentMessage;
         }
         private set
         {
@@ -96,6 +99,7 @@ public class UDPServer
         Port = port;
     }
 
+    private byte[] _block;
     public async void Connect()
     {
 #if UNITY_WSA && UNITY_EDITOR || UNITY_STANDALONE_WIN
@@ -112,19 +116,38 @@ public class UDPServer
         }, state);
         
 #elif UNITY_WSA && !UNITY_EDITOR
-        byte[] block = new byte[LMProtocol.Instance.BufferSize];
+        _block = new byte[LMProtocol.Instance.BufferSize];
         _server = new DatagramSocket();
+        _server.Control.QualityOfService = SocketQualityOfService.LowLatency;
+        _server.Control.InboundBufferSizeInBytes = ((uint) LMProtocol.Instance.BufferSize)*2048u;
         _server.MessageReceived += (sender, args) => { 
+
+/*
+            using (var streamIn = args.GetDataStream().AsStreamForRead())
+            {
+                Array.Clear(_block, 0, _block.Length);
+                streamIn.Read(_block,0,LMProtocol.Instance.BufferSize);
+                CurrentMessage = _block;
+            }
+*/
+            Array.Clear(_block, 0, _block.Length);
+            using (var reader = args.GetDataReader())
+            {
+                Array.Resize(ref _block,(int)reader.UnconsumedBufferLength);
+                reader.ReadBytes(_block);
+            }
+            CurrentMessage = _block;
+/*
             Stream streamIn = args.GetDataStream().AsStreamForRead();
-            Array.Clear(block, 0, block.Length);
-            streamIn.Read(block,0,LMProtocol.Instance.BufferSize);
-            CurrentMessage = block;
+            Array.Clear(_block, 0, _block.Length);
+            streamIn.Read(_block,0,LMProtocol.Instance.BufferSize);
+            CurrentMessage = _block;
             streamIn.Flush();
+*/
         };
         try
         {
             var icp = NetworkInformation.GetInternetConnectionProfile();
-
             HostName IP = Windows.Networking.Connectivity.NetworkInformation.GetHostNames().SingleOrDefault(hn =>
                 hn.IPInformation?.NetworkAdapter != null 
                     && hn.IPInformation.NetworkAdapter.NetworkAdapterId == icp.NetworkAdapter.NetworkAdapterId);
