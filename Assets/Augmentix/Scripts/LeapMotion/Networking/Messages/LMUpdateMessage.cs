@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Augmentix.Scripts.AR;
+#if UNITY_WSA || UNITY_STANDALONE_WIN
 using Leap.Unity;
 using UnityEngine;
 
@@ -95,3 +96,4 @@ namespace Augmentix.Scripts.LeapMotion.Networking.Messages
         }
     }
 }
+#endif

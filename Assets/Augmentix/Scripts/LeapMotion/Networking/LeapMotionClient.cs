@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Augmentix.Scripts;
+#if UNITY_WSA || UNITY_STANDALONE_WIN
 using Augmentix.Scripts.LeapMotion.Networking.Messages;
 using ExitGames.Client.Photon;
+
 using Leap;
 using Leap.Unity;
 using Photon.Pun;
@@ -154,3 +156,4 @@ public class LeapMotionClient : LMProtocol, IOnEventCallback
 #endif
     }
 }
+#endif

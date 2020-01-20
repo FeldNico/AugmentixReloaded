@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using Augmentix.Scripts.AR;
+#if UNITY_WSA || UNITY_STANDALONE_WIN
 using Augmentix.Scripts.LeapMotion.Networking.Messages;
 using ExitGames.Client.Photon;
 using Leap;
@@ -210,3 +211,4 @@ namespace Augmentix.Scripts.LeapMotion
         }
     }
 }
+#endif

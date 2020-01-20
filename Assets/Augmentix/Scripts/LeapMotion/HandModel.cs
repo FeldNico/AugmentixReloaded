@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Augmentix.Scripts.AR;
+#if UNITY_WSA || UNITY_STANDALONE_WIN
 using Augmentix.Scripts.LeapMotion;
 using Leap;
 using Leap.Unity;
@@ -81,3 +82,4 @@ public class HandModel : HandModelBase
     }
     
 }
+#endif

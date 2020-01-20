@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using Augmentix.Scripts;
 using ExitGames.Client.Photon;
+#if UNITY_WSA || UNITY_STANDALONE_WIN
 using Leap;
 using Photon.Pun;
 using Photon.Realtime;
@@ -40,3 +41,4 @@ public class LeapMotionManager : TargetManager
     }
 
 }
+#endif
