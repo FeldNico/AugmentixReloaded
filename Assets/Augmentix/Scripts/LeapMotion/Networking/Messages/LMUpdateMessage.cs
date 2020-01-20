@@ -52,6 +52,7 @@ namespace Augmentix.Scripts.LeapMotion.Networking.Messages
             var hand = IsRight ? hands.Right : hands.Left;
             hand.Thumb.transform.localPosition = ThumbPosition;
             hand.IndexFinger.transform.localPosition = IndexPosition;
+            hand.PinchStrength = PinchStrength;
             if (!hand.IsDetected)
             {
                 hand.IsDetected = true;

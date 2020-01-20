@@ -9,6 +9,7 @@ public class ARHand : MonoBehaviour
     public bool IsRight;
     public GameObject Thumb;
     public GameObject IndexFinger;
+    public PinchingSphere PinchingSphere;
     [HideInInspector] public float PinchStrength;
     [HideInInspector] public bool IsDetected = false;
     [HideInInspector] public bool IsPointing = false;
@@ -22,12 +23,8 @@ public class ARHand : MonoBehaviour
     
     public Interactable GrabbedInteractable { private set; get; }
 
-    #region DEBUG
-
     private LineRenderer _lineRenderer;
 
-    #endregion
-    
     public ARHand()
     {
         OnDetect += () =>
@@ -38,13 +35,20 @@ public class ARHand : MonoBehaviour
         {
             gameObject.SetActive(false);
         };
-        OnPinchEnd += () => { Debug.Log("OnPinchEnd"); };
+        OnPinchEnd += () =>
+        {
+            if (GrabbedInteractable != null)
+            {
+                GrabbedInteractable.OnPinchEnd?.Invoke(this);
+                GrabbedInteractable = null;
+            }
+        };
         OnPinchStart += () =>
         {
-            Debug.Log("OnPinchStart");
-            if (GrabbedInteractable == null)
+            if (PinchingSphere.IsColliding() && GrabbedInteractable == null)
             {
-                
+                GrabbedInteractable = PinchingSphere.CurrentInteractable;
+                GrabbedInteractable.OnPinchStart?.Invoke(this);
             }
         };
         OnPointEnd += () => { Debug.Log("OnPointEnd"); };
@@ -72,6 +76,8 @@ public class ARHand : MonoBehaviour
                 OnPinchStart?.Invoke();
             }
         }
+        
+        PinchingSphere.transform.position = GetPinchPosition();
 
         if (IsPointing)
         {

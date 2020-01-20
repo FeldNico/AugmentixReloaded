@@ -81,18 +81,13 @@ public class LeapMotionClient : LMProtocol, IOnEventCallback
                     arraySize += updatData.Length;
                     _messages.Add(updatData);
 
-                    if (!hand.GetPinky().IsExtended && !hand.GetRing().IsExtended && !hand.GetMiddle().IsExtended &&
+                    if (!hand.GetPinky().IsExtended && !hand.GetRing().IsExtended && !hand.GetMiddle().IsExtended && !hand.GetThumb().IsExtended &&
                         hand.GetIndex().IsExtended)
                     {
                         if (!status.Extended)
                         {
                             status.Extended = true;
                             Debug.Log("Start Pointing");
-                            /*
-                            PhotonNetwork.RaiseEvent((byte) TargetManager.EventCode.EXTENDED, new object[] {hand.IsRight,true},
-                                _options, SendOptions.SendReliable);
-                            Debug.Log("Start pointing "+(hand.IsRight ? "Right" : "Left"));
-                            */
                         }
 
                         var pointingData = new LMPointingMessage()
@@ -111,11 +106,6 @@ public class LeapMotionClient : LMProtocol, IOnEventCallback
                             status.Extended = false;
                             
                             Debug.Log("End Pointing");
-                            /*
-                            PhotonNetwork.RaiseEvent((byte) TargetManager.EventCode.EXTENDED, hand.IsRight,
-                                _options, SendOptions.SendReliable);
-                            Debug.Log("Stop pointing "+(hand.IsRight ? "Right" : "Left"));
-                            */
                         }
                     }
                 }

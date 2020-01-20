@@ -1,24 +1,42 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class Interactable : MonoBehaviour
+[RequireComponent(typeof(Collider))]
+public abstract class Interactable : MonoBehaviour
 {
-    private Collider _collider;
+    public UnityAction<ARHand> OnPinchStart;
+    public UnityAction<ARHand> OnPinchEnd;
+    public bool IsGrabbed { private set; get; } = false;
+    
+    private IEnumerator _onPinchStayEnumerator(ARHand hand)
+    {
+        while (true)
+        {
+            OnPinchStay(hand);
+            yield return new WaitForEndOfFrame();
+        }
+    }
     
     // Start is called before the first frame update
     void Start()
     {
-        _collider = GetComponent<Collider>();
-        if (_collider == null)
-            Debug.LogError("Interactable must have an collider!");
+        IEnumerator enumerator = null;
         
-        
+        OnPinchStart += hand =>
+        {
+            IsGrabbed = true;
+            enumerator = _onPinchStayEnumerator(hand);
+            StartCoroutine(enumerator);
+        };
+        OnPinchEnd += hand =>
+        {
+            IsGrabbed = false;
+            if (enumerator != null)
+                StopCoroutine(enumerator);
+        };
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    
+    abstract public void OnPinchStay(ARHand hand);
 }
