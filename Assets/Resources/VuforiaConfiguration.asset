@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: VuforiaConfiguration
   m_EditorClassIdentifier: 
   vuforia:
-    vuforiaLicenseKey: 
+    vuforiaLicenseKey: AQ6n6Z//////AAABmXaC3uMiQEe6ttOjpNurD+xxFx/mJThPam8TYWoFAts9bQDPgUKJPTPbnrPXGN5w0aZwmt9s9rCBdZzFocb7pYjFF5vSTDvYah0Azq6BhOe7XxOpgsv3YV6nwbLGIHdSW3wAGSv6Tiym8XApK/5BGEvFrLOVF1v9ZsqhUE1Q/P76mL8i+nfPYhVLPZ0gi7R5qkkKunsCHK9V2nmVfZw4fw16bmJ9KiliSwqF6eOSbyhI0UZpo7wHBPkvM3V285K1Vet1StHaQmQppopCED0Mouj0IfgCrBlimgkYOes5A5eIBc7LUFjiGGcwfD1athgb5y9+jD/R8S/XdQ/YFTR5IiMobMSR36lpiJ/LURA5BlUY
     ufoLicenseKey: QVF6c1Qwai8vLy8vQUFBQUtQZHh6UmNYcUUxdnFtN0hoczlwREVCRjZkc0RuWVljd2pOZzRyNEJ3MUcxYzFGS2FURmFJejdnTkpzZERPdjkzQytHalFQNmJES0VMNTZIcE9wdlhwN1pJeHJGbVMrMlZPdUk5dmJ6OU9TeDJJcGF1cFQvK0JXNWVCOSs2QmF1bTdoUDJIaDEvdmkvbFBjUm9sQS9rbWUza3BlY1F3VXdQQ3prZzhSa05JVWRXYk01aGYzTVJvRkZWWUtIUkQ2ZnpiNHBlcnFma2o0VUNLbk9GajhLam55VVYxaVpBVzdscncvZ1BVOTh2OXZWWFRtV0tPUXpXeFVocUdOVmNJZGVhQjJYai9SQnBUTUk4a3N4cjBIa3RMT2Jhd2hGSjJrSmpsQ1lWcHBvNkpnTUpJODl6c3pSTnZESFJRdFN0c2MvV0Y3UGNlUTdWc0FEL3RvUTJ4TFZqL2o0c3MwTEhjYVlqVmFqdkxFMXVMQ2Y=
     delayedInitialization: 0
     cameraDeviceModeSetting: -1
     maxSimultaneousImageTargets: 1
-    maxSimultaneousObjectTargets: 1
+    maxSimultaneousObjectTargets: 0
     useDelayedLoadingObjectTargets: 0
     modelTargetRecoWhileExtendedTracked: 1
     version: 8.6.7
@@ -41,5 +41,5 @@ MonoBehaviour:
     autoStartTracker: 0
   webcam:
     deviceNameSetInEditor: 
-    turnOffWebCam: 0
+    turnOffWebCam: 1
     renderTextureLayer: 30
