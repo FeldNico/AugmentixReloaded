@@ -1,8 +1,6 @@
 ﻿using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 using UnityEngine;
 using UnityEngine.Events;
@@ -12,18 +10,28 @@ public class Sinteractable : MonoBehaviour
     public UnityAction<ARHand> OnInteractionStart;
     public UnityAction<ARHand> OnInteractionEnd;
     public UnityAction<ARHand> OnInteractionKeep;
-
-    private Assembly _assembly;
+    
+    /*
     public void Awake()
     {
         OnPreprocessBuild();
     }
-
+    
     public void Start()
     {
         var type = HashNameToType(GetHashCode().ToString());
         var obj = gameObject.AddComponent(type);
         type.GetMethod("OnStart").Invoke(obj,null);
+    }
+*/
+    public void Update()
+    {
+        float vertical = Input.GetAxis("Vertical");
+        float horizontal = Input.GetAxis("Horizontal");
+        Debug.Log(vertical+" : "+horizontal);
+        vertical = Input.GetAxis("Mouse X");
+        horizontal = Input.GetAxis("Mouse Y");
+        Debug.Log(vertical+" : "+horizontal);
     }
 
     public string[] Variables;
@@ -66,6 +74,7 @@ public class Sinteractable : MonoBehaviour
     public int callbackOrder => 0;
 
     
+    /*
     public void OnPreprocessBuild()
     {
         CompilerParameters parameters = new CompilerParameters();
@@ -136,4 +145,5 @@ public class Sinteractable : MonoBehaviour
 
         return null;
     }
+    */
 }

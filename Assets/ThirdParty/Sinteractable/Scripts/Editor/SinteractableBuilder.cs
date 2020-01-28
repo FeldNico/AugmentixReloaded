@@ -1,8 +1,8 @@
-﻿
+﻿#if UNITY_EDITOR
 using UnityEditor.Callbacks;
 using UnityEditor.Compilation;
 using Assembly = System.Reflection.Assembly;
-#if UNITY_EDITOR
+
 using System;
 using System.CodeDom.Compiler;
 using System.Linq;
