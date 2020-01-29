@@ -76,7 +76,8 @@ public class LeapMotionClient : LMProtocol, IOnEventCallback
                         IsRight = hand.IsRight,
                         PinchStrength = hand.PinchStrength,
                         IndexPosition = hand.GetIndex().TipPosition.ToVector3(),
-                        ThumbPosition = hand.GetThumb().TipPosition.ToVector3()
+                        ThumbPosition = hand.GetThumb().TipPosition.ToVector3(),
+                        PalmPosition = hand.GetPalmPose().position
                     }.ConvertToBytes();
                     arraySize += updatData.Length;
                     _messages.Add(updatData);

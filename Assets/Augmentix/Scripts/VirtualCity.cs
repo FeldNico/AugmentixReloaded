@@ -20,10 +20,12 @@ public class VirtualCity : MonoBehaviour
                 var mesh = child.GetComponent<MeshFilter>();
                 if (mesh == null)
                     continue;
-                
-                foreach (var material in child.materials)
-                    material.enableInstancing = true;
 
+                foreach (var material in child.materials)
+                {
+                    //material.enableInstancing = true;
+                    material.renderQueue = 3002;
+                }
                 _renderList.Add((child.transform,child,child.GetComponent<MeshFilter>()));
             }
         }

@@ -8,7 +8,8 @@ public class ARHand : MonoBehaviour
 {
     public bool IsRight;
     public GameObject Thumb;
-    public GameObject IndexFinger;
+    public GameObject Index;
+    public GameObject Palm;
     public PinchingSphere PinchingSphere;
     [HideInInspector] public float PinchStrength;
     [HideInInspector] public bool IsDetected = false;
@@ -24,9 +25,17 @@ public class ARHand : MonoBehaviour
     public Interactable GrabbedInteractable { private set; get; }
 
     private LineRenderer _lineRenderer;
+    private Transform _thumbTransform;
+    private Transform _indexTransform;
+    private Transform _palmTransform;
 
-    public ARHand()
+    private void Start()
     {
+        _lineRenderer = GetComponent<LineRenderer>();
+        _thumbTransform = Thumb.transform;
+        _indexTransform = Index.transform;
+        _palmTransform = Palm.transform;
+        
         OnDetect += () =>
         {
             gameObject.SetActive(true);
@@ -55,11 +64,6 @@ public class ARHand : MonoBehaviour
         OnPointStart += () => { Debug.Log("OnPointStart"); };
     }
 
-    private void Start()
-    {
-        _lineRenderer = GetComponent<LineRenderer>();
-    }
-
     private bool _wasPinching = false;
     public void Update()
     {
@@ -76,15 +80,16 @@ public class ARHand : MonoBehaviour
                 OnPinchStart?.Invoke();
             }
         }
-        
-        PinchingSphere.transform.position = GetPinchPosition();
+
+        var pinchPos = GetPinchPosition();
+        PinchingSphere.transform.position = pinchPos + (pinchPos - _palmTransform.localPosition);
 
         if (IsPointing)
         {
             if (!_lineRenderer.enabled)
                 _lineRenderer.enabled = true;
-            _lineRenderer.SetPosition(0, IndexFinger.transform.localPosition);
-            _lineRenderer.SetPosition(1, IndexFinger.transform.localPosition + PointingDirection * 5);
+            _lineRenderer.SetPosition(0, Index.transform.localPosition);
+            _lineRenderer.SetPosition(1, Index.transform.localPosition + PointingDirection * 5);
         }
         else
         {
@@ -102,6 +107,6 @@ public class ARHand : MonoBehaviour
     }
     
     public Vector3 GetPinchPosition() {
-        return (2 * Thumb.transform.position + IndexFinger.transform.position) * 0.333333F;
+        return (2 * Thumb.transform.position + Index.transform.position) * 0.333333F;
     }
 }
