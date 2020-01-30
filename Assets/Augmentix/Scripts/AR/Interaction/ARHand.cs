@@ -22,7 +22,9 @@ public class ARHand : MonoBehaviour
     public UnityAction OnPinchStart;
     public UnityAction OnPinchEnd;
     
-    public Interactable GrabbedInteractable { private set; get; }
+    public AbstractInteractable CurrentInteractable { private set; get; }
+
+    public bool IsPinching = false;
 
     private LineRenderer _lineRenderer;
     private Transform _thumbTransform;
@@ -46,43 +48,30 @@ public class ARHand : MonoBehaviour
         };
         OnPinchEnd += () =>
         {
-            if (GrabbedInteractable != null)
+            Debug.Log("Pinch end");
+            if (CurrentInteractable != null)
             {
-                GrabbedInteractable.OnPinchEnd?.Invoke(this);
-                GrabbedInteractable = null;
+                CurrentInteractable.OnInteractionEnd?.Invoke(this);
+                CurrentInteractable = null;
             }
         };
         OnPinchStart += () =>
         {
-            if (PinchingSphere.IsColliding() && GrabbedInteractable == null)
+            Debug.Log("Pinch start");
+            if (PinchingSphere.IsColliding() && CurrentInteractable == null)
             {
-                GrabbedInteractable = PinchingSphere.CurrentInteractable;
-                GrabbedInteractable.OnPinchStart?.Invoke(this);
+                CurrentInteractable = PinchingSphere.CurrentInteractable;
+                CurrentInteractable.OnInteractionStart?.Invoke(this);
             }
         };
         OnPointEnd += () => { Debug.Log("OnPointEnd"); };
         OnPointStart += () => { Debug.Log("OnPointStart"); };
+
+        gameObject.SetActive(false);
     }
 
-    private bool _wasPinching = false;
     public void Update()
     {
-        if (IsPinching() ^ _wasPinching) 
-        {
-            if (_wasPinching)
-            {
-                _wasPinching = false;
-                OnPinchEnd?.Invoke();
-            }
-            else
-            {
-                _wasPinching = true;
-                OnPinchStart?.Invoke();
-            }
-        }
-
-        var pinchPos = GetPinchPosition();
-        PinchingSphere.transform.position = pinchPos + (pinchPos - _palmTransform.localPosition);
 
         if (IsPointing)
         {
@@ -98,15 +87,5 @@ public class ARHand : MonoBehaviour
             _lineRenderer.SetPosition(0, Vector3.zero);
             _lineRenderer.SetPosition(1, Vector3.zero);
         }
-    }
-
-
-    public bool IsPinching()
-    {
-        return PinchStrength > 0.8F;
-    }
-    
-    public Vector3 GetPinchPosition() {
-        return (2 * Thumb.transform.position + Index.transform.position) * 0.333333F;
     }
 }

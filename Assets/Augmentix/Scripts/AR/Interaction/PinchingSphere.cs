@@ -8,12 +8,12 @@ public class PinchingSphere : MonoBehaviour
 {
     private List<Collider> _collider = new List<Collider>();
 
-    public Interactable CurrentInteractable
+    public AbstractInteractable CurrentInteractable
     {
         get
         {
             if (IsColliding())
-                return _collider[0].GetComponent<Interactable>();
+                return _collider[0].GetComponent<AbstractInteractable>();
             
             return null;
         }
@@ -26,7 +26,7 @@ public class PinchingSphere : MonoBehaviour
     
     void OnTriggerEnter(Collider other)
     {
-        if (!other.GetComponent<Interactable>())
+        if (!other.GetComponent<AbstractInteractable>())
             return;
         
         if (!_collider.Contains(other))
@@ -37,7 +37,7 @@ public class PinchingSphere : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        if (!other.GetComponent<Interactable>())
+        if (!other.GetComponent<AbstractInteractable>())
             return;
         
         if (_collider.Contains(other))

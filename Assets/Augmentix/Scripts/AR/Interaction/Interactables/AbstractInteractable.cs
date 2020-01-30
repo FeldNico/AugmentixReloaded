@@ -3,40 +3,40 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(Collider))]
-public abstract class Interactable : MonoBehaviour
+[RequireComponent(typeof(Collider),typeof(Rigidbody))]
+public abstract class AbstractInteractable : MonoBehaviour
 {
-    public UnityAction<ARHand> OnPinchStart;
-    public UnityAction<ARHand> OnPinchEnd;
-    public bool IsGrabbed { private set; get; } = false;
+    public UnityAction<ARHand> OnInteractionStart;
+    public UnityAction<ARHand> OnInteractionEnd;
+    public UnityAction<ARHand> OnInteractionKeep;
+    public bool IsInteractedWith { private set; get; } = false;
     
     private IEnumerator _onPinchStayEnumerator(ARHand hand)
     {
         while (true)
         {
-            OnPinchStay(hand);
             yield return new WaitForEndOfFrame();
+            if (IsInteractedWith)
+                OnInteractionKeep?.Invoke(hand);
         }
     }
     
     // Start is called before the first frame update
-    void Start()
+    public void Start()
     {
         IEnumerator enumerator = null;
         
-        OnPinchStart += hand =>
+        OnInteractionStart += hand =>
         {
-            IsGrabbed = true;
+            IsInteractedWith = true;
             enumerator = _onPinchStayEnumerator(hand);
             StartCoroutine(enumerator);
         };
-        OnPinchEnd += hand =>
+        OnInteractionEnd += hand =>
         {
-            IsGrabbed = false;
+            IsInteractedWith = false;
             if (enumerator != null)
                 StopCoroutine(enumerator);
         };
     }
-    
-    abstract public void OnPinchStay(ARHand hand);
 }

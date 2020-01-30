@@ -71,6 +71,8 @@ public class LeapMotionClient : LMProtocol, IOnEventCallback
                 {
                     var status = _prevHandStatus[hand.IsRight ? Chirality.Right : Chirality.Left];
                     status.Tracked = true;
+                    
+                    /*
                     var updatData = new LMUpdateMessage
                     {
                         IsRight = hand.IsRight,
@@ -81,32 +83,39 @@ public class LeapMotionClient : LMProtocol, IOnEventCallback
                     }.ConvertToBytes();
                     arraySize += updatData.Length;
                     _messages.Add(updatData);
+                    */
 
-                    if (!hand.GetPinky().IsExtended && !hand.GetRing().IsExtended && !hand.GetMiddle().IsExtended && !hand.GetThumb().IsExtended &&
-                        hand.GetIndex().IsExtended)
+                    var pingData = new LMPingMessage()
                     {
-                        if (!status.Extended)
-                        {
-                            status.Extended = true;
-                            Debug.Log("Start Pointing");
-                        }
-
-                        var pointingData = new LMPointingMessage()
+                        IsRight = hand.IsRight,
+                    }.ConvertToBytes();
+                    arraySize += pingData.Length;
+                    _messages.Add(pingData);
+                    
+                    if (!hand.GetPinky().IsExtended && !hand.GetRing().IsExtended &&
+                        !hand.GetMiddle().IsExtended)
+                    {
+                        var pinchingData = new LMPinchPoseMessage()
                         {
                             IsRight = hand.IsRight,
-                            Direction = hand.GetIndex().Direction.ToVector3()
+                            PalmPosition = hand.GetPalmPose().position,
+                            PalmRotation = hand.GetPalmPose().rotation,
+                            PinchStrength = hand.PinchStrength
                         }.ConvertToBytes();
-
-                        arraySize += pointingData.Length;
-                        _messages.Add(pointingData);
-                    }
-                    else
-                    {
-                        if (status.Extended)
+                        arraySize += pinchingData.Length;
+                        _messages.Add(pinchingData);
+                        
+                        if (!hand.GetThumb().IsExtended && hand.GetIndex().IsExtended)
                         {
-                            status.Extended = false;
-                            
-                            Debug.Log("End Pointing");
+                            var pointingData = new LMPointingMessage()
+                            {
+                                IsRight = hand.IsRight,
+                                IndexPosition = hand.GetIndex().TipPosition.ToVector3(),
+                                Direction = hand.GetIndex().Direction.ToVector3()
+                            }.ConvertToBytes();
+
+                            arraySize += pointingData.Length;
+                            _messages.Add(pointingData);
                         }
                     }
                 }

@@ -20,6 +20,8 @@ public abstract class LMProtocol: MonoBehaviour
         Update = 0x1,
         Detected = 0x2,
         Pointing = 0x3,
+        PinchPose = 0x4,
+        Ping = 0x5
     }
     
     public class TimeOutData
