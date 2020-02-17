@@ -20,7 +20,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ************************************************************************************/
 //#define ENABLE_DEBUG_EXPORT_OBJ
-#if UNITY_EDITOR
 
 using UnityEngine;
 using UnityEditor;
@@ -119,4 +118,4 @@ public class ONSPPropagationGeometryEditor : Editor
     }
 
 }
-#endif
+

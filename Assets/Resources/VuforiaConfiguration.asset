@@ -9,20 +9,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -2067402452, guid: 4bc5fd733b147194692297d23f623541, type: 3}
+  m_Script: {fileID: -2067402452, guid: 8a9a760f95896c34689febc965510927, type: 3}
   m_Name: VuforiaConfiguration
   m_EditorClassIdentifier: 
   vuforia:
     vuforiaLicenseKey: AQ6n6Z//////AAABmXaC3uMiQEe6ttOjpNurD+xxFx/mJThPam8TYWoFAts9bQDPgUKJPTPbnrPXGN5w0aZwmt9s9rCBdZzFocb7pYjFF5vSTDvYah0Azq6BhOe7XxOpgsv3YV6nwbLGIHdSW3wAGSv6Tiym8XApK/5BGEvFrLOVF1v9ZsqhUE1Q/P76mL8i+nfPYhVLPZ0gi7R5qkkKunsCHK9V2nmVfZw4fw16bmJ9KiliSwqF6eOSbyhI0UZpo7wHBPkvM3V285K1Vet1StHaQmQppopCED0Mouj0IfgCrBlimgkYOes5A5eIBc7LUFjiGGcwfD1athgb5y9+jD/R8S/XdQ/YFTR5IiMobMSR36lpiJ/LURA5BlUY
-    ufoLicenseKey: QVF6c1Qwai8vLy8vQUFBQUtQZHh6UmNYcUUxdnFtN0hoczlwREVCRjZkc0RuWVljd2pOZzRyNEJ3MUcxYzFGS2FURmFJejdnTkpzZERPdjkzQytHalFQNmJES0VMNTZIcE9wdlhwN1pJeHJGbVMrMlZPdUk5dmJ6OU9TeDJJcGF1cFQvK0JXNWVCOSs2QmF1bTdoUDJIaDEvdmkvbFBjUm9sQS9rbWUza3BlY1F3VXdQQ3prZzhSa05JVWRXYk01aGYzTVJvRkZWWUtIUkQ2ZnpiNHBlcnFma2o0VUNLbk9GajhLam55VVYxaVpBVzdscncvZ1BVOTh2OXZWWFRtV0tPUXpXeFVocUdOVmNJZGVhQjJYai9SQnBUTUk4a3N4cjBIa3RMT2Jhd2hGSjJrSmpsQ1lWcHBvNkpnTUpJODl6c3pSTnZESFJRdFN0c2MvV0Y3UGNlUTdWc0FEL3RvUTJ4TFZqL2o0c3MwTEhjYVlqVmFqdkxFMXVMQ2Y=
+    ufoLicenseKey: QVV2QThEWC8vLy8vQUFBQUtLVk8vUm5IWmt6NHRkR2NoZUlMaU1CVWFRdXBTRk9renE5YUNaYjdaYnV6Y0JmdVlZSTQ2ZjFaV0ZTZ2h3NUxnNVY2SXdyOTNVQk16MEhtbW9Ob0pCZGc2NUQwMzNHOGljTkFURWlDSmNMM1FLaUlsdTZ6NSt1N3laR2VBNW5Ub0MyWENIT1Fqck1nbzdmQWhiSTVqSFJEUFoxeFlXS3ZUdXdJQ001aGVGdVJvTjJqV0d3ZXZ5c2FiaSs0Qm5Db1d0UjNrdWZ5d1Y0TVVwWUJCd2VBVEhKakhBSzg3NEVLeTVDekd2bldKbitIUDJER3BLN2xLZGU4NHI1SmF0a2JaSDNvVmQ5S2E0cmpDRnEyOVJNaUxJaG9qaW9XemlISlpPQzQxVytLOU9LZ0dzY041Q0toYWVHUnBlZUd3ZnJLNHc0QmNyMGdCZ3BoaVpoWG1qRUdlZ0lqQlcwNTZ6YzNpWUJZTkdtT0tWU2Y=
     delayedInitialization: 0
-    cameraDeviceModeSetting: -1
-    maxSimultaneousImageTargets: 1
-    maxSimultaneousObjectTargets: 0
+    cameraDeviceModeSetting: -3
+    maxSimultaneousImageTargets: 4
+    maxSimultaneousObjectTargets: 1
     useDelayedLoadingObjectTargets: 0
     modelTargetRecoWhileExtendedTracked: 1
-    version: 8.6.7
-    eulaAcceptedVersions: '{"Values":["7.5","8.0","8.1","0.0","7.1","7.2","7.7","7.9","8.2","8.3","8.5","8.4","7.6","7.8","2.9","8.6","9.0","8.7"]}'
+    version: 8.6.10
+    eulaAcceptedVersions: '{"Values":["8.1","8.3","0.0","7.1","7.2","7.5","7.7","8.0","7.9","8.2","8.5","8.4","7.6","7.8","2.9","8.6","9.0","8.7"]}'
     modelTargetMode: 0
   database:
     disableModelExtraction: 0
@@ -32,9 +32,9 @@ MonoBehaviour:
       type: 3}
     videoBackgroundEnabled: 1
   deviceTracker:
-    autoInitTracker: 1
-    autoStartTracker: 1
-    arcoreRequirement: 1
+    autoInitTracker: 0
+    autoStartTracker: 0
+    arcoreRequirement: 0
     autoImportArcore: 0
   smartTerrain:
     autoInitTracker: 0

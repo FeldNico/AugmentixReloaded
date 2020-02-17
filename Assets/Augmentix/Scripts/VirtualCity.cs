@@ -5,28 +5,26 @@ using UnityEngine;
 
 public class VirtualCity : MonoBehaviour
 {
-    public List<(Transform,Renderer, MeshFilter)> RenderList => _renderList;
-    private List<(Transform,Renderer, MeshFilter)> _renderList = new List<(Transform,Renderer, MeshFilter)>();
+    public List<(Transform,Renderer, MeshFilter,Material[])> RenderList => _renderList;
+    private List<(Transform,Renderer, MeshFilter,Material[])> _renderList = new List<(Transform,Renderer, MeshFilter,Material[])>();
     private int childCount = -1;
     void Update()
     {
-        var count = CountChildren(transform);
-        if (childCount != count)
+        if (Time.frameCount % 10 == 0)
         {
-            childCount = count;
-            _renderList.Clear();
-            foreach (var child in GetComponentsInChildren<Renderer>())
+            var count = CountChildren(transform);
+            if (childCount != count)
             {
-                var mesh = child.GetComponent<MeshFilter>();
-                if (mesh == null)
-                    continue;
-
-                foreach (var material in child.materials)
+                childCount = count;
+                _renderList.Clear();
+                foreach (var child in GetComponentsInChildren<Renderer>())
                 {
-                    //material.enableInstancing = true;
-                    material.renderQueue = 3002;
+                    var mesh = child.GetComponent<MeshFilter>();
+                    if (mesh == null)
+                        continue;
+                
+                    _renderList.Add((child.transform,child,child.GetComponent<MeshFilter>(),child.materials));
                 }
-                _renderList.Add((child.transform,child,child.GetComponent<MeshFilter>()));
             }
         }
     }

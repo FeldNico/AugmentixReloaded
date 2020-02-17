@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.MixedReality.Toolkit;
 using UnityEngine.Rendering;
 #if UNITY_WSA
 using System;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Leap.Unity;
+using Microsoft.MixedReality.Toolkit.Utilities;
 using UnityEngine;
 using UnityEngine.Events;
 using Vuforia;
@@ -33,7 +35,9 @@ public class Warpzone : MonoBehaviour
     private VirtualCity _virtualCity;
     private Transform _virtualCityTransform;
     private Camera _mainCamera;
-    private GameObject[] _clippingPlanes = new GameObject[4];
+    [HideInInspector]
+    public ClippingBox ClippingBox = null;
+    
 
     public bool doRender = false;
     // Start is called before the first frame update
@@ -63,46 +67,6 @@ public class Warpzone : MonoBehaviour
             doRender = false;
         });
 
-        for (int i = 0; i < _clippingPlanes.Length; i++)
-        {
-            _clippingPlanes[i] = Instantiate(WarpzoneManager.Instance.ClippingPlanePrefab);
-            _clippingPlanes[i].transform.parent = transform;
-            _clippingPlanes[i].transform.localScale = new Vector3(5,5,5);
-            var vec = new Vector3();
-            switch (i)
-            {
-                case 0:
-                {
-                    vec.x = -DisplaySize / transform.localScale.x;
-                    vec.y = -DisplaySize / transform.localScale.x;
-                    break;
-                }
-                case 1:
-                {
-                    vec.x = DisplaySize / transform.localScale.x;
-                    vec.y = -DisplaySize / transform.localScale.x;
-                    break;
-                }
-                case 2:
-                {
-                    vec.x = -DisplaySize / transform.localScale.x;
-                    vec.y = DisplaySize / transform.localScale.x;
-                    break;
-                }
-                case 3:
-                {
-                    vec.x = DisplaySize / transform.localScale.x;
-                    vec.y = DisplaySize / transform.localScale.x;
-                    break;
-                }
-            }
-
-            _clippingPlanes[i].transform.localPosition = vec;
-            _clippingPlanes[i].transform.LookAt(transform);
-            _clippingPlanes[i].transform.localRotation =
-            _clippingPlanes[i].transform.localRotation * Quaternion.Euler(90, 0, 0);
-        }
-        
         FindObjectOfType<WarpzoneManager>().ActiveWarpzone = this;
     }
 
@@ -114,22 +78,25 @@ public class Warpzone : MonoBehaviour
         {
             var warpzoneMatrix = Matrix4x4.TRS(_dummyTransform.localPosition,
                 _dummyTransform.localRotation, _dummyTransform.localScale / Scale).inverse;
-            
+
             var _commandBuffer = new CommandBuffer();
             foreach (var valueTuple in _virtualCity.RenderList)
             {
                 var trans = valueTuple.Item1;
                 var renderer = valueTuple.Item2;
                 var mesh = valueTuple.Item3;
+                var materials = valueTuple.Item4;
 
-                if (Vector3.Distance(_dummyTransform.localPosition, _virtualCityTransform.InverseTransformPoint(trans.position)) < 2 * DisplaySize / transform.localScale.x)
+                if ( Vector3.Distance(_dummyTransform.localPosition, _virtualCityTransform.InverseTransformPoint(trans.position)) < 2 * DisplaySize / transform.localScale.x)
                 {
                     var m = transform.localToWorldMatrix  * warpzoneMatrix * Matrix4x4.TRS(_virtualCityTransform.InverseTransformPoint(trans.position),
                                 _virtualCityTransform.InverseTransformRotation(trans.rotation),
                                 trans.lossyScale);
 
                     for (int i = 0; i < mesh.sharedMesh.subMeshCount; i++)
-                        _commandBuffer.DrawMesh(mesh.sharedMesh,m,renderer.materials[i],i,-1);
+                    {
+                        _commandBuffer.DrawMesh(mesh.sharedMesh,m,materials[i],i,-1);
+                    }
                 }
             }
             _mainCamera.AddCommandBuffer(CameraEvent.BeforeForwardOpaque, _commandBuffer);

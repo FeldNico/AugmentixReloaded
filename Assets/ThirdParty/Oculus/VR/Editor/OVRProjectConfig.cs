@@ -49,6 +49,8 @@ public class OVRProjectConfig : ScriptableObject
 	public bool disableBackups;
 	public bool enableNSCConfig;
 
+	public bool focusAware;
+
 	//public const string OculusProjectConfigAssetPath = "Assets/Oculus/OculusProjectConfig.asset";
 
 	private static string GetOculusProjectConfigAssetPath()
@@ -87,6 +89,7 @@ public class OVRProjectConfig : ScriptableObject
 			projectConfig.handTrackingSupport = HandTrackingSupport.ControllersOnly;
 			projectConfig.disableBackups = true;
 			projectConfig.enableNSCConfig = true;
+			projectConfig.focusAware = false;
 			AssetDatabase.CreateAsset(projectConfig, oculusProjectConfigAssetPath);
 		}
 		return projectConfig;

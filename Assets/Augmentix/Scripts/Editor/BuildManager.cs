@@ -1,13 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.XR;
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using System;
 using System.CodeDom;
+using System.Threading;
 using Photon.Realtime;
+using UnityEditor.PackageManager;
+using UnityEngine.VR;
 
 namespace Augmentix.Scripts.Editor
 {
@@ -16,6 +21,8 @@ namespace Augmentix.Scripts.Editor
         [SerializeField] private List<SceneAsset> _scenes;
         [SerializeField] private List<string> _scenePaths;
         [SerializeField] private string _buildPath = "";
+        [SerializeField] private bool _usesVuforia = false;
+        [SerializeField] private bool _usesVR = false;
         [SerializeField] private bool _run = false;
         [SerializeField] private bool _open = false;
         [SerializeField] private bool _scriptDebugging = false;
@@ -38,6 +45,10 @@ namespace Augmentix.Scripts.Editor
             EditorGUILayout.PropertyField(serialProp, true);
             serialObj.ApplyModifiedProperties();
 
+            _usesVuforia = EditorGUILayout.Toggle("Vuforia", _usesVuforia);
+            
+            _usesVR = EditorGUILayout.Toggle("VR", _usesVR);
+            
             _scriptDebugging = EditorGUILayout.Toggle("Script Debugging", _scriptDebugging);
 
             _open = EditorGUILayout.Toggle("Open Folder after Build", _open);
@@ -118,6 +129,7 @@ namespace Augmentix.Scripts.Editor
 
         public static void DoSwitch(Type type, BuildTarget target)
         {
+
             if (EditorUserBuildSettings.activeBuildTarget == target)
                 return;
 
@@ -143,22 +155,70 @@ namespace Augmentix.Scripts.Editor
                 }
             }
 
+            var searchRequest = Client.List();
             
-            
-            if (type == typeof(ARBuildManager))
+            while(!searchRequest.IsCompleted)
+                Thread.Sleep(10);
+
+            if (searchRequest.Result.Select(info => info.name).Contains("com.ptc.vuforia.engine"))
             {
-                PlayerSettings.vuforiaEnabled = true;
-                PlayerSettings.virtualRealitySupported = true;
-            } else if (type == typeof(VRBuildManager))
+                if (!newManager._usesVuforia)
+                {
+                    Client.Remove("com.ptc.vuforia.engine");
+                }
+            }
+            else
             {
-                PlayerSettings.vuforiaEnabled = false;
-                PlayerSettings.virtualRealitySupported = true;
-            } else if (type == typeof(LeapMotionManager))
-            {
-                PlayerSettings.vuforiaEnabled = false;
-                PlayerSettings.virtualRealitySupported = false;
+                if (newManager._usesVuforia)
+                {
+                    Client.Add("com.ptc.vuforia.engine");
+                }
             }
 
+            if (newManager._usesVR)
+            {
+                XRSettings.LoadDeviceByName("newDevice");
+                Thread.Sleep(10);
+                XRSettings.enabled = true;
+            }
+            else
+            {
+                XRSettings.LoadDeviceByName("");
+                Thread.Sleep(10);
+                XRSettings.enabled = false;
+            }
+
+            /*
+            if (newManager._usesVR)
+            {
+                if (type == typeof(ARBuildManager))
+                {
+                    if (searchRequest.Result.Select(info => info.name).Contains("com.unity.xr.oculus"))
+                        Client.Remove("com.unity.xr.oculus");
+                    if (!searchRequest.Result.Select(info => info.name).Contains("com.unity.xr.windowsmr"))
+                        Client.Add("com.unity.xr.windowsmr");
+                    if (!searchRequest.Result.Select(info => info.name).Contains("com.unity.xr.windowsmr"))
+                        Client.Add("com.unity.xr.windowsmr.metro");
+                } else if (type == typeof(VRBuildManager))
+                {
+                    if (!searchRequest.Result.Select(info => info.name).Contains("com.unity.xr.oculus"))
+                        Client.Add("com.unity.xr.oculus");
+                    if (searchRequest.Result.Select(info => info.name).Contains("com.unity.xr.windowsmr"))
+                        Client.Remove("com.unity.xr.windowsmr");
+                    if (searchRequest.Result.Select(info => info.name).Contains("com.unity.xr.windowsmr"))
+                        Client.Remove("com.unity.xr.windowsmr.metro");
+                }
+            }
+            else
+            {
+                if (searchRequest.Result.Select(info => info.name).Contains("com.unity.xr.oculus"))
+                    Client.Remove("com.unity.xr.oculus");
+                if (searchRequest.Result.Select(info => info.name).Contains("com.unity.xr.windowsmr"))
+                    Client.Remove("com.unity.xr.windowsmr");
+                if (searchRequest.Result.Select(info => info.name).Contains("com.unity.xr.windowsmr.metro"))
+                    Client.Remove("com.unity.xr.windowsmr.metro");
+            }
+            */
 
             EditorBuildSettings.scenes =
                 newManager._scenePaths.Select(s => new EditorBuildSettingsScene(s, true)).ToArray();

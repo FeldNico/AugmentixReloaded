@@ -1,0 +1,20 @@
+{
+    "name": "Thirdparty.MixedRealityToolkit",
+    "references": [
+        "GUID:343deaaf83e0cee4ca978e7df0b80d21"
+    ],
+    "includePlatforms": [
+        "Editor",
+        "WSA"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_WSA"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
