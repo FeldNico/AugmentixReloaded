@@ -64,6 +64,11 @@ namespace Augmentix.Scripts
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
             PhotonNetwork.GameVersion = gameVersion;
+            
+        }
+
+        public void Connect()
+        {
             PhotonNetwork.ConnectUsingSettings();
         }
 

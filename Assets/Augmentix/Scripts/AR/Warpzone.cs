@@ -67,7 +67,7 @@ public class Warpzone : MonoBehaviour
             doRender = false;
         });
 
-        FindObjectOfType<WarpzoneManager>().ActiveWarpzone = this;
+        //FindObjectOfType<WarpzoneManager>().ActiveWarpzone = this;
     }
 
     private void LateUpdate()

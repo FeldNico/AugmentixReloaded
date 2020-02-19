@@ -9,9 +9,11 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using System;
 using System.CodeDom;
+using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using Photon.Realtime;
 using UnityEditor.PackageManager;
+using UnityEngine.UI;
 using UnityEngine.VR;
 
 namespace Augmentix.Scripts.Editor
@@ -129,6 +131,29 @@ namespace Augmentix.Scripts.Editor
 
         public static void DoSwitch(Type type, BuildTarget target)
         {
+            var inputManager = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/InputManager.asset")[0];
+ 
+            SerializedObject obj = new SerializedObject(inputManager);
+ 
+            SerializedProperty axisArray = obj.FindProperty("m_Axes");
+ 
+            if (axisArray.arraySize == 0)
+                Debug.Log("No Axes");
+ 
+            var axisList = new string[axisArray.arraySize];
+            
+            for( int i = 0; i < axisArray.arraySize; ++i )
+            {
+                var axis = axisArray.GetArrayElementAtIndex(i);
+ 
+                axisList[i] = "\""+axis.FindPropertyRelative("m_Name").stringValue+"\"";
+            }
+
+            var axises = "["+axisList.Aggregate((a, b) => a + "," + b)+"]";
+
+            Debug.Log(axises);
+
+            return;
 
             if (EditorUserBuildSettings.activeBuildTarget == target)
                 return;

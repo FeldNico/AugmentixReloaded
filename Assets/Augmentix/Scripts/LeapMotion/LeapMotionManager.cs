@@ -26,6 +26,7 @@ public class LeapMotionManager : TargetManager
         {
             Camera.main.backgroundColor = Color.green;
         };
+        Connect();
     }
 
 
