@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 5066290084294240985}
   - component: {fileID: 3207447511731582273}
   - component: {fileID: -6743317749614770338}
-  - component: {fileID: -1981576345424774740}
   - component: {fileID: -6753381499781914613}
+  - component: {fileID: -7339307913023730981}
   m_Layer: 0
   m_Name: Secondary_Avatar
   m_TagString: Untagged
@@ -61,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -3033667219593020291, guid: 2fabdb3698b9edb4fb2b1e4cf30217d7, type: 3}
+  - {fileID: 2100000, guid: a7448698c15706f48905e44d8e76f2b5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -100,25 +100,10 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: -1981576345424774740}
+  - {fileID: -7339307913023730981}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &-1981576345424774740
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8613080119748150700}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
 --- !u!114 &-6753381499781914613
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,3 +116,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 565c9b95133557e4c977f3b391a613e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-7339307913023730981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8613080119748150700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e770414b327608f4cadcc6d7d7a71d2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0

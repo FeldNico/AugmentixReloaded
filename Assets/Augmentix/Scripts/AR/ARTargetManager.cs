@@ -23,7 +23,10 @@ namespace Augmentix.Scripts.AR
 #if UNITY_WSA
         public int Port = 1337;
         public ARHands Hands;
+        public GameObject AvatarPrefab;
+        [HideInInspector]
         public bool DoCalibrate = false;
+        [HideInInspector]
         public Vector3 FirstCalibrationVector, SecondCalibrationVector;
         public TMP_Text DebugText;
 
@@ -62,7 +65,14 @@ namespace Augmentix.Scripts.AR
         new void Start()
         {
             base.Start();
-            OnConnection += () => { PhotonNetwork.SetInterestGroups((byte) Groups.LEAP_MOTION, true); };
+            OnConnection += () =>
+            {
+                PhotonNetwork.SetInterestGroups((byte) Groups.LEAP_MOTION, true);
+                var avatar = PhotonNetwork.Instantiate(AvatarPrefab.name, Camera.main.transform.position,
+                    Camera.main.transform.rotation);
+                avatar.transform.parent = Camera.main.transform;
+                avatar.GetComponent<Renderer>().enabled = false;
+            };
         }
 #endif
 

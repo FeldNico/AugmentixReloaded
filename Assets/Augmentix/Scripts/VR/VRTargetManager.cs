@@ -21,9 +21,9 @@ namespace Augmentix.Scripts.VR
             OnConnection += () =>
             {
                 var avatar =
-                    PhotonNetwork.Instantiate(AvatarPrefab.name, transform.position, transform.rotation);
+                    PhotonNetwork.Instantiate(AvatarPrefab.name, Camera.main.transform.position, Camera.main.transform.rotation);
+                avatar.transform.parent = Camera.main.transform;
                 avatar.GetComponent<Renderer>().enabled = false;
-                avatar.transform.parent = GameObject.Find("CenterEyeAnchor").transform;
             };
         }
     }

@@ -1,7 +1,7 @@
 {
     "name": "CommonEditor",
     "references": [
-        "GUID:1e8317908b93adf4586df701d26d050e"
+        "GUID:4991db4e847a04340aae81b245f2634b"
     ],
     "includePlatforms": [
         "Editor"
@@ -20,5 +20,6 @@
             "expression": "1.0.0",
             "define": "VUFORIA_ENABLED"
         }
-    ]
+    ],
+    "noEngineReferences": false
 }

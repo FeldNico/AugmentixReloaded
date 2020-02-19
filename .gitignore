@@ -483,3 +483,5 @@ MigrationBackup/
 
 # End of https://www.gitignore.io/api/rider,unity,visualstudio,visualstudiocode
 /LeapBuild/
+/ARBuild/
+/VRBuild/

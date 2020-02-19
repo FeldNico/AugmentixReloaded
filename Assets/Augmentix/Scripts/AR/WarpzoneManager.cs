@@ -15,7 +15,6 @@ public class WarpzoneManager : MonoBehaviour
 
     public float ScrollSpeed = 10f;
     public List<Warpzone> Warpzones { get; private set; }
-    public GameObject ClippingPlanePrefab;
 
     private Warpzone _activeWarpzone;
 
