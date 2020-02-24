@@ -2384,7 +2384,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WarpzoneGazeIndicator: {fileID: 2802853611066991086, guid: 24b3184ffec538340ace4c2a29c25f50,
     type: 3}
-  ScrollSpeed: 10
+  ScrollSpeed: 20
 --- !u!114 &1670034904
 MonoBehaviour:
   m_ObjectHideFlags: 3

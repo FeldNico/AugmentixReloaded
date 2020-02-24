@@ -122,44 +122,44 @@ public class ControllerManager : MonoBehaviour
             {
                 if (Input.GetKey(KeyCode.W))
                 {
-                    vec += _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * forwardProject;
+                    vec += _warpzoneManager.ScrollSpeed * activeWarpzone.Scale * forwardProject;
                 }
                 else if (Input.GetKey(KeyCode.X))
                 {
-                    vec -= _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * forwardProject;
+                    vec -= _warpzoneManager.ScrollSpeed * activeWarpzone.Scale * forwardProject;
                 }
 
                 if (Input.GetKey(KeyCode.A))
                 {
-                    vec += _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * rightProject;
+                    vec += _warpzoneManager.ScrollSpeed * activeWarpzone.Scale * rightProject;
                 }
                 else if (Input.GetKey(KeyCode.D))
                 {
-                    vec -= _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * rightProject;
+                    vec -= _warpzoneManager.ScrollSpeed * activeWarpzone.Scale * rightProject;
                 }
             }
             else
             {
                 if (Input.GetKey(KeyCode.W))
                 {
-                    vec += _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * forwardProject;
+                    vec += 0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * forwardProject;
                 }
                 else if (Input.GetKey(KeyCode.X))
                 {
-                    vec -= _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * forwardProject;
+                    vec -=0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * forwardProject;
                 }
 
                 if (Input.GetKey(KeyCode.A))
                 {
-                    vec += _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * rightProject;
+                    vec -=0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * rightProject;
                 }
                 else if (Input.GetKey(KeyCode.D))
                 {
-                    vec.z = 1f * _warpzoneManager.ScrollSpeed * activeWarpzone.Scale;
+                    vec +=0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * rightProject;
                 }
             }
 
-            _warpzoneManager.ActiveWarpzone.LocalPosition += vec;
+            _warpzoneManager.ActiveWarpzone.Position += vec;
         }
     }
 }
