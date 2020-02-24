@@ -1,4 +1,5 @@
 ﻿
+using Augmentix.Scripts.OOI;
 using Microsoft.MixedReality.Toolkit;
 using UnityEngine.Rendering;
 #if UNITY_WSA
@@ -7,8 +8,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Augmentix.Scripts.VR;
 using Leap.Unity;
 using Microsoft.MixedReality.Toolkit.Utilities;
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.Events;
 using Vuforia;
@@ -16,10 +19,16 @@ using Vuforia;
 [RequireComponent(typeof(ImageTargetBehaviour),typeof(DefaultTrackableEventHandler))]
 public class Warpzone : MonoBehaviour
 {
-    public Vector3 Position
+    public Vector3 LocalPosition
     {
         set => _dummyTransform.localPosition = value;
         get => _dummyTransform.localPosition;
+    }
+    
+    public Vector3 Position
+    {
+        set => _dummyTransform.position = value;
+        get => _dummyTransform.position;
     }
 
     public float DisplaySize = 3f;
@@ -37,7 +46,6 @@ public class Warpzone : MonoBehaviour
     private Camera _mainCamera;
     [HideInInspector]
     public ClippingBox ClippingBox = null;
-    
 
     public bool doRender = false;
     // Start is called before the first frame update
@@ -56,25 +64,33 @@ public class Warpzone : MonoBehaviour
         _dummyTransform.localScale = Vector3.one;
         _dummyTransform.localRotation = Quaternion.identity;
 
+        var collider = gameObject.AddComponent<BoxCollider>();
+        collider.size = new Vector3(2f,0,2f);
+        collider.isTrigger = true;
+        collider.enabled = false;
+        
+        
         _eventHandler.OnTargetFound.AddListener(() =>
         {
             Debug.Log("Found Trackable");
             doRender = true;
+            collider.enabled = true;
         });
         _eventHandler.OnTargetLost.AddListener(() =>
         {
             Debug.Log("Lost Trackable");
             doRender = false;
+            collider.enabled = false;
         });
-
-        //FindObjectOfType<WarpzoneManager>().ActiveWarpzone = this;
+        
+        gameObject.layer = LayerMask.NameToLayer("WarpzoneRaycast");
     }
 
     private void LateUpdate()
     {
         _mainCamera.RemoveAllCommandBuffers();
         
-        if (doRender)
+        if (doRender && PhotonNetwork.IsConnected)
         {
             var warpzoneMatrix = Matrix4x4.TRS(_dummyTransform.localPosition,
                 _dummyTransform.localRotation, _dummyTransform.localScale / Scale).inverse;
@@ -83,7 +99,6 @@ public class Warpzone : MonoBehaviour
             foreach (var valueTuple in _virtualCity.RenderList)
             {
                 var trans = valueTuple.Item1;
-                var renderer = valueTuple.Item2;
                 var mesh = valueTuple.Item3;
                 var materials = valueTuple.Item4;
 
@@ -100,6 +115,41 @@ public class Warpzone : MonoBehaviour
                 }
             }
             _mainCamera.AddCommandBuffer(CameraEvent.BeforeForwardOpaque, _commandBuffer);
+        }
+    }
+
+    private GameObject _indicator;
+
+    public void SetIndicationMode(WarpzoneManager.IndicatorMode mode)
+    {
+        switch (mode)
+        {
+            case WarpzoneManager.IndicatorMode.None:
+            {
+                if (_indicator)
+                    Destroy(_indicator);
+
+                _indicator = null;
+                break;
+            }
+            case WarpzoneManager.IndicatorMode.Gazed:
+            {
+                if (_indicator == null)
+                {
+                    _indicator = Instantiate(WarpzoneManager.Instance.WarpzoneGazeIndicator, transform);
+                }
+                _indicator.GetComponent<Renderer>().material.color = Color.green;
+                break;
+            }
+            case WarpzoneManager.IndicatorMode.Selected:
+            {
+                if (_indicator == null)
+                {
+                    _indicator = Instantiate(WarpzoneManager.Instance.WarpzoneGazeIndicator, transform);
+                }
+                _indicator.GetComponent<Renderer>().material.color = Color.blue;
+                break;
+            }
         }
     }
 }
