@@ -9,7 +9,6 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using System;
 using System.CodeDom;
-using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using Photon.Realtime;
 using UnityEditor.PackageManager;
@@ -23,7 +22,7 @@ namespace Augmentix.Scripts.Editor
         [SerializeField] private List<SceneAsset> _scenes;
         [SerializeField] private List<string> _scenePaths;
         [SerializeField] private string _buildPath = "";
-        [SerializeField] private bool _usesVuforia = false;
+        [SerializeField] private List<string> _packages;
         [SerializeField] private bool _usesVR = false;
         [SerializeField] private bool _run = false;
         [SerializeField] private bool _open = false;
@@ -47,7 +46,9 @@ namespace Augmentix.Scripts.Editor
             EditorGUILayout.PropertyField(serialProp, true);
             serialObj.ApplyModifiedProperties();
 
-            _usesVuforia = EditorGUILayout.Toggle("Vuforia", _usesVuforia);
+            serialProp = serialObj.FindProperty("_packages");
+            EditorGUILayout.PropertyField(serialProp, true);
+            serialObj.ApplyModifiedProperties();
             
             _usesVR = EditorGUILayout.Toggle("VR", _usesVR);
             
@@ -131,30 +132,6 @@ namespace Augmentix.Scripts.Editor
 
         public static void DoSwitch(Type type, BuildTarget target)
         {
-            var inputManager = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/InputManager.asset")[0];
- 
-            SerializedObject obj = new SerializedObject(inputManager);
- 
-            SerializedProperty axisArray = obj.FindProperty("m_Axes");
- 
-            if (axisArray.arraySize == 0)
-                Debug.Log("No Axes");
- 
-            var axisList = new string[axisArray.arraySize];
-            
-            for( int i = 0; i < axisArray.arraySize; ++i )
-            {
-                var axis = axisArray.GetArrayElementAtIndex(i);
- 
-                axisList[i] = "\""+axis.FindPropertyRelative("m_Name").stringValue+"\"";
-            }
-
-            var axises = "["+axisList.Aggregate((a, b) => a + "," + b)+"]";
-
-            Debug.Log(axises);
-
-            return;
-
             if (EditorUserBuildSettings.activeBuildTarget == target)
                 return;
 
@@ -185,6 +162,19 @@ namespace Augmentix.Scripts.Editor
             while(!searchRequest.IsCompleted)
                 Thread.Sleep(10);
 
+            foreach (var package in manager._packages)
+            {
+                if (!newManager._packages.Contains(package) && searchRequest.Result.Select(info => info.name).Contains(package))
+                {
+                    Client.Remove(package);
+                }
+            }
+            
+            foreach (var package in newManager._packages)
+            {
+                if (!searchRequest.Result.Select(info => info.name).Contains(package))
+                    Client.Add(package);
+            }/*
             if (searchRequest.Result.Select(info => info.name).Contains("com.ptc.vuforia.engine"))
             {
                 if (!newManager._usesVuforia)
@@ -199,6 +189,7 @@ namespace Augmentix.Scripts.Editor
                     Client.Add("com.ptc.vuforia.engine");
                 }
             }
+            */
 
             if (newManager._usesVR)
             {

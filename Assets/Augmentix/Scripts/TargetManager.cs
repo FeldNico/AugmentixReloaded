@@ -24,7 +24,8 @@ namespace Augmentix.Scripts
 
         public enum Groups : byte
         {
-            LEAP_MOTION = 0x1
+            LEAP_MOTION = 0x1,
+            PLAYERS = 0x2
         }
 
         public enum EventCode : byte
@@ -101,10 +102,10 @@ namespace Augmentix.Scripts
                 {
                     player = PhotonNetwork.PlayerListOthers.FirstOrDefault(
                         p => (string) p.CustomProperties["Class"] == playerType.ToString());
-
+                    
                     if (player != null)
                         break;
-
+                    
                     yield return new WaitForSeconds(CheckUpdateRate);
                 }
 

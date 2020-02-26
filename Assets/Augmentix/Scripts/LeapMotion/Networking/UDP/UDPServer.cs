@@ -121,7 +121,6 @@ public class UDPServer
         _server.Control.QualityOfService = SocketQualityOfService.LowLatency;
         _server.Control.InboundBufferSizeInBytes = ((uint) LMProtocol.Instance.BufferSize)*2048u;
         _server.MessageReceived += (sender, args) => { 
-
 /*
             using (var streamIn = args.GetDataStream().AsStreamForRead())
             {

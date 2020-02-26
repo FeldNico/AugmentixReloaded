@@ -21,8 +21,20 @@ public class ARHand : MonoBehaviour
     public UnityAction OnPointEnd;
     public UnityAction OnPinchStart;
     public UnityAction OnPinchEnd;
-    
-    public AbstractInteractable CurrentInteractable { private set; get; }
+
+    private AbstractInteractable _currentInteractable;
+    public AbstractInteractable CurrentInteractable
+    {
+        set
+        {
+            if (_currentInteractable != null)
+                _currentInteractable.OnInteractionEnd?.Invoke(this);
+            _currentInteractable = value;
+            if (_currentInteractable != null)
+                _currentInteractable.OnInteractionStart?.Invoke(this);
+        }
+        get => _currentInteractable;
+    }
 
     public bool IsPinching = false;
 
@@ -48,24 +60,17 @@ public class ARHand : MonoBehaviour
         };
         OnPinchEnd += () =>
         {
-            Debug.Log("Pinch end");
-            if (CurrentInteractable != null)
-            {
-                CurrentInteractable.OnInteractionEnd?.Invoke(this);
-                CurrentInteractable = null;
-            }
+            Debug.Log("PinchEnd");
+            CurrentInteractable = null;
         };
         OnPinchStart += () =>
         {
-            Debug.Log("Pinch start");
-            if (PinchingSphere.IsColliding() && CurrentInteractable == null)
+            Debug.Log("PinchStart");
+            if (PinchingSphere.IsColliding())
             {
                 CurrentInteractable = PinchingSphere.CurrentInteractable;
-                CurrentInteractable.OnInteractionStart?.Invoke(this);
             }
         };
-        OnPointEnd += () => { Debug.Log("OnPointEnd"); };
-        OnPointStart += () => { Debug.Log("OnPointStart"); };
 
         gameObject.SetActive(false);
     }

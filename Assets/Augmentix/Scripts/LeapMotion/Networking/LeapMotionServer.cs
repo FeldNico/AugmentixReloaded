@@ -67,7 +67,6 @@ public class LeapMotionServer : LMProtocol
                     index = message.ConvertFromBytes(msg, index);
                     message.HandleMessage();
                     message.HandleTimeout(_timeoutCache);
-                    
                 }
                 
             }

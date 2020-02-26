@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Augmentix.Scripts.AR;
 using Augmentix.Scripts.VR;
 using Leap.Unity;
 using Microsoft.MixedReality.Toolkit.Utilities;
@@ -84,6 +85,15 @@ public class Warpzone : MonoBehaviour
         });
         
         gameObject.layer = LayerMask.NameToLayer("WarpzoneRaycast");
+        
+        //WarpzoneManager.Instance.ActiveWarpzone = this;
+
+        StartCoroutine(bla());
+        IEnumerator bla()
+        {
+            yield return new WaitForSeconds(0.1f);
+            FindObjectOfType<ARTargetManager>().Connect();
+        }
     }
 
     private void LateUpdate()

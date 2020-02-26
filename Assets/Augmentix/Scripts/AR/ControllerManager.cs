@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using Augmentix.Scripts.VR;
 using Photon.Pun;
+using TMPro;
 using UnityEngine;
 using Vuforia;
 
@@ -115,51 +116,58 @@ public class ControllerManager : MonoBehaviour
             var vec = new Vector3();
 
             var camTransform = Camera.main.transform;
-            var forwardProject = new Vector3(camTransform.forward.x, 0, camTransform.forward.z).normalized;
-            var rightProject = new Vector3(camTransform.right.x, 0, camTransform.right.z).normalized;
             
             if (_deskzone.IsInside)
             {
-                if (Input.GetKey(KeyCode.W))
+                if (Input.GetKey(KeyCode.H))
                 {
-                    vec += _warpzoneManager.ScrollSpeed * activeWarpzone.Scale * forwardProject;
+                    if (Input.GetKey(KeyCode.W) && activeWarpzone.Scale < 0.5f)
+                        activeWarpzone.Scale += 0.01f;
+                    else if (Input.GetKey(KeyCode.X) && activeWarpzone.Scale > 0.02f)
+                        activeWarpzone.Scale -= 0.01f;
                 }
-                else if (Input.GetKey(KeyCode.X))
+                else
                 {
-                    vec -= _warpzoneManager.ScrollSpeed * activeWarpzone.Scale * forwardProject;
-                }
+                    var forwardProject = activeWarpzone.transform.InverseTransformVector(camTransform.forward);
+                    var rightProject = activeWarpzone.transform.InverseTransformVector(camTransform.right);
+                    forwardProject = new Vector3(forwardProject.x,0,forwardProject.z).normalized;
+                    rightProject = new Vector3(rightProject.x,0,rightProject.z).normalized;
 
-                if (Input.GetKey(KeyCode.A))
-                {
-                    vec += _warpzoneManager.ScrollSpeed * activeWarpzone.Scale * rightProject;
+                    if (Input.GetKey(KeyCode.W))
+                        vec -= 0.05f* _warpzoneManager.ScrollSpeed * forwardProject;
+                    else if (Input.GetKey(KeyCode.X))
+                        vec += 0.05f*_warpzoneManager.ScrollSpeed * forwardProject;
+
+                    if (Input.GetKey(KeyCode.A))
+                        vec += 0.05f*_warpzoneManager.ScrollSpeed * rightProject;
+                    else if (Input.GetKey(KeyCode.D))
+                        vec -=0.05f* _warpzoneManager.ScrollSpeed * rightProject;
+                    
+                    _warpzoneManager.ActiveWarpzone.LocalPosition += vec;
                 }
-                else if (Input.GetKey(KeyCode.D))
-                {
-                    vec -= _warpzoneManager.ScrollSpeed * activeWarpzone.Scale * rightProject;
-                }
+                
+                
             }
             else
             {
+                
+                var forwardProject = new Vector3(camTransform.forward.x, 0, camTransform.forward.z).normalized;
+                var rightProject = new Vector3(camTransform.right.x, 0, camTransform.right.z).normalized;
+
                 if (Input.GetKey(KeyCode.W))
-                {
                     vec += 0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * forwardProject;
-                }
                 else if (Input.GetKey(KeyCode.X))
-                {
                     vec -=0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * forwardProject;
-                }
 
                 if (Input.GetKey(KeyCode.A))
-                {
                     vec -=0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * rightProject;
-                }
                 else if (Input.GetKey(KeyCode.D))
-                {
                     vec +=0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * rightProject;
-                }
+                
+                _warpzoneManager.ActiveWarpzone.Position += vec;
             }
 
-            _warpzoneManager.ActiveWarpzone.Position += vec;
+            
         }
     }
 }

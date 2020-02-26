@@ -24,6 +24,7 @@ public class LeapMotionManager : TargetManager
 
         OnConnection += () =>
         {
+            PhotonNetwork.SetInterestGroups(new []{(byte)Groups.PLAYERS}, new []{(byte)Groups.LEAP_MOTION});
             Camera.main.backgroundColor = Color.green;
         };
         Connect();
@@ -32,8 +33,6 @@ public class LeapMotionManager : TargetManager
 
     public override void OnJoinedRoom()
     {
-        PhotonNetwork.SetInterestGroups((byte)Groups.LEAP_MOTION, true);
-       
         WaitForPlayer(PlayerType.Primary,CheckUpdateRate, () =>
         {
             Debug.Log("Primary found!");

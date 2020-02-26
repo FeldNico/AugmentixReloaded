@@ -17,8 +17,8 @@ MonoBehaviour:
   managerScene:
     Name: 1-Menu
     Path: Assets/ThirdParty/Common/SampleResources/Scenes/1-Menu.unity
-    Included: 1
-    BuildIndex: 1
+    Included: 0
+    BuildIndex: -1
     Tag: Untagged
     Asset: {fileID: 102900000, guid: 72a81fd0bdedaf0448e6c17d1e8fcb86, type: 3}
   useLightingScene: 0
@@ -33,26 +33,26 @@ MonoBehaviour:
   contentScenes:
   - Name: 1-Menu
     Path: Assets/ThirdParty/Common/SampleResources/Scenes/1-Menu.unity
-    Included: 1
-    BuildIndex: 1
+    Included: 0
+    BuildIndex: -1
     Tag: Untagged
     Asset: {fileID: 102900000, guid: 72a81fd0bdedaf0448e6c17d1e8fcb86, type: 3}
   - Name: 2-ImageTargets
     Path: Assets/ThirdParty/Common/SampleResources/Scenes/2-ImageTargets.unity
-    Included: 1
-    BuildIndex: 2
+    Included: 0
+    BuildIndex: -1
     Tag: Untagged
     Asset: {fileID: 102900000, guid: 03ddc4184641b534487cecd6dab620df, type: 3}
   - Name: 2-VuMarks
     Path: Assets/ThirdParty/Common/SampleResources/Scenes/2-VuMarks.unity
-    Included: 1
-    BuildIndex: 3
+    Included: 0
+    BuildIndex: -1
     Tag: Untagged
     Asset: {fileID: 102900000, guid: d9b53b25a285640cf8ac170a80603e34, type: 3}
   - Name: 2-ModelTargets
     Path: Assets/ThirdParty/Common/SampleResources/Scenes/2-ModelTargets.unity
-    Included: 1
-    BuildIndex: 4
+    Included: 0
+    BuildIndex: -1
     Tag: Untagged
     Asset: {fileID: 102900000, guid: 530386685ba085242832bd5cc78d7222, type: 3}
   permittedLightingSceneComponentTypes:
