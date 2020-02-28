@@ -14,6 +14,8 @@ public class Imposter : AbstractInteractable
     void Start()
     {
         OnInteractionStart += CreateSpawnable;
+        
+        Debug.Log("Spawnable"+Path.DirectorySeparatorChar+Object.name);
     }
 
     private void CreateSpawnable(ARHand hand)
@@ -24,8 +26,10 @@ public class Imposter : AbstractInteractable
             return;
         }
 
-        var obj = PhotonNetwork.Instantiate("Spawnable"+Path.PathSeparator+Object.name, Object.transform.position, Object.transform.rotation,
+        var obj = PhotonNetwork.Instantiate("Spawnable"+Path.DirectorySeparatorChar+Object.name, transform.position, transform.rotation,
             (byte) TargetManager.Groups.PLAYERS);
+        obj.transform.localScale = transform.lossyScale;
+        
         
         hand.CurrentInteractable = obj.GetComponent<AbstractInteractable>();
     }

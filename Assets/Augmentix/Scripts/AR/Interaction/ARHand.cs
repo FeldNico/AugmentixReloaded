@@ -27,6 +27,7 @@ public class ARHand : MonoBehaviour
     {
         set
         {
+            Debug.Log("New interactable: "+ (value != null ? value.gameObject.name:"null"));
             if (_currentInteractable != null)
                 _currentInteractable.OnInteractionEnd?.Invoke(this);
             _currentInteractable = value;
@@ -66,7 +67,7 @@ public class ARHand : MonoBehaviour
         OnPinchStart += () =>
         {
             Debug.Log("PinchStart");
-            if (PinchingSphere.IsColliding())
+            if (PinchingSphere.IsColliding() && CurrentInteractable == null)
             {
                 CurrentInteractable = PinchingSphere.CurrentInteractable;
             }
