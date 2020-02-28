@@ -1,8 +1,10 @@
-﻿    using Photon.Pun;
-    using UnityEngine;
+﻿using Photon.Pun;
+using UnityEngine;
 
+namespace Augmentix.Scripts.Network
+{
     [RequireComponent(typeof(PhotonView))]
-    public class AvatarTransformView : MonoBehaviour, IPunObservable
+    public class AugmentixTransformView : MonoBehaviour, IPunObservable
     {
         private float m_Distance;
         private float m_Angle;
@@ -151,3 +153,4 @@
             }
         }
     }
+}

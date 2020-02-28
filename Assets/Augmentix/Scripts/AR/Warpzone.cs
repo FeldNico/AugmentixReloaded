@@ -85,8 +85,6 @@ public class Warpzone : MonoBehaviour
         });
         
         gameObject.layer = LayerMask.NameToLayer("WarpzoneRaycast");
-        
-        //WarpzoneManager.Instance.ActiveWarpzone = this;
 
         StartCoroutine(bla());
         IEnumerator bla()
