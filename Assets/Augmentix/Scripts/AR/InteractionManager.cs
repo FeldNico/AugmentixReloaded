@@ -10,8 +10,12 @@ using TMPro;
 using UnityEngine;
 using Vuforia;
 
-public class ControllerManager : MonoBehaviour
+public class InteractionManager : MonoBehaviour
 {
+    public GameObject InteractionSpherePrefab;
+    public GameObject TextPrefab;
+    public GameObject VideoPrefab;
+    
     private Deskzone _deskzone;
     private WarpzoneManager _warpzoneManager;
     private VirtualCity _virtualCity;
@@ -25,23 +29,6 @@ public class ControllerManager : MonoBehaviour
         _virtualCity = FindObjectOfType<VirtualCity>();
         _mainCamera = Camera.main;
     }
-
-    private string[] axisList = new[]
-    {
-        "Horizontal", "Vertical", "Fire1", "Fire2", "Fire3", "Jump", "Mouse X", "Mouse Y", "Mouse ScrollWheel",
-        "Horizontal", "Vertical", "Fire1", "Fire2", "Fire3", "Jump", "Submit", "Submit", "Cancel", "AXIS_1",
-        "AXIS_2", "AXIS_3", "AXIS_4", "AXIS_5", "AXIS_6", "AXIS_7", "AXIS_8", "AXIS_9", "AXIS_10", "AXIS_11",
-        "AXIS_12", "AXIS_13", "AXIS_14", "AXIS_15", "AXIS_16", "AXIS_17", "AXIS_18", "AXIS_19", "AXIS_20",
-        "AXIS_21", "AXIS_22", "AXIS_23", "AXIS_24", "AXIS_25", "AXIS_26", "AXIS_27", "AXIS_28", "UpDown", "UpDown",
-        "Oculus_GearVR_LThumbstickX", "Oculus_GearVR_LThumbstickY", "Oculus_GearVR_RThumbstickX",
-        "Oculus_GearVR_RThumbstickY", "Oculus_GearVR_DpadX", "Oculus_GearVR_DpadY", "Oculus_GearVR_LIndexTrigger",
-        "Oculus_GearVR_RIndexTrigger", "Oculus_CrossPlatform_Button2", "Oculus_CrossPlatform_Button4",
-        "Oculus_CrossPlatform_PrimaryThumbstick", "Oculus_CrossPlatform_SecondaryThumbstick",
-        "Oculus_CrossPlatform_PrimaryIndexTrigger", "Oculus_CrossPlatform_SecondaryIndexTrigger",
-        "Oculus_CrossPlatform_PrimaryHandTrigger", "Oculus_CrossPlatform_SecondaryHandTrigger",
-        "Oculus_CrossPlatform_PrimaryThumbstickHorizontal", "Oculus_CrossPlatform_PrimaryThumbstickVertical",
-        "Oculus_CrossPlatform_SecondaryThumbstickHorizontal", "Oculus_CrossPlatform_SecondaryThumbstickVertical"
-    };
 
 
     void Update()

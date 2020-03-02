@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Augmentix.Scripts;
 using UnityEngine;
 
 public class VirtualCity : MonoBehaviour
@@ -10,20 +11,23 @@ public class VirtualCity : MonoBehaviour
     private int childCount = -1;
     void Update()
     {
-        if (Time.frameCount % 10 == 0)
+        if (TargetManager.Instance.Type == TargetManager.PlayerType.Primary)
         {
-            var count = CountChildren(transform);
-            if (childCount != count)
+            if (Time.frameCount % 10 == 0)
             {
-                childCount = count;
-                _renderList.Clear();
-                foreach (var child in GetComponentsInChildren<Renderer>())
+                var count = CountChildren(transform);
+                if (childCount != count)
                 {
-                    var mesh = child.GetComponent<MeshFilter>();
-                    if (mesh == null)
-                        continue;
+                    childCount = count;
+                    _renderList.Clear();
+                    foreach (var child in GetComponentsInChildren<Renderer>())
+                    {
+                        var mesh = child.GetComponent<MeshFilter>();
+                        if (mesh == null)
+                            continue;
                 
-                    _renderList.Add((child.transform,child,child.GetComponent<MeshFilter>(),child.materials));
+                        _renderList.Add((child.transform,child,child.GetComponent<MeshFilter>(),child.materials));
+                    }
                 }
             }
         }

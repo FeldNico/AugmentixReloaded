@@ -35,5 +35,7 @@ MonoBehaviour:
   - Fire
   - RespawnSpaceship
   - ToogleVisibilityRPC
+  - Interact
+  - ChangeTextRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1

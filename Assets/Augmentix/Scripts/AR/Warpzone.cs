@@ -34,6 +34,7 @@ public class Warpzone : MonoBehaviour
 
     public float DisplaySize = 3f;
     public float Scale = 0.05f;
+    public Dictionary<Transform, Matrix4x4> Matrices = new Dictionary<Transform, Matrix4x4>();
 
     public UnityAction OnFocus;
     public UnityAction OnFocusLost;
@@ -86,12 +87,8 @@ public class Warpzone : MonoBehaviour
         
         gameObject.layer = LayerMask.NameToLayer("WarpzoneRaycast");
 
-        StartCoroutine(bla());
-        IEnumerator bla()
-        {
-            yield return new WaitForSeconds(0.1f);
-            FindObjectOfType<ARTargetManager>().Connect();
-        }
+        FindObjectOfType<ARTargetManager>().Connect();
+        FindObjectOfType<WarpzoneManager>().ActiveWarpzone = this;
     }
 
     private void LateUpdate()
@@ -104,21 +101,23 @@ public class Warpzone : MonoBehaviour
                 _dummyTransform.localRotation, _dummyTransform.localScale / Scale).inverse;
 
             var _commandBuffer = new CommandBuffer();
+            Matrices.Clear();
             foreach (var valueTuple in _virtualCity.RenderList)
             {
                 var trans = valueTuple.Item1;
                 var mesh = valueTuple.Item3;
                 var materials = valueTuple.Item4;
 
+                
                 if ( Vector3.Distance(_dummyTransform.localPosition, _virtualCityTransform.InverseTransformPoint(trans.position)) < 2 * DisplaySize / transform.localScale.x)
                 {
-                    var m = transform.localToWorldMatrix  * warpzoneMatrix * Matrix4x4.TRS(_virtualCityTransform.InverseTransformPoint(trans.position),
+                    Matrices[trans]  = transform.localToWorldMatrix  * warpzoneMatrix * Matrix4x4.TRS(_virtualCityTransform.InverseTransformPoint(trans.position),
                                 _virtualCityTransform.InverseTransformRotation(trans.rotation),
                                 trans.lossyScale);
 
                     for (int i = 0; i < mesh.sharedMesh.subMeshCount; i++)
                     {
-                        _commandBuffer.DrawMesh(mesh.sharedMesh,m,materials[i],i,-1);
+                        _commandBuffer.DrawMesh(mesh.sharedMesh,Matrices[trans],materials[i],i,-1);
                     }
                 }
             }

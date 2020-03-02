@@ -3,12 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Augmentix.Scripts;
+using Augmentix.Scripts.Network;
+using Augmentix.Scripts.OOI;
 using Photon.Pun;
 using UnityEngine;
 
 public class Imposter : AbstractInteractable
 {
     public GameObject Object;
+
+
+    private void Awake()
+    {
+        /*
+        var ooi = GetComponent<OOI>();
+        if (ooi)
+            Destroy(ooi);
+        Destroy(GetComponent<AugmentixTransformView>());
+        Destroy(GetComponent<AbstractInteractable>());
+        Destroy(GetComponent<PhotonView>());
+        */
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -26,12 +41,17 @@ public class Imposter : AbstractInteractable
             return;
         }
 
-        var obj = PhotonNetwork.Instantiate("Spawnable"+Path.DirectorySeparatorChar+Object.name, transform.position, transform.rotation,
+        var obj = PhotonNetwork.Instantiate("OOI"+Path.DirectorySeparatorChar+"Spawnable"+Path.DirectorySeparatorChar+Object.name, transform.position, transform.rotation,
             (byte) TargetManager.Groups.PLAYERS);
         obj.transform.localScale = transform.lossyScale;
+
+        StartCoroutine(AttachInteractable());
         
-        
-        hand.CurrentInteractable = obj.GetComponent<AbstractInteractable>();
+        IEnumerator AttachInteractable()
+        {
+          yield return new WaitForEndOfFrame();
+          hand.CurrentInteractable = obj.GetComponent<AbstractInteractable>();
+        }
     }
     
 }
