@@ -18,11 +18,16 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback
         if (GetComponent<PhotonView>().IsMine)
             Mine = this;
         
-        if (TargetManager.Instance.Type == TargetManager.PlayerType.Primary)
+        if ((string) GetComponent<PhotonView>().Owner.CustomProperties["Class"] == TargetManager.PlayerType.Primary.ToString())
         {
-            _deskzone = FindObjectOfType<Deskzone>();
-            _deskzone.Inside += () => { ToggleVisibility(false); };
-            _deskzone.Outside += () => { ToggleVisibility(true); };
+            if (TargetManager.Instance.Type == TargetManager.PlayerType.Primary)
+            {
+                _deskzone = FindObjectOfType<Deskzone>();
+                /*
+                _deskzone.Inside += () => { ToggleVisibility(false); };
+                _deskzone.Outside += () => { ToggleVisibility(true); };
+                */
+            }
             PrimaryAvatar = this;
         }
         else
@@ -33,11 +38,14 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
-        if (!Equals(info.photonView.Owner, PhotonNetwork.LocalPlayer))
+        if (!info.photonView.IsMine)
         {
             transform.parent = FindObjectOfType<VirtualCity>().transform;
+            
+            /*
             if ((string) info.photonView.Owner.CustomProperties["Class"] == TargetManager.PlayerType.Primary.ToString())
                 GetComponent<Renderer>().enabled = false;
+                */
         }
     }
 
@@ -54,7 +62,7 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback
 
     private void OnDestroy()
     {
-        if (TargetManager.Instance.Type == TargetManager.PlayerType.Primary)
+        if ((string) GetComponent<PhotonView>().Owner.CustomProperties["Class"] == TargetManager.PlayerType.Primary.ToString())
         {
             PrimaryAvatar = null;
         }

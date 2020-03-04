@@ -75,12 +75,33 @@ namespace Augmentix.Scripts
 
         public override void OnConnectedToMaster()
         {
+            
+            
             PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable {{"Class", Type.ToString()}});
             PhotonNetwork.JoinOrCreateRoom(ROOMNAME, new RoomOptions {MaxPlayers = 0}, TypedLobby.Default);
         }
 
         public override void OnJoinedRoom()
         {
+            switch (Type)
+            {
+                case PlayerType.Primary:
+                {
+                    PhotonNetwork.SetInterestGroups(null, new []{(byte)Groups.LEAP_MOTION,(byte)Groups.PLAYERS});
+                    break;
+                }
+                case PlayerType.Secondary:
+                {
+                    PhotonNetwork.SetInterestGroups(new [] {(byte)Groups.LEAP_MOTION}, new []{(byte)Groups.PLAYERS});
+                    break;
+                }
+                case PlayerType.LeapMotion:
+                {
+                    PhotonNetwork.SetInterestGroups(new [] {(byte)Groups.PLAYERS}, new []{(byte)Groups.LEAP_MOTION});
+                    break;
+                }
+            }
+            
             StartCoroutine(OnConnect());
 
             IEnumerator OnConnect()

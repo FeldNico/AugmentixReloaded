@@ -29,7 +29,7 @@ namespace Augmentix.Scripts.Network
         {
             m_PhotonView = GetComponent<PhotonView>();
 
-            m_StoredPosition = transform.localPosition;
+            m_StoredPosition = transform.position;
             m_NetworkPosition = Vector3.zero;
 
             m_NetworkRotation = Quaternion.identity;

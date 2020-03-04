@@ -75,12 +75,12 @@ namespace Augmentix.Scripts.AR
             base.Start();
             OnConnection += () =>
             {
-                PhotonNetwork.SetInterestGroups(null, new []{(byte)Groups.LEAP_MOTION,(byte)Groups.PLAYERS});
+                
                 if (AvatarPrefab != null)
                     Debug.Log(AvatarPrefab.name);
                 
                 var avatar = PhotonNetwork.Instantiate(AvatarPrefab != null ? AvatarPrefab.name : "Primary_Avatar", Camera.main.transform.position,
-                    Camera.main.transform.rotation,(byte) Groups.PLAYERS);
+                    Camera.main.transform.rotation);
                 
                 avatar.transform.parent = Camera.main.transform;
                 avatar.GetComponent<Renderer>().enabled = false;

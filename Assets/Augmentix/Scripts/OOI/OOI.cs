@@ -51,10 +51,12 @@ namespace Augmentix.Scripts.OOI
             _collider = GetComponent<Collider>();
             if (TargetManager.Instance.Type == TargetManager.PlayerType.Primary)
             {
+                #if UNITY_WSA
                 _interactionSphere =
                     Instantiate(FindObjectOfType<InteractionManager>().InteractionSpherePrefab, transform.position + new Vector3(0,_collider.bounds.size.y,0),
                         transform.rotation).GetComponent<InteractionSphere>();
                 _interactionSphere.OOI = this;
+                #endif
             }
         }
 
@@ -62,8 +64,12 @@ namespace Augmentix.Scripts.OOI
         public void Interact(InteractionFlag flag)
         {
             var view = GetComponent<PhotonView>();
+            
+            
+            /*
             if (TargetManager.Instance.Type == TargetManager.PlayerType.Primary)
                 view.RPC("Interact", RpcTarget.Others, flag);
+                */
 
             switch (flag)
             {
@@ -100,6 +106,9 @@ namespace Augmentix.Scripts.OOI
 
         private void ToggleText()
         {
+            
+            
+            #if UNITY_WSA
             if (_textObjects.Keys.Count == 0)
             {
                 foreach (var avatar in PlayerAvatar.SecondaryAvatars)
@@ -123,6 +132,7 @@ namespace Augmentix.Scripts.OOI
                 }
                 _textObjects.Clear();
             }
+#endif
         }
 
         private Coroutine _moveVideo = null;
@@ -130,6 +140,10 @@ namespace Augmentix.Scripts.OOI
 
         private void ToggleVideo()
         {
+            if (PlayerAvatar.SecondaryAvatars.Count == 0)
+                return;
+            
+            #if UNITY_WSA
             if (_videoObjects.Keys.Count == 0)
             {
                 foreach (var avatar in PlayerAvatar.SecondaryAvatars)
@@ -156,6 +170,7 @@ namespace Augmentix.Scripts.OOI
                 }
                 _videoObjects.Clear();
             }
+        #endif
         }
 
         private IEnumerator MoveObject(Dictionary<PlayerAvatar, OOIInfo> objects, Quaternion rotationOffset,

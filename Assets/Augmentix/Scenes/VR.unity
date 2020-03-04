@@ -1246,6 +1246,7 @@ GameObject:
   - component: {fileID: 947488591696805339}
   - component: {fileID: 8359953129127530795}
   - component: {fileID: 675306746884533695}
+  - component: {fileID: 675306746884533696}
   m_Layer: 0
   m_Name: default
   m_TagString: Untagged
@@ -1275,6 +1276,21 @@ MonoBehaviour:
   viewIdField: 1
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &675306746884533696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 675306746884533694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c2cdb0a7cb552a44af84d6c27459fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  StaticOOI: 1
+  Flags: 129
+  Text: 
 --- !u!4 &699955061625906430
 Transform:
   m_ObjectHideFlags: 0
@@ -2698,7 +2714,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6474521763430249315}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -43, y: 0, z: -330}
+  m_LocalPosition: {x: -46.2, y: 0, z: -374.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6765553457040915567}

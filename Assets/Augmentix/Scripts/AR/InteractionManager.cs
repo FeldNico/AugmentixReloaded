@@ -1,6 +1,7 @@
-﻿using System;
+﻿#if UNITY_WSA
+using System;
 using Augmentix.Scripts.OOI;
-#if UNITY_WSA
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -8,7 +9,9 @@ using Augmentix.Scripts.VR;
 using Photon.Pun;
 using TMPro;
 using UnityEngine;
+
 using Vuforia;
+
 
 public class InteractionManager : MonoBehaviour
 {

@@ -1,8 +1,8 @@
-﻿
+﻿#if UNITY_WSA
 using Augmentix.Scripts.OOI;
 using Microsoft.MixedReality.Toolkit;
 using UnityEngine.Rendering;
-#if UNITY_WSA
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,6 +15,7 @@ using Microsoft.MixedReality.Toolkit.Utilities;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.Events;
+
 using Vuforia;
 
 [RequireComponent(typeof(ImageTargetBehaviour),typeof(DefaultTrackableEventHandler))]
@@ -86,9 +87,8 @@ public class Warpzone : MonoBehaviour
         });
         
         gameObject.layer = LayerMask.NameToLayer("WarpzoneRaycast");
-
+        
         FindObjectOfType<ARTargetManager>().Connect();
-        FindObjectOfType<WarpzoneManager>().ActiveWarpzone = this;
     }
 
     private void LateUpdate()

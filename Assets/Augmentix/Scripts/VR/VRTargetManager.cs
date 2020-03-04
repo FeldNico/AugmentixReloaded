@@ -23,8 +23,7 @@ namespace Augmentix.Scripts.VR
             {
                 PhotonNetwork.SetInterestGroups(new []{(byte)Groups.LEAP_MOTION}, new []{(byte)Groups.PLAYERS});
                 var avatar =
-                    PhotonNetwork.Instantiate(AvatarPrefab != null ? AvatarPrefab.name : "Secondary_Avatar", Camera.main.transform.position, Camera.main.transform.rotation,
-                        (byte) Groups.PLAYERS);
+                    PhotonNetwork.Instantiate(AvatarPrefab != null ? AvatarPrefab.name : "Secondary_Avatar", Camera.main.transform.position, Camera.main.transform.rotation);
                 avatar.transform.parent = Camera.main.transform;
                 avatar.GetComponent<Renderer>().enabled = false;
             };
