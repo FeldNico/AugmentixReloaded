@@ -19,9 +19,6 @@ public class WarpzoneManager : MonoBehaviour
         Gazed,
         Selected
     }
-
-    public static WarpzoneManager Instance { get; private set; }
-
     public GameObject WarpzoneGazeIndicator;
     public float ScrollSpeed = 10f;
     public List<Warpzone> Warpzones { get; private set; }
@@ -54,7 +51,6 @@ public class WarpzoneManager : MonoBehaviour
     }
     public void Awake()
     {
-        Instance = this;
         Warpzones = FindObjectsOfType<Warpzone>().ToList();
     }
 
@@ -62,7 +58,7 @@ public class WarpzoneManager : MonoBehaviour
     {
         _virtualCity = FindObjectOfType<VirtualCity>();
         _deskzone = FindObjectOfType<Deskzone>();
-
+        
         OnWarpzoneLost += Warpzone => { _virtualCity.transform.position = new Vector3(0,500,0); };
     }
 
@@ -70,7 +66,7 @@ public class WarpzoneManager : MonoBehaviour
     {
         if (ActiveWarpzone != null)
         {
-            _virtualCity.transform.position = _virtualCity.transform.position + (_deskzone.transform.position - ActiveWarpzone.Position);
+            _virtualCity.transform.position = _virtualCity.transform.position + (_deskzone.Position - ActiveWarpzone.Position);
         }
     }
 }

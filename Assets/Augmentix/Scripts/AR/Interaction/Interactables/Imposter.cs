@@ -11,47 +11,53 @@ using UnityEngine;
 public class Imposter : AbstractInteractable
 {
     public GameObject Object;
-
-
+    
     private void Awake()
     {
-        /*
         var ooi = GetComponent<OOI>();
         if (ooi)
             Destroy(ooi);
         Destroy(GetComponent<AugmentixTransformView>());
         Destroy(GetComponent<AbstractInteractable>());
         Destroy(GetComponent<PhotonView>());
-        */
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        OnInteractionStart += CreateSpawnable;
+        var deskzone = FindObjectOfType<Deskzone>();
+        
+        OnInteractionStart += (hand) =>
+        {
+            if (!deskzone.IsInside)
+            {
+                if (Object == null)
+                {
+                    Debug.LogError("Object not set");
+                    return;
+                }
+
+                var obj = PhotonNetwork.Instantiate("OOI"+Path.DirectorySeparatorChar+"Spawnable"+Path.DirectorySeparatorChar+Object.name, transform.position, transform.rotation,
+                    (byte) TargetManager.Groups.PLAYERS);
+                obj.transform.localScale = transform.lossyScale;
+
+                StartCoroutine(AttachInteractable());
+        
+                IEnumerator AttachInteractable()
+                {
+                    yield return new WaitForEndOfFrame();
+                    hand.CurrentInteractable = obj.GetComponent<AbstractInteractable>();
+                }
+            }
+        };
         
         Debug.Log("Spawnable"+Path.DirectorySeparatorChar+Object.name);
     }
 
-    private void CreateSpawnable(ARHand hand)
+    /*
+    public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
-        if (Object == null)
-        {
-            Debug.LogError("Object not set");
-            return;
-        }
-
-        var obj = PhotonNetwork.Instantiate("OOI"+Path.DirectorySeparatorChar+"Spawnable"+Path.DirectorySeparatorChar+Object.name, transform.position, transform.rotation,
-            (byte) TargetManager.Groups.PLAYERS);
-        obj.transform.localScale = transform.lossyScale;
-
-        StartCoroutine(AttachInteractable());
-        
-        IEnumerator AttachInteractable()
-        {
-          yield return new WaitForEndOfFrame();
-          hand.CurrentInteractable = obj.GetComponent<AbstractInteractable>();
-        }
+        transform.parent = FindObjectOfType<VirtualCity>().transform;
     }
-    
+    */
 }

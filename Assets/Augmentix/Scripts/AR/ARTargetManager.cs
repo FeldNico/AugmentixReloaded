@@ -75,7 +75,6 @@ namespace Augmentix.Scripts.AR
             base.Start();
             OnConnection += () =>
             {
-                
                 if (AvatarPrefab != null)
                     Debug.Log(AvatarPrefab.name);
                 

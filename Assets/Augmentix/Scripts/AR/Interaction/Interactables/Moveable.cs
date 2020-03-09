@@ -4,7 +4,7 @@ using Photon.Pun;
 using UnityEngine;
 
 [RequireComponent(typeof(PhotonView))]
-public class Moveable : AbstractInteractable
+public class Moveable : AbstractInteractable, IPunInstantiateMagicCallback
 {
     
     new void Start()
@@ -15,9 +15,8 @@ public class Moveable : AbstractInteractable
         {
             var joint = gameObject.GetComponent<FixedJoint>();
             if (joint == null)
-            {
                 joint = gameObject.AddComponent<FixedJoint>();
-            }
+
             joint.connectedBody = hand.PinchingSphere.GetComponent<Rigidbody>();
         };
 
@@ -25,10 +24,13 @@ public class Moveable : AbstractInteractable
         {
             var joint = gameObject.GetComponent<FixedJoint>();
             if (joint != null && joint.connectedBody == hand.PinchingSphere.GetComponent<Rigidbody>())
-            {
                 Destroy(joint);
-            }
         };
         
+    }
+
+    public void OnPhotonInstantiate(PhotonMessageInfo info)
+    {
+        transform.parent = FindObjectOfType<VirtualCity>().transform;
     }
 }

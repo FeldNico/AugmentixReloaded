@@ -2,12 +2,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using Augmentix.Scripts.OOI;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions.Comparers;
 
 public class InteractionSphere : AbstractInteractable
 {
     #if UNITY_WSA
+    
+    public List<GameObject> MenuItems { private set; get; } = new List<GameObject>();
+    
     private Transform _ooiTransform;
     private Collider _collider;
     private Vector3 _offset;
@@ -15,6 +19,7 @@ public class InteractionSphere : AbstractInteractable
 
     private OOI _ooi;
     private WarpzoneManager _warpzoneManager;
+    private InteractionManager _interactionManager;
 
     public OOI OOI
     {
@@ -32,13 +37,72 @@ public class InteractionSphere : AbstractInteractable
     {
         base.Start();
         _warpzoneManager = FindObjectOfType<WarpzoneManager>();
-        OnInteractionStart += (hand) => { _ooi.Interact(OOI.InteractionFlag.Text); };
+        _interactionManager = FindObjectOfType<InteractionManager>();
+        var go = new GameObject();
+        go.transform.position = transform.position;
+
+        var interactionList = new List<OOI.InteractionFlag>();
+        if (_ooi.Flags.HasFlag(OOI.InteractionFlag.Text))
+        {
+            interactionList.Add(OOI.InteractionFlag.Text);
+        }
+        if (_ooi.Flags.HasFlag(OOI.InteractionFlag.Video))
+        {
+            interactionList.Add(OOI.InteractionFlag.Video);
+        }
+        if (_ooi.Flags.HasFlag(OOI.InteractionFlag.Highlight))
+        {
+            interactionList.Add(OOI.InteractionFlag.Highlight);
+        }
+        
+        OnInteractionStart += (hand) =>
+        {
+            var joint = gameObject.GetComponent<FixedJoint>();
+            if (joint == null)
+                joint = gameObject.AddComponent<FixedJoint>();
+
+            joint.connectedBody = hand.PinchingSphere.GetComponent<Rigidbody>();
+            
+            foreach (var flag in interactionList)
+            {
+                GameObject item = null;
+                switch (flag)
+                {
+                    case OOI.InteractionFlag.Text:
+                    {
+                        item = Instantiate(_interactionManager.TextPrefab,transform.position,transform.rotation, transform);
+                        break;
+                    }
+                    case OOI.InteractionFlag.Video:
+                    {
+                        item = Instantiate(_interactionManager.VideoPrefab,transform.position,transform.rotation, transform);
+                        break;
+                    }
+                    case OOI.InteractionFlag.Highlight:
+                    {
+                        item = Instantiate(_interactionManager.HighlightPrefab,transform.position,transform.rotation, transform);
+                        break;
+                    }
+                }
+                MenuItems.Add(item);
+            }
+        };
+
+        OnInteractionEnd += (hand) =>
+        {
+            var joint = gameObject.GetComponent<FixedJoint>();
+            if (joint != null && joint.connectedBody == hand.PinchingSphere.GetComponent<Rigidbody>())
+                Destroy(joint);
+            
+            
+        };
+        
     }
 
-    private Quaternion _halfXRotation = Quaternion.AngleAxis(180, Vector3.up);
+    private Quaternion _halfXRotation = Quaternion.AngleAxis(0, Vector3.up);
     void Update()
     {
-        if (OOI == null || !_collider.enabled)
+        if (OOI == null || !_collider.enabled || IsInteractedWith)
             return;
 
         if (_ooi.StaticOOI)

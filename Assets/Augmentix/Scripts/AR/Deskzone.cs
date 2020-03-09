@@ -12,6 +12,16 @@ public class Deskzone : MonoBehaviour
     public UnityAction Inside;
     public UnityAction Outside;
 
+    public Vector3 Position
+    {
+        get
+        {
+            var pos = transform.position;
+            return new Vector3(pos.x,pos.y - _height,pos.z );
+        }
+    }
+
+    private float _height;
     public bool IsInside => _inside == 1;
     private short _inside = -1;
     
@@ -20,6 +30,7 @@ public class Deskzone : MonoBehaviour
     {
         _renderer = GetComponent<Renderer>();
         _mainCameraTransform = Camera.main.transform;
+        _height = _renderer.bounds.extents.y;
     }
 
     void Update()

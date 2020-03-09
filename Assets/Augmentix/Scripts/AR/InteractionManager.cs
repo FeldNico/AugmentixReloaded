@@ -18,6 +18,7 @@ public class InteractionManager : MonoBehaviour
     public GameObject InteractionSpherePrefab;
     public GameObject TextPrefab;
     public GameObject VideoPrefab;
+    public GameObject HighlightPrefab;
     
     private Deskzone _deskzone;
     private WarpzoneManager _warpzoneManager;
@@ -80,7 +81,7 @@ public class InteractionManager : MonoBehaviour
         {
             if (_currentGazedWarpzone != null)
             {
-                if (_currentGazedWarpzone != null && _currentGazedWarpzone != _warpzoneManager.ActiveWarpzone)
+                if (_currentGazedWarpzone != _warpzoneManager.ActiveWarpzone)
                     _currentGazedWarpzone.SetIndicationMode(WarpzoneManager.IndicatorMode.None);
 
                 _currentGazedWarpzone = null;

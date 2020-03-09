@@ -47,6 +47,7 @@ public class Warpzone : MonoBehaviour
     private VirtualCity _virtualCity;
     private Transform _virtualCityTransform;
     private Camera _mainCamera;
+    private WarpzoneManager _warpzoneManager;
     [HideInInspector]
     public ClippingBox ClippingBox = null;
 
@@ -59,6 +60,7 @@ public class Warpzone : MonoBehaviour
         _eventHandler = GetComponent<DefaultTrackableEventHandler>();
         _virtualCity = FindObjectOfType<VirtualCity>();
         _virtualCityTransform = _virtualCity.transform;
+        _warpzoneManager = FindObjectOfType<WarpzoneManager>();
         
         _warpzonePositionDummy = new GameObject("TangiblePosition");
         _dummyTransform = _warpzonePositionDummy.transform;
@@ -87,8 +89,6 @@ public class Warpzone : MonoBehaviour
         });
         
         gameObject.layer = LayerMask.NameToLayer("WarpzoneRaycast");
-        
-        FindObjectOfType<ARTargetManager>().Connect();
     }
 
     private void LateUpdate()
@@ -107,13 +107,13 @@ public class Warpzone : MonoBehaviour
                 var trans = valueTuple.Item1;
                 var mesh = valueTuple.Item3;
                 var materials = valueTuple.Item4;
-
+                var scale = valueTuple.Item5;
                 
                 if ( Vector3.Distance(_dummyTransform.localPosition, _virtualCityTransform.InverseTransformPoint(trans.position)) < 2 * DisplaySize / transform.localScale.x)
                 {
                     Matrices[trans]  = transform.localToWorldMatrix  * warpzoneMatrix * Matrix4x4.TRS(_virtualCityTransform.InverseTransformPoint(trans.position),
                                 _virtualCityTransform.InverseTransformRotation(trans.rotation),
-                                trans.lossyScale);
+                                trans.lossyScale * scale);
 
                     for (int i = 0; i < mesh.sharedMesh.subMeshCount; i++)
                     {
@@ -143,7 +143,7 @@ public class Warpzone : MonoBehaviour
             {
                 if (_indicator == null)
                 {
-                    _indicator = Instantiate(WarpzoneManager.Instance.WarpzoneGazeIndicator, transform);
+                    _indicator = Instantiate(_warpzoneManager.WarpzoneGazeIndicator, transform);
                 }
                 _indicator.GetComponent<Renderer>().material.color = Color.green;
                 break;
@@ -152,7 +152,7 @@ public class Warpzone : MonoBehaviour
             {
                 if (_indicator == null)
                 {
-                    _indicator = Instantiate(WarpzoneManager.Instance.WarpzoneGazeIndicator, transform);
+                    _indicator = Instantiate(_warpzoneManager.WarpzoneGazeIndicator, transform);
                 }
                 _indicator.GetComponent<Renderer>().material.color = Color.blue;
                 break;

@@ -6,6 +6,7 @@ using System.IO;
 using Augmentix.Scripts.OOI.Editor;
 #endif
 using Augmentix.Scripts.VR;
+using InteractionEngineUtility;
 using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
@@ -150,8 +151,9 @@ namespace Augmentix.Scripts.OOI
                 {
                     var video = PhotonNetwork.Instantiate(
                         "OOI" + Path.DirectorySeparatorChar + "Info" + Path.DirectorySeparatorChar +
-                        FindObjectOfType<InteractionManager>().VideoPrefab.name, transform.position, transform.rotation,
+                        FindObjectOfType<InteractionManager>().VideoPrefab.name, _collider.bounds.center, transform.rotation,
                         (byte) TargetManager.Groups.PLAYERS, new object[] {photonView.ViewID});
+                    video.transform.parent = transform;
                     var scale = video.transform.localScale;
                     scale.y *= (1f * GetComponent<VideoPlayer>().height) / GetComponent<VideoPlayer>().width;
                     transform.localScale = scale;
@@ -182,24 +184,23 @@ namespace Augmentix.Scripts.OOI
                 {
                     var objTransform = objects[avatar].transform;
                     var playerTransform = avatar.transform;
-                    objTransform.position = transform.position;
                     var playerPosition = playerTransform.position;
                     
                     Vector3 nearestPoint = _collider.ClosestPoint(playerPosition);
 
                     nearestPoint.y = playerPosition.y;
 
-                    var newPosition = Vector3.zero;
+                    Vector3 newPosition;
 
-                    if ((nearestPoint - playerPosition).sqrMagnitude < 1)
+                    if (nearestPoint == playerPosition)
                     {
-                        newPosition += playerPosition +
+                        newPosition = playerPosition +
                                        Vector3.ProjectOnPlane(playerTransform.forward, Vector3.up).normalized *
                                        playerTransform.lossyScale.x;
                     }
                     else
                     {
-                        newPosition += playerPosition + (nearestPoint - playerPosition).normalized *
+                        newPosition = playerPosition + (nearestPoint - playerPosition).normalized *
                                        playerTransform.lossyScale.x;
                     }
 

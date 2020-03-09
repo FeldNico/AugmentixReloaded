@@ -23,6 +23,7 @@ public class OOIInfo : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
         _ooi = PhotonView.Find((int) info.photonView.InstantiationData[0]).GetComponent<OOI>();
+        transform.parent = _ooi.transform;
         switch (Type)
         {
             case InfoType.Text:

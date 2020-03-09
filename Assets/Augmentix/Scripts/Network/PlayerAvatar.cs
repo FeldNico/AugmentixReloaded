@@ -13,6 +13,7 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback
     public static PlayerAvatar Mine { private set; get; } = null;
     
     private Deskzone _deskzone;
+    private TargetManager.PlayerType Type;
     private void Start()
     {
         if (GetComponent<PhotonView>().IsMine)
@@ -20,18 +21,18 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback
         
         if ((string) GetComponent<PhotonView>().Owner.CustomProperties["Class"] == TargetManager.PlayerType.Primary.ToString())
         {
+            Type = TargetManager.PlayerType.Primary;
             if (TargetManager.Instance.Type == TargetManager.PlayerType.Primary)
             {
                 _deskzone = FindObjectOfType<Deskzone>();
-                /*
                 _deskzone.Inside += () => { ToggleVisibility(false); };
                 _deskzone.Outside += () => { ToggleVisibility(true); };
-                */
             }
             PrimaryAvatar = this;
         }
         else
         {
+            Type = TargetManager.PlayerType.Secondary;
             SecondaryAvatars.Add(this);
         }
     }
@@ -39,14 +40,7 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
         if (!info.photonView.IsMine)
-        {
             transform.parent = FindObjectOfType<VirtualCity>().transform;
-            
-            /*
-            if ((string) info.photonView.Owner.CustomProperties["Class"] == TargetManager.PlayerType.Primary.ToString())
-                GetComponent<Renderer>().enabled = false;
-                */
-        }
     }
 
     public void ToggleVisibility(bool isVisible)
@@ -62,7 +56,7 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback
 
     private void OnDestroy()
     {
-        if ((string) GetComponent<PhotonView>().Owner.CustomProperties["Class"] == TargetManager.PlayerType.Primary.ToString())
+        if (Type == TargetManager.PlayerType.Primary)
         {
             PrimaryAvatar = null;
         }

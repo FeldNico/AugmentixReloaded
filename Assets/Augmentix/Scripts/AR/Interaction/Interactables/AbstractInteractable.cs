@@ -10,6 +10,7 @@ public abstract class AbstractInteractable : MonoBehaviour
     public UnityAction<ARHand> OnInteractionEnd;
     public UnityAction<ARHand> OnInteractionKeep;
     public bool IsInteractedWith { private set; get; } = false;
+    public bool IsBlocked { protected set; get; }
     
     private IEnumerator _onPinchStayEnumerator(ARHand hand)
     {
@@ -18,6 +19,8 @@ public abstract class AbstractInteractable : MonoBehaviour
             yield return new WaitForEndOfFrame();
             if (IsInteractedWith)
                 OnInteractionKeep?.Invoke(hand);
+            else
+                break;
         }
     }
     

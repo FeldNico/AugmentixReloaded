@@ -30,7 +30,12 @@ public class ARHand : MonoBehaviour
             Debug.Log("New interactable: "+ (value != null ? value.gameObject.name:"null"));
             if (_currentInteractable != null)
                 _currentInteractable.OnInteractionEnd?.Invoke(this);
-            _currentInteractable = value;
+            
+            if (value == null || value.IsBlocked)
+                _currentInteractable = null;
+            else
+                _currentInteractable = value;
+
             if (_currentInteractable != null)
                 _currentInteractable.OnInteractionStart?.Invoke(this);
         }
