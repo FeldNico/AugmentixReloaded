@@ -5,12 +5,13 @@ using Augmentix.Scripts.OOI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions.Comparers;
+using UnityEngine.Video;
 
 public class InteractionSphere : AbstractInteractable
 {
     #if UNITY_WSA
     
-    public List<GameObject> MenuItems { private set; get; } = new List<GameObject>();
+    public Dictionary<GameObject,OOI.InteractionFlag> MenuItems { private set; get; } = new Dictionary<GameObject, OOI.InteractionFlag>();
     
     private Transform _ooiTransform;
     private Collider _collider;
@@ -38,25 +39,23 @@ public class InteractionSphere : AbstractInteractable
         base.Start();
         _warpzoneManager = FindObjectOfType<WarpzoneManager>();
         _interactionManager = FindObjectOfType<InteractionManager>();
-        var go = new GameObject();
-        go.transform.position = transform.position;
-
-        var interactionList = new List<OOI.InteractionFlag>();
-        if (_ooi.Flags.HasFlag(OOI.InteractionFlag.Text))
-        {
-            interactionList.Add(OOI.InteractionFlag.Text);
-        }
-        if (_ooi.Flags.HasFlag(OOI.InteractionFlag.Video))
-        {
-            interactionList.Add(OOI.InteractionFlag.Video);
-        }
-        if (_ooi.Flags.HasFlag(OOI.InteractionFlag.Highlight))
-        {
-            interactionList.Add(OOI.InteractionFlag.Highlight);
-        }
         
         OnInteractionStart += (hand) =>
         {
+            var interactionList = new List<OOI.InteractionFlag>();
+            if (_ooi.Flags.HasFlag(OOI.InteractionFlag.Text))
+            {
+                interactionList.Add(OOI.InteractionFlag.Text);
+            }
+            if (_ooi.Flags.HasFlag(OOI.InteractionFlag.Video))
+            {
+                interactionList.Add(OOI.InteractionFlag.Video);
+            }
+            if (_ooi.Flags.HasFlag(OOI.InteractionFlag.Highlight))
+            {
+                interactionList.Add(OOI.InteractionFlag.Highlight);
+            }
+            
             var joint = gameObject.GetComponent<FixedJoint>();
             if (joint == null)
                 joint = gameObject.AddComponent<FixedJoint>();
@@ -70,21 +69,48 @@ public class InteractionSphere : AbstractInteractable
                 {
                     case OOI.InteractionFlag.Text:
                     {
-                        item = Instantiate(_interactionManager.TextPrefab,transform.position,transform.rotation, transform);
+                        item = Instantiate(_interactionManager.TextPrefab,_warpzoneManager.ActiveWarpzone.transform.position,_warpzoneManager.ActiveWarpzone.transform.rotation * Quaternion.AngleAxis(180f, Vector3.up), transform);
+                        item.GetComponent<TextMeshPro>().text = _ooi.Text;
                         break;
                     }
                     case OOI.InteractionFlag.Video:
                     {
-                        item = Instantiate(_interactionManager.VideoPrefab,transform.position,transform.rotation, transform);
+                        item = Instantiate(_interactionManager.VideoPrefab,_warpzoneManager.ActiveWarpzone.transform.position,_warpzoneManager.ActiveWarpzone.transform.rotation, transform);
+                        var video = _ooi.GetComponent<VideoPlayer>();
+                        var scale = item.transform.localScale;
+                        scale.y *= (1f * video.height) / video.width;
+                        item.transform.localScale = scale;
+                        video.targetMaterialRenderer = item.GetComponent<Renderer>();
+                        for (ushort i = 0; i < video.audioTrackCount; i++)
+                        {
+                            video.SetDirectAudioMute( i,true);
+                        }
+                        video.Stop();
+                        video.Play();
                         break;
                     }
                     case OOI.InteractionFlag.Highlight:
                     {
-                        item = Instantiate(_interactionManager.HighlightPrefab,transform.position,transform.rotation, transform);
+                        item = Instantiate(_interactionManager.HighlightPrefab,_warpzoneManager.ActiveWarpzone.transform.position,_warpzoneManager.ActiveWarpzone.transform.rotation, transform);
                         break;
                     }
                 }
-                MenuItems.Add(item);
+                
+                MenuItems.Add(item,flag);
+            }
+
+            var camera = Camera.main.transform;
+            
+            var count = 0;
+            foreach (var menuItem in MenuItems.Keys)
+            {
+                var x = (float) (0.04f  * Math.Cos(2 * count * Math.PI / MenuItems.Count));
+                var y = (float) (0.04f  * Math.Sin(2 * count * Math.PI / MenuItems.Count));
+
+                menuItem.transform.position = transform.position + camera.up * x + camera.right * y;
+                menuItem.transform.LookAt(camera);
+                menuItem.transform.parent = _warpzoneManager.ActiveWarpzone.transform;
+                count++;
             }
         };
 
@@ -94,7 +120,18 @@ public class InteractionSphere : AbstractInteractable
             if (joint != null && joint.connectedBody == hand.PinchingSphere.GetComponent<Rigidbody>())
                 Destroy(joint);
             
+            if (_ooi.GetComponent<VideoPlayer>())
+                _ooi.GetComponent<VideoPlayer>().Stop();
             
+            foreach (var key in MenuItems.Keys)
+            {
+                if (key.GetComponent<SphereCollider>().bounds.Contains(transform.position))
+                {
+                    _ooi.Interact(MenuItems[key]);
+                }
+                Destroy(key);
+            }
+            MenuItems.Clear();
         };
         
     }

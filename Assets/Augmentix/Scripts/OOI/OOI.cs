@@ -66,7 +66,7 @@ namespace Augmentix.Scripts.OOI
         {
             var view = GetComponent<PhotonView>();
             
-            
+            Debug.Log("Interact: "+flag.ToString());
             /*
             if (TargetManager.Instance.Type == TargetManager.PlayerType.Primary)
                 view.RPC("Interact", RpcTarget.Others, flag);
@@ -160,7 +160,7 @@ namespace Augmentix.Scripts.OOI
                     _videoObjects[avatar] = video.GetComponent<OOIInfo>();
                 }
 
-                _moveVideo = StartCoroutine(MoveObject(_videoObjects, Quaternion.Euler(0, 0, 180),
+                _moveVideo = StartCoroutine(MoveObject(_videoObjects, Quaternion.identity, 
                     new Vector3(0, -0.4f, 0)));
             }
             else
@@ -207,7 +207,6 @@ namespace Augmentix.Scripts.OOI
                     newPosition = newPosition + objTransform.lossyScale.x * positionOffset.y * objTransform.up;
                     objTransform.position = Vector3.Lerp(objTransform.position, newPosition, 0.05f);
                     objTransform.LookAt(new Vector3(playerPosition.x, newPosition.y, playerPosition.z));
-                    objTransform.Rotate(Vector3.up, 180);
                     objTransform.rotation = objTransform.rotation * rotationOffset;
                 }
 

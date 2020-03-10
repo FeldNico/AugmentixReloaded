@@ -105,7 +105,7 @@ public class LeapMotionClient : LMProtocol, IOnEventCallback
                         arraySize += pinchingData.Length;
                         _messages.Add(pinchingData);
                         
-                        if (!hand.GetThumb().IsExtended && hand.GetIndex().IsExtended)
+                        if (!hand.GetThumb().IsExtended && hand.GetIndex().IsExtended && hand.PinchStrength < 0.2f)
                         {
                             var pointingData = new LMPointingMessage()
                             {

@@ -29,12 +29,14 @@ namespace Augmentix.Scripts.Network
         {
             m_PhotonView = GetComponent<PhotonView>();
 
-            m_StoredPosition = transform.position;
+            _virtualCityTransform = FindObjectOfType<VirtualCity>().transform;
+
+            m_StoredPosition = _virtualCityTransform.InverseTransformPoint(transform.position) ;
             m_NetworkPosition = Vector3.zero;
 
             m_NetworkRotation = Quaternion.identity;
 
-            _virtualCityTransform = FindObjectOfType<VirtualCity>().transform;
+            
         }
 
         void OnEnable()

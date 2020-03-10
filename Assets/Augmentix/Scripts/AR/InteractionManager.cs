@@ -5,6 +5,7 @@ using Augmentix.Scripts.OOI;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using Augmentix.Scripts.AR;
 using Augmentix.Scripts.VR;
 using Photon.Pun;
 using TMPro;
