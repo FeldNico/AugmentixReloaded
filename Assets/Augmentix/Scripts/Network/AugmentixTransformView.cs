@@ -48,8 +48,8 @@ namespace Augmentix.Scripts.Network
         {
             if (!this.m_PhotonView.IsMine)
             {
-                transform.position = Vector3.MoveTowards(transform.position, this.m_NetworkPosition, this.m_Distance * (1.0f / PhotonNetwork.SerializationRate));
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, this.m_NetworkRotation, this.m_Angle * (1.0f / PhotonNetwork.SerializationRate));
+                transform.position = Vector3.MoveTowards(transform.position, _virtualCityTransform.TransformPoint(this.m_NetworkPosition), this.m_Distance * (1.0f / PhotonNetwork.SerializationRate));
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, _virtualCityTransform.rotation * this.m_NetworkRotation, this.m_Angle * (1.0f / PhotonNetwork.SerializationRate));
             }
         }
 
@@ -97,19 +97,19 @@ namespace Augmentix.Scripts.Network
                 
                 if (this.m_SynchronizePosition)
                 {
-                    this.m_NetworkPosition = _virtualCityTransform.TransformPoint((Vector3)stream.ReceiveNext());
-                    this.m_Direction = _virtualCityTransform.TransformVector((Vector3)stream.ReceiveNext());
+                    this.m_NetworkPosition = (Vector3)stream.ReceiveNext();
+                    this.m_Direction = (Vector3)stream.ReceiveNext();
 
                     if (m_firstTake)
                     {
-                        transform.position = this.m_NetworkPosition;
+                        transform.position = _virtualCityTransform.TransformPoint(this.m_NetworkPosition);
                         this.m_Distance = 0f;
                     }
                     else
                     {
                         float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTime));
                         this.m_NetworkPosition += this.m_Direction * lag;
-                        this.m_Distance = Vector3.Distance(transform.position, this.m_NetworkPosition);
+                        this.m_Distance = Vector3.Distance(transform.position, this._virtualCityTransform.TransformPoint(m_NetworkPosition));
                     }
 
                    
@@ -117,16 +117,16 @@ namespace Augmentix.Scripts.Network
 
                 if (this.m_SynchronizeRotation)
                 {
-                    this.m_NetworkRotation = _virtualCityTransform.rotation * (Quaternion)stream.ReceiveNext();
+                    this.m_NetworkRotation =  (Quaternion)stream.ReceiveNext();
 
                     if (m_firstTake)
                     {
                         this.m_Angle = 0f;
-                        transform.localRotation = this.m_NetworkRotation;
+                        transform.localRotation = _virtualCityTransform.rotation *this.m_NetworkRotation;
                     }
                     else
                     {
-                        this.m_Angle = Quaternion.Angle(transform.rotation, this.m_NetworkRotation);
+                        this.m_Angle = Quaternion.Angle(transform.rotation, _virtualCityTransform.rotation * this.m_NetworkRotation);
                     }
                 }
 
