@@ -104,8 +104,8 @@ public class InteractionSphere : AbstractInteractable
             var count = 0;
             foreach (var menuItem in MenuItems.Keys)
             {
-                var x = (float) (0.04f  * Math.Cos(2 * count * Math.PI / MenuItems.Count));
-                var y = (float) (0.04f  * Math.Sin(2 * count * Math.PI / MenuItems.Count));
+                var x = (float) (_interactionManager.RadianUIRadius  * Math.Cos(2 * count * Math.PI / MenuItems.Count));
+                var y = (float) (_interactionManager.RadianUIRadius  * Math.Sin(2 * count * Math.PI / MenuItems.Count));
 
                 menuItem.transform.position = transform.position + camera.up * x + camera.right * y;
                 menuItem.transform.LookAt(camera);
@@ -162,13 +162,13 @@ public class InteractionSphere : AbstractInteractable
                     transform.position = center;
                 }
 
-                transform.localScale = Vector3.one * 0.03f;
+                transform.localScale = Vector3.one * _interactionManager.InteractionSphereScale;
             }
         }
         else
         {
-            transform.localScale = new Vector3(0.03f / transform.lossyScale.x, 0.03f / transform.lossyScale.y,
-                0.03f / transform.lossyScale.z);
+            transform.localScale = new Vector3(_interactionManager.InteractionSphereScale / transform.lossyScale.x, _interactionManager.InteractionSphereScale / transform.lossyScale.y,
+                _interactionManager.InteractionSphereScale/ transform.lossyScale.z);
             var center = _collider.bounds.center;
             transform.position = center + (new Vector3(center.x,
                                                _collider.ClosestPoint(new Vector3(center.x, float.MaxValue, center.z))

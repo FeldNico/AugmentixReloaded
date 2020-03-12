@@ -6,6 +6,7 @@ using System.IO;
 using Augmentix.Scripts.OOI.Editor;
 #endif
 using Augmentix.Scripts.VR;
+using ExitGames.Client.Photon;
 using InteractionEngineUtility;
 using Photon.Pun;
 using Photon.Realtime;
@@ -44,49 +45,65 @@ namespace Augmentix.Scripts.OOI
 
         [TextArea(15, 20)] public string Text;
 
-        private Collider _collider = null;
+        public Collider Collider { private set; get; } = null;
         private InteractionSphere _interactionSphere;
 
         private void Start()
         {
-            _collider = GetComponent<Collider>();
+            Collider = GetComponent<Collider>();
             if (TargetManager.Instance.Type == TargetManager.PlayerType.Primary)
             {
                 #if UNITY_WSA
                 _interactionSphere =
-                    Instantiate(FindObjectOfType<InteractionManager>().InteractionSpherePrefab, transform.position + new Vector3(0,_collider.bounds.size.y,0),
+                    Instantiate(FindObjectOfType<InteractionManager>().InteractionSpherePrefab, transform.position + new Vector3(0,Collider.bounds.size.y,0),
                         transform.rotation).GetComponent<InteractionSphere>();
                 _interactionSphere.OOI = this;
                 #endif
             }
+
+            if (Flags.HasFlag(InteractionFlag.Highlight))
+            {
+                var outline = gameObject.AddComponent<Outline>();
+                outline.OutlineMode = Outline.Mode.OutlineVisible;
+
+                StartCoroutine(nextFrame());
+                IEnumerator nextFrame()
+                {
+                    yield return new WaitForEndOfFrame();
+                    outline.enabled = false;
+                }
+            }
         }
 
+        private GameObject _prevHighlightTarget = null;
         [PunRPC]
         public void Interact(InteractionFlag flag)
         {
-            var view = GetComponent<PhotonView>();
-            
-            Debug.Log("Interact: "+flag.ToString());
-            /*
-            if (TargetManager.Instance.Type == TargetManager.PlayerType.Primary)
-                view.RPC("Interact", RpcTarget.Others, flag);
-                */
 
+            Debug.Log("Interact: "+flag.ToString());
+            
             switch (flag)
             {
                 case InteractionFlag.Highlight:
                 {
-                    /*
-                    if (VRUI.Instance)
+                    PhotonNetwork.RaiseEvent((byte) TargetManager.EventCode.HIGHLIGHT, photonView.ViewID,
+                        RaiseEventOptions.Default, SendOptions.SendReliable);
+                    
+                    if (_prevHighlightTarget != gameObject)
                     {
-                        VRUI.Instance.ToggleHighlightTarget(gameObject);
+                        if (_prevHighlightTarget != null)
+                            _prevHighlightTarget.GetComponent<Outline>().enabled = false;
+                        _prevHighlightTarget = gameObject;
                     }
-                    else
+                    
+                    var outline = gameObject.GetComponent<Outline>();
+                    if (!outline)
                     {
-                        OOIUI.Instance.ToggleHighlightTarget(gameObject);
+                        outline = gameObject.AddComponent<Outline>();
+                        outline.OutlineMode = Outline.Mode.OutlineVisible;
                     }
-                    */
-
+                    outline.enabled = !outline.enabled;
+                    
                     break;
                 }
                 case InteractionFlag.Video:
@@ -151,7 +168,7 @@ namespace Augmentix.Scripts.OOI
                 {
                     var video = PhotonNetwork.Instantiate(
                         "OOI" + Path.DirectorySeparatorChar + "Info" + Path.DirectorySeparatorChar +
-                        FindObjectOfType<InteractionManager>().VideoPrefab.name, _collider.bounds.center, transform.rotation,
+                        FindObjectOfType<InteractionManager>().VideoPrefab.name, Collider.bounds.center, transform.rotation,
                         (byte) TargetManager.Groups.PLAYERS, new object[] {photonView.ViewID});
                     video.transform.parent = transform;
                     var scale = video.transform.localScale;
@@ -186,7 +203,7 @@ namespace Augmentix.Scripts.OOI
                     var playerTransform = avatar.transform;
                     var playerPosition = playerTransform.position;
                     
-                    Vector3 nearestPoint = _collider.ClosestPoint(playerPosition);
+                    Vector3 nearestPoint = Collider.ClosestPoint(playerPosition);
 
                     nearestPoint.y = playerPosition.y;
 

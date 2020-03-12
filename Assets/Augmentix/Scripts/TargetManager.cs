@@ -33,6 +33,7 @@ namespace Augmentix.Scripts
             SEND_IP = 0x42,
             HAND_LOST = 0x43,
             EXTENDED = 0x44,
+            HIGHLIGHT = 0x45
         }
     
         public static TargetManager Instance { protected set; get; }
@@ -75,8 +76,6 @@ namespace Augmentix.Scripts
 
         public override void OnConnectedToMaster()
         {
-            
-            
             PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable {{"Class", Type.ToString()}});
             PhotonNetwork.JoinOrCreateRoom(ROOMNAME, new RoomOptions {MaxPlayers = 0}, TypedLobby.Default);
         }

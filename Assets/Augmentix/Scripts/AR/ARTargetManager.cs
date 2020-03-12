@@ -6,12 +6,12 @@ using System.Text;
 using ExitGames.Client.Photon;
 using UnityEngine;
 using UnityEngine.Events;
+using TMPro;
+using Photon.Pun;
 #if UNITY_WSA
 using Augmentix.Scripts.LeapMotion;
 using System.Collections;
 using Leap;
-using Photon.Pun;
-using TMPro;
 using UnityEngine.XR.WSA.Input;
 
 #endif
@@ -20,10 +20,10 @@ namespace Augmentix.Scripts.AR
 {
     public class ARTargetManager : TargetManager
     {
-#if UNITY_WSA
         public int Port = 1337;
         public ARHands Hands;
         public GameObject AvatarPrefab;
+        public GameObject WarpzoneDummyPrefab;
         [HideInInspector]
         public bool DoCalibrate = false;
         [HideInInspector]
@@ -36,6 +36,9 @@ namespace Augmentix.Scripts.AR
 
         new public void Awake()
         {
+            if (AvatarPrefab == null)
+                AvatarPrefab = Resources.Load<GameObject>("Primary_Avatar");
+            
             if (Hands == null)
                 Hands = FindObjectOfType<ARHands>();
             if (DebugText == null)
@@ -78,7 +81,7 @@ namespace Augmentix.Scripts.AR
                 if (AvatarPrefab != null)
                     Debug.Log(AvatarPrefab.name);
                 
-                var avatar = PhotonNetwork.Instantiate(AvatarPrefab != null ? AvatarPrefab.name : "Primary_Avatar", Camera.main.transform.position,
+                var avatar = PhotonNetwork.Instantiate(AvatarPrefab.name, Camera.main.transform.position,
                     Camera.main.transform.rotation);
                 
                 avatar.transform.parent = Camera.main.transform;
@@ -95,7 +98,5 @@ namespace Augmentix.Scripts.AR
                 Connect();
             }
         }
-#endif
-
     }
 }

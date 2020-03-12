@@ -1,8 +1,6 @@
-﻿#if UNITY_WSA
-using Augmentix.Scripts.OOI;
+﻿using Augmentix.Scripts.OOI;
 using Microsoft.MixedReality.Toolkit;
 using UnityEngine.Rendering;
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,15 +8,16 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Augmentix.Scripts.AR;
 using Augmentix.Scripts.VR;
-using Leap.Unity;
 using Microsoft.MixedReality.Toolkit.Utilities;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.Events;
 
+#if UNITY_WSA
 using Vuforia;
 
 [RequireComponent(typeof(ImageTargetBehaviour),typeof(DefaultTrackableEventHandler))]
+#endif
 public class Warpzone : MonoBehaviour
 {
     public Vector3 LocalPosition
@@ -26,7 +25,7 @@ public class Warpzone : MonoBehaviour
         set => _dummyTransform.localPosition = value;
         get => _dummyTransform.localPosition;
     }
-    
+
     public Vector3 Position
     {
         set => _dummyTransform.position = value;
@@ -39,42 +38,46 @@ public class Warpzone : MonoBehaviour
 
     public UnityAction OnFocus;
     public UnityAction OnFocusLost;
-    
+
+#if UNITY_WSA
     private ImageTargetBehaviour _behaviour;
     private DefaultTrackableEventHandler _eventHandler;
+#endif
     private GameObject _warpzonePositionDummy;
     private Transform _dummyTransform;
     private VirtualCity _virtualCity;
     private Transform _virtualCityTransform;
     private Camera _mainCamera;
     private WarpzoneManager _warpzoneManager;
-    [HideInInspector]
-    public ClippingBox ClippingBox = null;
+    [HideInInspector] public ClippingBox ClippingBox = null;
 
     public bool doRender = false;
+
     // Start is called before the first frame update
     void Start()
     {
         _mainCamera = Camera.main;
+#if UNITY_WSA
         _behaviour = GetComponent<ImageTargetBehaviour>();
         _eventHandler = GetComponent<DefaultTrackableEventHandler>();
+#endif
         _virtualCity = FindObjectOfType<VirtualCity>();
         _virtualCityTransform = _virtualCity.transform;
         _warpzoneManager = FindObjectOfType<WarpzoneManager>();
-        
+
         _warpzonePositionDummy = new GameObject("TangiblePosition");
         _dummyTransform = _warpzonePositionDummy.transform;
         _dummyTransform.parent = _virtualCityTransform;
-        _dummyTransform.localPosition = new Vector3(46.2f,0,374.1f);
+        _dummyTransform.localPosition = new Vector3(46.2f, 0, 374.1f);
         _dummyTransform.localScale = Vector3.one;
         _dummyTransform.localRotation = Quaternion.identity;
 
         var collider = gameObject.AddComponent<BoxCollider>();
-        collider.size = new Vector3(2f,0,2f);
+        collider.size = new Vector3(2f, 0, 2f);
         collider.isTrigger = true;
         collider.enabled = false;
-        
-        
+
+#if UNITY_WSA
         _eventHandler.OnTargetFound.AddListener(() =>
         {
             Debug.Log("Found Trackable");
@@ -87,14 +90,15 @@ public class Warpzone : MonoBehaviour
             doRender = false;
             collider.enabled = false;
         });
-        
+#endif
+
         gameObject.layer = LayerMask.NameToLayer("WarpzoneRaycast");
     }
 
     private void LateUpdate()
     {
         _mainCamera.RemoveAllCommandBuffers();
-        
+
         if (doRender && PhotonNetwork.IsConnected)
         {
             var warpzoneMatrix = Matrix4x4.TRS(_dummyTransform.localPosition,
@@ -108,19 +112,23 @@ public class Warpzone : MonoBehaviour
                 var mesh = valueTuple.Item3;
                 var materials = valueTuple.Item4;
                 var scale = valueTuple.Item5;
-                
-                if ( Vector3.Distance(_dummyTransform.localPosition, _virtualCityTransform.InverseTransformPoint(trans.position)) < 2 * DisplaySize / transform.localScale.x)
+
+                if (Vector3.Distance(_dummyTransform.localPosition,
+                        _virtualCityTransform.InverseTransformPoint(trans.position)) <
+                    2 * DisplaySize / transform.localScale.x)
                 {
-                    Matrices[trans]  = transform.localToWorldMatrix  * warpzoneMatrix * Matrix4x4.TRS(_virtualCityTransform.InverseTransformPoint(trans.position),
-                                _virtualCityTransform.InverseTransformRotation(trans.rotation),
-                                trans.lossyScale * scale);
+                    Matrices[trans] = transform.localToWorldMatrix * warpzoneMatrix * Matrix4x4.TRS(
+                                          _virtualCityTransform.InverseTransformPoint(trans.position),
+                                          Quaternion.Inverse(_virtualCityTransform.rotation) * trans.rotation,
+                                          trans.lossyScale * scale);
 
                     for (int i = 0; i < mesh.sharedMesh.subMeshCount; i++)
                     {
-                        _commandBuffer.DrawMesh(mesh.sharedMesh,Matrices[trans],materials[i],i,-1);
+                        _commandBuffer.DrawMesh(mesh.sharedMesh, Matrices[trans], materials[i], i, -1);
                     }
                 }
             }
+
             _mainCamera.AddCommandBuffer(CameraEvent.BeforeForwardOpaque, _commandBuffer);
         }
     }
@@ -145,6 +153,7 @@ public class Warpzone : MonoBehaviour
                 {
                     _indicator = Instantiate(_warpzoneManager.WarpzoneGazeIndicator, transform);
                 }
+
                 _indicator.GetComponent<Renderer>().material.color = Color.green;
                 break;
             }
@@ -154,10 +163,10 @@ public class Warpzone : MonoBehaviour
                 {
                     _indicator = Instantiate(_warpzoneManager.WarpzoneGazeIndicator, transform);
                 }
+
                 _indicator.GetComponent<Renderer>().material.color = Color.blue;
                 break;
             }
         }
     }
 }
-#endif

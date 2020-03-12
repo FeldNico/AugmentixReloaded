@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Augmentix.Scripts;
 using Photon.Pun;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(PhotonView))]
 public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback
@@ -11,6 +12,9 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback
     public static List<PlayerAvatar> SecondaryAvatars { private set; get; } = new List<PlayerAvatar>();
     public static PlayerAvatar PrimaryAvatar { private set; get; } = null;
     public static PlayerAvatar Mine { private set; get; } = null;
+
+    public static UnityAction<PlayerAvatar> AvatarCreated;
+    public static UnityAction<PlayerAvatar> AvatarLost;
     
     private Deskzone _deskzone;
     private TargetManager.PlayerType Type;
@@ -35,6 +39,7 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback
             Type = TargetManager.PlayerType.Secondary;
             SecondaryAvatars.Add(this);
         }
+        AvatarCreated?.Invoke(this);
     }
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)
@@ -56,6 +61,7 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback
 
     private void OnDestroy()
     {
+        AvatarLost?.Invoke(this);
         if (Type == TargetManager.PlayerType.Primary)
         {
             PrimaryAvatar = null;

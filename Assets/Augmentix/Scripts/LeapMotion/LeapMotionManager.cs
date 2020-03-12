@@ -33,6 +33,7 @@ public class LeapMotionManager : TargetManager
 
     public override void OnJoinedRoom()
     {
+        Debug.Log("On Joined Room");
         WaitForPlayer(PlayerType.Primary,CheckUpdateRate, () =>
         {
             Debug.Log("Primary found!");

@@ -55,14 +55,17 @@ public class LMPinchPoseMessage : ILMMessage
         hand.Palm.transform.localRotation = PalmRotation;
         hand.Palm.transform.localPosition = PalmPosition;
         hand.PinchingSphere.gameObject.SetActive(true);
-        if (!hand.IsPinching && PinchStrength > 0.9F)
+        //Debug.Log(PinchStrength);
+        if (!hand.IsPinching && PinchStrength > 0.9f)
         {
+            Debug.Log("Pinch start: "+PinchStrength);
             hand.IsPinching = true;
             hand.OnPinchStart?.Invoke();
         }
 
-        if (hand.IsPinching && PinchStrength <= 0.9F)
+        if (hand.IsPinching && PinchStrength <= 0.9f)
         {
+            Debug.Log("Pinch end: "+PinchStrength);
             hand.IsPinching = false;
             hand.OnPinchEnd?.Invoke();
         }

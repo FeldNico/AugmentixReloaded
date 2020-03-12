@@ -1,4 +1,4 @@
-﻿#if UNITY_WSA
+﻿
 using System;
 using System.CodeDom.Compiler;
 using System.Collections;
@@ -70,4 +70,3 @@ public class WarpzoneManager : MonoBehaviour
         }
     }
 }
-#endif

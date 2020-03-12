@@ -46,22 +46,27 @@ public class VirtualCity : MonoBehaviour
                 {
                     Debug.Log("Child count changed");
                     childCount = count;
-                    _renderList.Clear();
-                    foreach (var child in GetComponentsInChildren<Renderer>())
-                    {
-                        var mesh = child.GetComponent<MeshFilter>();
-                        if (mesh == null)
-                            continue;
-
-                        _renderList.Add((child.transform, child, child.GetComponent<MeshFilter>(), child.materials,
-                            child.GetComponent<PlayerAvatar>() == null ? 1f : 10f));
-                    }
+                    RefreshRenderList();
                 }
             }
         }
     }
 
 
+    public void RefreshRenderList()
+    {
+        _renderList.Clear();
+        foreach (var child in GetComponentsInChildren<Renderer>())
+        {
+            var mesh = child.GetComponent<MeshFilter>();
+            if (mesh == null)
+                continue;
+
+            _renderList.Add((child.transform, child, child.GetComponent<MeshFilter>(), child.materials,
+                child.GetComponent<PlayerAvatar>() == null ? 1f : 10f));
+        }
+    }
+    
     private int CountChildren(Transform transform)
     {
         int count = transform.childCount; // direct child count.

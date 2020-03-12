@@ -1,4 +1,4 @@
-﻿#if UNITY_WSA
+﻿
 using System;
 using Augmentix.Scripts.OOI;
 
@@ -11,8 +11,6 @@ using Photon.Pun;
 using TMPro;
 using UnityEngine;
 
-using Vuforia;
-
 
 public class InteractionManager : MonoBehaviour
 {
@@ -20,6 +18,9 @@ public class InteractionManager : MonoBehaviour
     public GameObject TextPrefab;
     public GameObject VideoPrefab;
     public GameObject HighlightPrefab;
+
+    public float InteractionSphereScale = 0.03f;
+    public float RadianUIRadius = 0.04f;
     
     private Deskzone _deskzone;
     private WarpzoneManager _warpzoneManager;
@@ -163,4 +164,3 @@ public class InteractionManager : MonoBehaviour
         }
     }
 }
-#endif

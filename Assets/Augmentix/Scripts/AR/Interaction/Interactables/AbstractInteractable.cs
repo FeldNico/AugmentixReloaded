@@ -37,9 +37,9 @@ public abstract class AbstractInteractable : MonoBehaviour
         };
         OnInteractionEnd += hand =>
         {
-            IsInteractedWith = false;
             if (enumerator != null)
                 StopCoroutine(enumerator);
+            IsInteractedWith = false;
         };
     }
 }
