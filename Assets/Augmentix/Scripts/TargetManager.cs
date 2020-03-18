@@ -33,7 +33,8 @@ namespace Augmentix.Scripts
             SEND_IP = 0x42,
             HAND_LOST = 0x43,
             EXTENDED = 0x44,
-            HIGHLIGHT = 0x45
+            HIGHLIGHT = 0x45,
+            NAVIGATION = 0x46,
         }
     
         public static TargetManager Instance { protected set; get; }

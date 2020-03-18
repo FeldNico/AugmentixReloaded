@@ -12,7 +12,7 @@ namespace Augmentix.Scripts.AR
     {
         public float PlayerScale;
         public float Scale;
-        public Vector3 MapOffset = new Vector3(1.694f,0f,1.261f);
+        public Vector3 MapOffset = new Vector3(1.694f,-0.4f,1.261f);
         public GameObject Scaler { private set; get; }
         public Dictionary<PlayerAvatar,GameObject> AvatarDummies { private set; get; } = new Dictionary<PlayerAvatar, GameObject>();
         public Dictionary<Warpzone,GameObject> WarpzoneDummies { private set; get; } = new Dictionary<Warpzone, GameObject>();

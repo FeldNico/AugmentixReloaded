@@ -156,8 +156,11 @@ public class InteractionManager : MonoBehaviour
                     vec -=0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * rightProject;
                 else if (Input.GetKey(KeyCode.D))
                     vec +=0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * rightProject;
+
+                vec = _virtualCity.transform.InverseTransformVector(vec);
+                vec.y = 0;
                 
-                _warpzoneManager.ActiveWarpzone.Position += vec;
+                _warpzoneManager.ActiveWarpzone.LocalPosition += vec;
             }
 
             

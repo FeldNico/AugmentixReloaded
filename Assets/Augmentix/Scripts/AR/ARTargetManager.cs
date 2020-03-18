@@ -87,6 +87,7 @@ namespace Augmentix.Scripts.AR
                 avatar.transform.parent = Camera.main.transform;
                 avatar.GetComponent<Renderer>().enabled = false;
             };
+            Connect();
         }
 
         public void SetupDeskzoneAndConnect()
