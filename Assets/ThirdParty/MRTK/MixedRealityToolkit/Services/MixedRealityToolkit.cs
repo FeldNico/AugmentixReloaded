@@ -625,7 +625,12 @@ namespace Microsoft.MixedReality.Toolkit
         {
             if (IsActiveInstance)
             {
-                UpdateAllServices();
+                if (HasProfileAndIsInitialized)
+                {
+                    foreach (var system in MixedRealityServiceRegistry.GetAllServices())
+                        system.Update();
+                }
+                //UpdateAllServices();
             }
         }
 
@@ -633,7 +638,19 @@ namespace Microsoft.MixedReality.Toolkit
         {
             if (IsActiveInstance)
             {
-                LateUpdateAllServices();
+                // If the Mixed Reality Toolkit is not configured, stop.
+                if (activeProfile == null) { return; }
+
+                // If the Mixed Reality Toolkit is not initialized, stop.
+                if (!IsInitialized) { return; }
+                
+                if (HasProfileAndIsInitialized)
+                {
+                    foreach (var system in MixedRealityServiceRegistry.GetAllServices())
+                        system.LateUpdate();
+                }
+                
+                //LateUpdateAllServices();
             }
         }
 

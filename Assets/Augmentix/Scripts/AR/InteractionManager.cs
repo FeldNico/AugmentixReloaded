@@ -41,7 +41,8 @@ public class InteractionManager : MonoBehaviour
     {
         if (PhotonNetwork.IsConnected)
         {
-            HandleWarpzoneGazing();
+            if (_deskzone.IsInside)
+                HandleWarpzoneGazing();
             HandleWarpzoneMoving();
         }
     }

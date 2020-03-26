@@ -13,14 +13,14 @@ public class MapTargetDummy : MonoBehaviour
     public MonoBehaviour Target;
 
     private InteractionManager _interactionManager;
-    private MapTarget _mapTarget;
+    private Map _map;
     private Moveable _interactable;
     private LineRenderer _lineRenderer;
 
     void Start()
     {
         _interactionManager = FindObjectOfType<InteractionManager>();
-        _mapTarget = FindObjectOfType<MapTarget>();
+        _map = FindObjectOfType<Map>();
         var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         sphere.name = "InteractionSphere " + gameObject.name;
         sphere.GetComponent<SphereCollider>().isTrigger = true;
@@ -33,7 +33,7 @@ public class MapTargetDummy : MonoBehaviour
         {
             _interactable.OnInteractionKeep += (hand) =>
             {
-                var localPos = _mapTarget.Scaler.transform.InverseTransformPoint(_interactable.transform.position);
+                var localPos = _map.Scaler.transform.InverseTransformPoint(_interactable.transform.position);
                 localPos.y = 0;
                 ((Warpzone) Target).LocalPosition = localPos;
             };
@@ -42,35 +42,52 @@ public class MapTargetDummy : MonoBehaviour
         {
             _lineRenderer = gameObject.AddComponent<LineRenderer>();
             _lineRenderer.useWorldSpace = true;
-            _lineRenderer.startColor = Color.blue;
-            _lineRenderer.endColor = Color.blue;
+            _lineRenderer.material = _map.LineMaterial;
+            _lineRenderer.material.color = Color.blue;
+            _lineRenderer.startWidth = 0.01f;
+            _lineRenderer.endWidth = 0.01f;
             _lineRenderer.enabled = false;
-            
+
+            _interactable.OnInteractionStart += (hand) =>
+            {
+                _lineRenderer.material.color = Color.green;
+                _lineRenderer.enabled = true;
+            };
+
             _interactable.OnInteractionEnd += (hand) =>
             {
-                var localPos = _mapTarget.Scaler.transform.InverseTransformPoint(_interactable.transform.position);
+                var localPos = _map.Scaler.transform.InverseTransformPoint(_interactable.transform.position);
                 localPos.y = 0;
+                _lineRenderer.material.color = Color.blue;
                 PhotonNetwork.RaiseEvent((byte) TargetManager.EventCode.NAVIGATION,
                     localPos,
                     RaiseEventOptions.Default, SendOptions.SendReliable);
+            };
 
+            _interactable.OnInteractionKeep += (hand) =>
+            {
                 _lineRenderer.enabled = true;
-                _lineRenderer.SetPosition(1,_mapTarget.Scaler.transform.TransformPoint(localPos));
+                var localPos = _map.Scaler.transform.InverseTransformPoint(_interactable.transform.position);
+                localPos.y = 0;
+                _lineRenderer.SetPosition(1, _map.Scaler.transform.TransformPoint(localPos));
             };
         }
     }
 
     private void Update()
     {
-        if (!_interactable.IsInteractedWith && !_interactable.IsBlocked)
-            _interactable.transform.position =
-                transform.position + _mapTarget.transform.up * (Target is Warpzone ? 0.07f : 0.035f);
-
-        if (_lineRenderer && _lineRenderer.enabled)
+        if (Time.frameCount % 10 == 0)
         {
-            _lineRenderer.SetPosition(0,transform.position);
-            if (Vector3.Distance(_lineRenderer.GetPosition(0), _lineRenderer.GetPosition(1)) < 0.02f)
-                _lineRenderer.enabled = false;
+            if (!_interactable.IsInteractedWith && !_interactable.IsBlocked)
+                _interactable.transform.position =
+                    transform.position + _map.transform.up * (Target is Warpzone ? 0.07f : 0.035f);
+
+            if (_lineRenderer && _lineRenderer.enabled)
+            {
+                _lineRenderer.SetPosition(0, transform.position);
+                if (Vector3.Distance(_lineRenderer.GetPosition(0), _lineRenderer.GetPosition(1)) < 0.02f)
+                    _lineRenderer.enabled = false;
+            }
         }
     }
 

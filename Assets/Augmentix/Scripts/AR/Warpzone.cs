@@ -145,26 +145,35 @@ public class Warpzone : MonoBehaviour
                     Destroy(_indicator);
 
                 _indicator = null;
+                
+                var dummy = FindObjectsOfType<MapTargetDummy>().First(target => target.Target == this);
+                if (dummy != null)
+                    dummy.GetComponentInChildren<Renderer>().material.color = Color.blue;
+                
                 break;
             }
             case WarpzoneManager.IndicatorMode.Gazed:
             {
                 if (_indicator == null)
-                {
                     _indicator = Instantiate(_warpzoneManager.WarpzoneGazeIndicator, transform);
-                }
 
-                _indicator.GetComponent<Renderer>().material.color = Color.green;
+                var dummy = FindObjectsOfType<MapTargetDummy>().First(target => target.Target == this);
+                if (dummy != null)
+                    dummy.GetComponentInChildren<Renderer>().material.color = Color.blue;
+
+                _indicator.GetComponent<Renderer>().material.color = Color.blue;
                 break;
             }
             case WarpzoneManager.IndicatorMode.Selected:
             {
                 if (_indicator == null)
-                {
                     _indicator = Instantiate(_warpzoneManager.WarpzoneGazeIndicator, transform);
-                }
 
-                _indicator.GetComponent<Renderer>().material.color = Color.blue;
+                var dummy = FindObjectsOfType<MapTargetDummy>().First(target => target.Target == this);
+                if (dummy != null)
+                    dummy.GetComponentInChildren<Renderer>().material.color = Color.green;
+                
+                _indicator.GetComponent<Renderer>().material.color = Color.green;
                 break;
             }
         }

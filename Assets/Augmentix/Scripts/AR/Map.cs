@@ -5,13 +5,15 @@ using System.Linq;
 using Augmentix.Scripts.Network;
 using Photon.Pun;
 using UnityEngine;
+using Vuforia;
 
 namespace Augmentix.Scripts.AR
 {
-    public class MapTarget : MonoBehaviour
+    public class Map : MonoBehaviour
     {
         public float PlayerScale;
         public float Scale;
+        public Material LineMaterial;
         public Vector3 MapOffset = new Vector3(1.694f,-0.4f,1.261f);
         public GameObject Scaler { private set; get; }
         public Dictionary<PlayerAvatar,GameObject> AvatarDummies { private set; get; } = new Dictionary<PlayerAvatar, GameObject>();
@@ -81,20 +83,30 @@ namespace Augmentix.Scripts.AR
             }
         }
 
+        public void StopTracking()
+        {
+            var parent = transform.parent;
+            transform.parent = null;
+            parent.gameObject.SetActive(false);
+        }
+
         void Update()
         {
-            foreach (var dummy in Dummies)
+            if (Time.frameCount % 5 == 0)
             {
-                var target = dummy.Target;
+                foreach (var dummy in Dummies)
+                {
+                    var target = dummy.Target;
                 
-                if (target is PlayerAvatar)
-                {
-                    dummy.transform.localPosition = _virtualCity.transform.InverseTransformPoint(target.transform.position);
-                    dummy.transform.localRotation =
-                        Quaternion.Inverse(_virtualCity.transform.rotation) * target.transform.rotation;
-                } else if (target is Warpzone)
-                {
-                    dummy.transform.localPosition = ((Warpzone) target).LocalPosition;
+                    if (target is PlayerAvatar)
+                    {
+                        dummy.transform.localPosition = _virtualCity.transform.InverseTransformPoint(target.transform.position);
+                        dummy.transform.localRotation =
+                            Quaternion.Inverse(_virtualCity.transform.rotation) * target.transform.rotation;
+                    } else if (target is Warpzone)
+                    {
+                        dummy.transform.localPosition = ((Warpzone) target).LocalPosition;
+                    }
                 }
             }
         }

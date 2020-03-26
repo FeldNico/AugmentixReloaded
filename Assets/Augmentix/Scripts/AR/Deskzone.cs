@@ -35,7 +35,7 @@ public class Deskzone : MonoBehaviour
 
     void Update()
     {
-        if (PhotonNetwork.IsConnected)
+        if (PhotonNetwork.IsConnected && Time.frameCount % 10 == 0)
         {
             if (_renderer.bounds.Contains(_mainCameraTransform.position))
             {

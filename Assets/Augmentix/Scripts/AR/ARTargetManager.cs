@@ -94,8 +94,10 @@ namespace Augmentix.Scripts.AR
         {
             if (!PhotonNetwork.IsConnected)
             {
-                FindObjectOfType<VirtualCity>().transform.parent = null;
-                FindObjectOfType<Deskzone>().transform.parent = null;
+                var target = _virtualCity.transform.parent;
+                _virtualCity.transform.parent = null;
+                _deskzone.transform.parent = null;
+                target.gameObject.SetActive(false);
                 Connect();
             }
         }

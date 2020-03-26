@@ -71,17 +71,20 @@ namespace Augmentix.Scripts.VR
             }
             else
             {
-                _indicator.SetActive(false);
                 if (_currentTarget.GetComponent<Outline>()) 
                     _currentTarget.GetComponent<Outline>().enabled = false;
-                _currentTarget = null;
-                try
+                if (Target != _navigationDummy)
                 {
-                    StopCoroutine(_indicatorRotate);
-                }
-                catch (Exception e)
-                {
-                    // ignored
+                    _indicator.SetActive(false);
+                    _currentTarget = null;
+                    try
+                    {
+                        StopCoroutine(_indicatorRotate);
+                    }
+                    catch (Exception e)
+                    {
+                        // ignored
+                    }
                 }
             }
 
@@ -117,7 +120,7 @@ namespace Augmentix.Scripts.VR
                 }
                 case (byte) TargetManager.EventCode.NAVIGATION:
                 {
-                    if (_navigationDummy == null)
+                    if (_navigationDummy != null)
                     {
                         _navigationDummy = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         _navigationDummy.GetComponent<Renderer>().enabled = false;

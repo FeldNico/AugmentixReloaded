@@ -28,6 +28,19 @@ namespace Augmentix.Scripts.VR
                 avatar.GetComponent<Renderer>().enabled = false;
             };
             Connect();
+            
+            
+        }
+
+        void Update()
+        {
+            foreach (var button in (OVRInput.Button[]) Enum.GetValues(typeof(OVRInput.Button)))
+            {
+                if (OVRInput.GetDown(button))
+                {
+                    Debug.Log(Enum.GetName(typeof(OVRInput.Button),button));
+                }
+            }
         }
     }
 }

@@ -32,5 +32,8 @@ public class Moveable : AbstractInteractable, IPunInstantiateMagicCallback
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
         transform.parent = FindObjectOfType<VirtualCity>().transform;
+#if UNITY_ANDROID
+        var grabber = gameObject.AddComponent<OVRGrabbable>();
+#endif
     }
 }

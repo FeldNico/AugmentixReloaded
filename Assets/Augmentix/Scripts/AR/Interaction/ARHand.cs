@@ -81,6 +81,7 @@ public class ARHand : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    /*
     public void Update()
     {
 
@@ -99,4 +100,5 @@ public class ARHand : MonoBehaviour
             _lineRenderer.SetPosition(1, Vector3.zero);
         }
     }
+    */
 }

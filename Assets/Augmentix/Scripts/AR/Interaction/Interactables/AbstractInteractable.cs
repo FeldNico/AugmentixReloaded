@@ -32,8 +32,8 @@ public abstract class AbstractInteractable : MonoBehaviour
         OnInteractionStart += hand =>
         {
             IsInteractedWith = true;
-            enumerator = _onPinchStayEnumerator(hand);
-            StartCoroutine(enumerator);
+            //enumerator = _onPinchStayEnumerator(hand);
+            //StartCoroutine(enumerator);
         };
         OnInteractionEnd += hand =>
         {
