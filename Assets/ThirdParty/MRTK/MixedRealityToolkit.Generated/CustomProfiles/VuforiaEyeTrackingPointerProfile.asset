@@ -17,13 +17,14 @@ MonoBehaviour:
   pointingRaycastLayerMasks:
   - serializedVersion: 2
     m_Bits: 4294967291
-  debugDrawPointingRays: 1
+  debugDrawPointingRays: 0
   debugDrawPointingRayColors:
   - {r: 0, g: 1, b: 0, a: 1}
   gazeCursorPrefab: {fileID: 1000012072213228, guid: 521049f9431e342478200d59fce43f92,
     type: 3}
   gazeProviderType:
     reference: Microsoft.MixedReality.Toolkit.Input.GazeProvider, Microsoft.MixedReality.Toolkit.Services.InputSystem
+  isEyeTrackingEnabled: 1
   pointerOptions:
   - controllerType: 256
     handedness: 7

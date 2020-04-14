@@ -1,4 +1,4 @@
-﻿/*===============================================================================
+/*===============================================================================
 Copyright (c) 2019 PTC Inc. All Rights Reserved.
 
 Vuforia is a trademark of PTC Inc., registered in the United States and other
@@ -50,6 +50,12 @@ public class SafeAreaManager : MonoBehaviour
 
     void Awake()
     {
+        if (!topArea || !bottomArea)
+        {
+            Debug.LogWarning("Either topArea or bottomArea is null. Programmatically getting the required references.");
+            SetAreaRectTransforms();
+        }
+        
         // cache our unsafe area image components
         this.topAreaImage = this.topArea.GetComponent<Image>();
         this.bottomAreaImage = this.bottomArea.GetComponent<Image>();
@@ -60,6 +66,19 @@ public class SafeAreaManager : MonoBehaviour
         this.safeArea = GetSafeArea();
     }
 
+    void SetAreaRectTransforms()
+    {
+        var images = GetComponentsInChildren<Image>();
+        if (images.Length != 2)
+        {
+            Debug.LogError($"SafeAreaManager must have exactly two children with Image components attached.");
+            return;
+        }
+
+        topArea = images[0].rectTransform;
+        bottomArea = images[1].rectTransform;
+    }
+    
     Rect GetSafeArea()
     {
         return new Rect(
@@ -182,7 +201,7 @@ public class SafeAreaManager : MonoBehaviour
     /// </summary>
     /// <param name="topColor">Top color.</param>
     /// <param name="bottomColor">Bottom color.</param>
-    public void SetAreaColors(Color topColor = default, Color bottomColor = default)
+    public void SetAreaColors(Color topColor, Color bottomColor)
     {
         // update Inspector-level colors to match programmatic ones
         this.topAreaColor = topColor;

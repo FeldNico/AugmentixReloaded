@@ -49,7 +49,6 @@ public class Warpzone : MonoBehaviour
     private Transform _virtualCityTransform;
     private Camera _mainCamera;
     private WarpzoneManager _warpzoneManager;
-    [HideInInspector] public ClippingBox ClippingBox = null;
 
     public bool doRender = false;
 
@@ -101,6 +100,7 @@ public class Warpzone : MonoBehaviour
 
         if (doRender && PhotonNetwork.IsConnected)
         {
+
             var warpzoneMatrix = Matrix4x4.TRS(_dummyTransform.localPosition,
                 _dummyTransform.localRotation, _dummyTransform.localScale / Scale).inverse;
 

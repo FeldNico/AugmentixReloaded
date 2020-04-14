@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 6188290876310147159}
   - component: {fileID: 6090505260722842481}
   - component: {fileID: 7893586524990607025}
-  - component: {fileID: -4276797985108164634}
   - component: {fileID: -2888224954848449012}
   - component: {fileID: -967186052930753173}
   m_Layer: 0
@@ -102,7 +101,7 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
-  OwnershipTransfer: 0
+  OwnershipTransfer: 1
   ObservedComponents:
   - {fileID: 6188290876310147159}
   viewIdField: 0
@@ -152,18 +151,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &-4276797985108164634
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7486777772794237263}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 23474862d7d29c24c9b7fbae27ba8ea3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &-2888224954848449012
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -176,8 +163,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c2cdb0a7cb552a44af84d6c27459fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Flags: 39
-  Text: 
+  StaticOOI: 0
+  Flags: 15
+  Text: jnhgjgifuzgkihgkhjgkfgjzggfkgloiouluil
 --- !u!328 &-967186052930753173
 VideoPlayer:
   m_ObjectHideFlags: 0
@@ -186,7 +174,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7486777772794237263}
   m_Enabled: 1
-  m_VideoClip: {fileID: 0}
+  m_VideoClip: {fileID: 32900000, guid: ac0db4fa73b13ad4ba3bed45c9ca37f4, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
@@ -207,7 +195,7 @@ VideoPlayer:
   m_EnabledAudioTracks: 01
   m_DirectAudioMutes: 00
   m_ControlledAudioTrackCount: 1
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_SkipOnDrop: 1
   m_Looping: 0
   m_WaitForFirstFrame: 1

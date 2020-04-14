@@ -5,7 +5,6 @@ Vuforia is a trademark of PTC Inc., registered in the United States and other
 countries.
 ===============================================================================*/
 
-#if UNITY_WSA
 using System.Collections.Generic;
 using UnityEngine;
 using Vuforia;
@@ -365,28 +364,27 @@ public class AboutScreenInfo
             description +
             "\nThe Model Targets Sample shows how to detect a 3D object and " +
             "render a simple 3D representation over it. The sample demonstrates " +
-            "how Standard, Advanced, and 360 DataSets work." +
+            "how Standard and Advanced DataSets work." +
             "\n\n" +
             keyFunctionality +
             "\n• Standard Model Target: Loads a Model Target with multiple Guide Views " +
             "that can be cycled with the click of a button and used to pick which view " +
             "to detect of the physical model" +
             "\n• Advanced Model Target: Loads two Model Targets that have automatic " +
-            "detection and snapping of Guide Views to the physical models" +
-            "\n• Model Target 360: Loads a Model Target that can be detected from arbitrary views" +
+            "detection from arbitrary views and snapping of Guide Views to the physical models" +
             "\n• Automatic 3D object tracking after successful detection" +
             "\n• Extended Tracking when target is not visible in the camera view" +
             "\n\n" +
             targets +
             "\n• Model Target: 3D Printed Model (Mars Lander)" +
-            "\n• Model Target: Toy Model (Bike)" +
+            "\n• Model Target: Toy Model (Polaris RZR)" +
             "\n\n" +
             instructions +
             "\n• Point camera at target to view" +
             "\n• Double tap to focus" +
             "\n• Switch to access a different dataset" +
-            "\n• Mars Lander is in all three datasets" +
-            "\n• Motorcycle is in the Advanced dataset" +
+            "\n• Mars Lander is in both datasets" +
+            "\n• Polaris RZR is in the Advanced dataset" +
             "\n• Change the Detection Position if needed" +
             "\n\n" +
             footer + "\n");
@@ -536,4 +534,3 @@ public class AboutScreenInfo
     #endregion // CONSTRUCTOR
 
 }
-#endif

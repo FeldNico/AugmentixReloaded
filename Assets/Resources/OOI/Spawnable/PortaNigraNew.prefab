@@ -102,7 +102,7 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
-  OwnershipTransfer: 0
+  OwnershipTransfer: 1
   ObservedComponents:
   - {fileID: -1731436949436616030}
   viewIdField: 0
@@ -176,6 +176,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c2cdb0a7cb552a44af84d6c27459fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  StaticOOI: 0
   Flags: 39
   Text: 
 --- !u!328 &-1930418670060146556

@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: VuforiaMainMenuMRSpeechCommandsProfile
   m_EditorClassIdentifier: 
   isCustomProfile: 1
-  startBehavior: 0
+  startBehavior: 1
   recognitionConfidenceLevel: 1
   speechCommands:
   - localizationKey: 
     keyword: Menu
-    keyCode: 51
+    keyCode: 101
     action:
       id: 2
       description: Menu
@@ -32,14 +32,14 @@ MonoBehaviour:
       axisConstraint: 2
   - localizationKey: 
     keyword: Hide Hand
-    keyCode: 48
+    keyCode: 107
     action:
       id: 0
       description: None
       axisConstraint: 0
   - localizationKey: 
     keyword: Show Hand
-    keyCode: 57
+    keyCode: 108
     action:
       id: 0
       description: None
@@ -80,43 +80,22 @@ MonoBehaviour:
       description: None
       axisConstraint: 0
   - localizationKey: 
-    keyword: Options
-    keyCode: 111
-    action:
-      id: 0
-      description: Navigation Action
-      axisConstraint: 0
-  - localizationKey: 
-    keyword: Features
-    keyCode: 0
-    action:
-      id: 0
-      description: Navigation Action
-      axisConstraint: 0
-  - localizationKey: 
     keyword: Reset
-    keyCode: 0
+    keyCode: 114
     action:
       id: 0
       description: Navigation Action
       axisConstraint: 0
   - localizationKey: 
     keyword: Standard
-    keyCode: 55
+    keyCode: 115
     action:
       id: 0
       description: Navigation Action
       axisConstraint: 0
   - localizationKey: 
     keyword: Advanced
-    keyCode: 56
-    action:
-      id: 0
-      description: Navigation Action
-      axisConstraint: 0
-  - localizationKey: 
-    keyword: Three Sixty
-    keyCode: 57
+    keyCode: 97
     action:
       id: 0
       description: Navigation Action

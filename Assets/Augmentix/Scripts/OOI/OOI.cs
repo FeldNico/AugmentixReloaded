@@ -7,7 +7,9 @@ using Augmentix.Scripts.OOI.Editor;
 #endif
 using Augmentix.Scripts.VR;
 using ExitGames.Client.Photon;
-using InteractionEngineUtility;
+using Microsoft.MixedReality.Toolkit.Experimental.UI;
+using Microsoft.MixedReality.Toolkit.Input;
+using Microsoft.MixedReality.Toolkit.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
@@ -30,18 +32,15 @@ namespace Augmentix.Scripts.OOI
             Highlight = 1,
             Text = 2,
             Video = 4,
-            Animation = 8,
-            Manipulate = 16,
-            Scale = 32,
-            Changeable = 64,
-            Lockable = 128
+            Manipulate = 8,
+            Changeable = 16
         }
 
         public bool StaticOOI = false;
 #if UNITY_EDITOR
         [OOIViewEditor.EnumFlagsAttribute]
 #endif
-        public InteractionFlag Flags = InteractionFlag.Highlight | InteractionFlag.Lockable;
+        public InteractionFlag Flags = InteractionFlag.Highlight;
 
         [TextArea(15, 20)] public string Text;
 
@@ -51,16 +50,41 @@ namespace Augmentix.Scripts.OOI
         private void Start()
         {
             Collider = GetComponent<Collider>();
-            if (TargetManager.Instance.Type == TargetManager.PlayerType.Primary)
-            {
-                #if UNITY_WSA
+#if UNITY_WSA
+            var prefab = FindObjectOfType<InteractionManager>().InteractionSpherePrefab;
+                
                 _interactionSphere =
-                    Instantiate(FindObjectOfType<InteractionManager>().InteractionSpherePrefab, transform.position + new Vector3(0,Collider.bounds.size.y,0),
+                    Instantiate(prefab, transform.position + new Vector3(0,Collider.bounds.size.y,0),
                         transform.rotation).GetComponent<InteractionSphere>();
                 _interactionSphere.OOI = this;
-                #endif
-            }
+#endif
 
+            if (Flags.HasFlag(InteractionFlag.Manipulate))
+            {
+#if UNITY_WSA
+                var manipulator = gameObject.AddComponent<ObjectManipulator>();
+                manipulator.ReleaseBehavior = 0;
+                gameObject.AddComponent<NearInteractionGrabbable>();
+                gameObject.AddComponent<MinMaxScaleConstraint>();
+                manipulator.OnManipulationStarted.AddListener(data =>
+                {
+                    GetComponent<PhotonView>().RequestOwnership();
+                });
+                manipulator.OnManipulationEnded.AddListener(data =>
+                {
+                    StartCoroutine(StopMovement());
+                    IEnumerator StopMovement()
+                    {
+                        yield return null;
+                        GetComponent<Rigidbody>().velocity = Vector3.zero;
+                        GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+                    }
+                });
+#elif UNITY_ANDROID
+
+#endif
+            }
+            
             if (Flags.HasFlag(InteractionFlag.Highlight))
             {
                 var outline = gameObject.AddComponent<Outline>();

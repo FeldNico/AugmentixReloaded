@@ -4,7 +4,6 @@ Copyright (c) 2019 PTC Inc. All Rights Reserved.
 Vuforia is a trademark of PTC Inc., registered in the United States and other 
 countries.
 ===============================================================================*/
-#if UNITY_WSA
 using UnityEngine;
 using Vuforia;
 using UnityEngine.UI;
@@ -60,4 +59,3 @@ public class AmbientLightManager : MonoBehaviour
 
     #endregion // VUFORIA_CALLBACK_METHODS
 }
-#endif

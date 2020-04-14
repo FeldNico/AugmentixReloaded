@@ -17,30 +17,20 @@ namespace Augmentix.Scripts.VR
 
         new void Start()
         {
-            
+
             base.Start();
             OnConnection += () =>
             {
-                PhotonNetwork.SetInterestGroups(new []{(byte)Groups.LEAP_MOTION}, new []{(byte)Groups.PLAYERS});
+                PhotonNetwork.SetInterestGroups(new[] {(byte) Groups.LEAP_MOTION}, new[] {(byte) Groups.PLAYERS});
                 var avatar =
-                    PhotonNetwork.Instantiate(AvatarPrefab != null ? AvatarPrefab.name : "Secondary_Avatar", Camera.main.transform.position, Camera.main.transform.rotation);
+                    PhotonNetwork.Instantiate(AvatarPrefab != null ? AvatarPrefab.name : "Secondary_Avatar",
+                        Camera.main.transform.position, Camera.main.transform.rotation);
                 avatar.transform.parent = Camera.main.transform;
                 avatar.GetComponent<Renderer>().enabled = false;
             };
             Connect();
-            
-            
-        }
 
-        void Update()
-        {
-            foreach (var button in (OVRInput.Button[]) Enum.GetValues(typeof(OVRInput.Button)))
-            {
-                if (OVRInput.GetDown(button))
-                {
-                    Debug.Log(Enum.GetName(typeof(OVRInput.Button),button));
-                }
-            }
+
         }
     }
 }

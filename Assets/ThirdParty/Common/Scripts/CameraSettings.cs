@@ -6,7 +6,6 @@ Copyright (c) 2015 Qualcomm Connected Experiences, Inc. All Rights Reserved.
 Vuforia is a trademark of PTC Inc., registered in the United States and other
 countries.
 ===============================================================================*/
-#if UNITY_WSA
 using UnityEngine;
 using System.Collections;
 using Vuforia;
@@ -185,4 +184,3 @@ public class CameraSettings : MonoBehaviour
 
     #endregion // PRIVATE_METHODS
 }
-#endif

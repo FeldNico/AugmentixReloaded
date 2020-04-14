@@ -1,39 +1,28 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using Microsoft.MixedReality.Toolkit.Experimental.UI;
+using Microsoft.MixedReality.Toolkit.Input;
+using Microsoft.MixedReality.Toolkit.UI;
 using Photon.Pun;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(PhotonView))]
-public class Moveable : AbstractInteractable, IPunInstantiateMagicCallback
+public class Moveable : MonoBehaviour, IPunInstantiateMagicCallback
 {
-    
-    new void Start()
+    void Start()
     {
-        base.Start();
-
-        OnInteractionStart += (hand) =>
-        {
-            var joint = gameObject.GetComponent<FixedJoint>();
-            if (joint == null)
-                joint = gameObject.AddComponent<FixedJoint>();
-
-            joint.connectedBody = hand.PinchingSphere.GetComponent<Rigidbody>();
-        };
-
-        OnInteractionEnd += (hand) =>
-        {
-            var joint = gameObject.GetComponent<FixedJoint>();
-            if (joint != null && joint.connectedBody == hand.PinchingSphere.GetComponent<Rigidbody>())
-                Destroy(joint);
-        };
+        #if UNITY_WSA
         
+#elif UNITY_ANDROID
+        gameObject.AddComponent<OVRGrabbable>();
+#endif
+
     }
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
         transform.parent = FindObjectOfType<VirtualCity>().transform;
-#if UNITY_ANDROID
-        var grabber = gameObject.AddComponent<OVRGrabbable>();
-#endif
     }
 }

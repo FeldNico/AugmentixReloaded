@@ -5,8 +5,6 @@ Vuforia is a trademark of PTC Inc., registered in the United States and other
 countries.   
 ==============================================================================*/
 
-#if UNITY_WSA
-
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -88,4 +86,3 @@ public class AboutManager : MonoBehaviour
     }
 
 }
-#endif

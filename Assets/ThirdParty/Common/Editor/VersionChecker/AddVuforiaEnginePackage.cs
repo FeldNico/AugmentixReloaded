@@ -8,10 +8,12 @@ using UnityEngine;
 [InitializeOnLoad]
 public class AddVuforiaEnginePackage
 {
-    const string VUFORIA_VERSION = "8.6.10";
+    const string VUFORIA_VERSION = "9.0.12";
     const string PACKAGE_KEY = "\"com.ptc.vuforia.engine\"";
 
-    static readonly string sManifestJsonPath = Path.Combine(Application.dataPath, "..", "Packages", "manifest.json");
+    static readonly string sPackagesPath = Path.Combine(Application.dataPath, "..", "Packages");
+    static readonly string sManifestJsonPath = Path.Combine(sPackagesPath, "manifest.json");
+    static readonly string sLocalVuforiaPackagePath = Path.Combine(sPackagesPath, "com.ptc.vuforia.engine");
 
 
     static readonly ScopedRegistry sVuforiaRegistry = new ScopedRegistry()
@@ -29,18 +31,20 @@ public class AddVuforiaEnginePackage
 
         var manifest = Manifest.JsonDeserialize(sManifestJsonPath);
         var registries = manifest.ScopedRegistries.ToList();
-        if (registries.Any(r => r == sVuforiaRegistry))
+        if (IsLocalVuforiaEnginePackageInstalled() || registries.Any(r => r == sVuforiaRegistry))
             return;
 
         if (EditorUtility.DisplayDialog("Add Vuforia Engine Package",
-            "In order to use Vuforia Engine, your project requires the Vuforia Engine package from Vuforia's scoped registry. Would you like to add it now?", "OK", "Cancel"))
+            "Would you like to update your project to always be able to find the latest version of the Vuforia Engine in the package manager window?\n" +
+            $"If a Vuforia Engine package is already present in your project it will be upgraded to version {VUFORIA_VERSION}", "Update", "Cancel"))
         {
             UpdateManifest(manifest);
         }
-        else
-        {
-            Debug.LogError("In order to use Vuforia Engine, your project requires the Vuforia Engine package. Please follow this guide to include it: https://library.vuforia.com/content/vuforia-library/en/articles/Solution/vuforia-engine-package-hosting-for-unity.html");
-        }
+    }
+
+    static bool IsLocalVuforiaEnginePackageInstalled()
+    {
+        return Directory.Exists(sLocalVuforiaPackagePath);
     }
 
     static void UpdateManifest(Manifest manifest)

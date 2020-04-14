@@ -5,6 +5,7 @@ using System.Linq;
 using Augmentix.Scripts.Network;
 using Photon.Pun;
 using UnityEngine;
+using UnityEngine.XR.WSA;
 using Vuforia;
 
 namespace Augmentix.Scripts.AR
@@ -88,6 +89,11 @@ namespace Augmentix.Scripts.AR
             var parent = transform.parent;
             transform.parent = null;
             parent.gameObject.SetActive(false);
+            var objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
+            objectTracker.Stop();
+            objectTracker.DeactivateDataSet(objectTracker.GetDataSets().First(set => set.Path == "Vuforia/Augmentix_Map.xml"));
+            objectTracker.Start();
+            gameObject.AddComponent<WorldAnchor>();
         }
 
         void Update()

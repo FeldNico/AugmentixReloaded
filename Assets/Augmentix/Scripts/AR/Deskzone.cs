@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.Events;
+using Vuforia;
 
 public class Deskzone : MonoBehaviour
 {
@@ -31,6 +33,32 @@ public class Deskzone : MonoBehaviour
         _renderer = GetComponent<Renderer>();
         _mainCameraTransform = Camera.main.transform;
         _height = _renderer.bounds.extents.y;
+
+        DataSet deskzonDataset = null;
+        ObjectTracker objectTracker = null;
+        Inside += () =>
+        {
+            if (deskzonDataset == null || objectTracker == null)
+            {
+                objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
+                deskzonDataset = objectTracker.GetDataSets().First(set => set.Path == "Vuforia/Augmentix_Deskzone.xml");
+            }
+            objectTracker.Stop();
+            objectTracker.ActivateDataSet(deskzonDataset);
+            objectTracker.Start();
+        };
+
+        Outside += () =>
+        {
+            if (deskzonDataset == null || objectTracker == null)
+            {
+                objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
+                deskzonDataset = objectTracker.GetDataSets().First(set => set.Path == "Vuforia/Augmentix_Deskzone.xml");
+            }
+            objectTracker.Stop();
+            objectTracker.DeactivateDataSet(deskzonDataset);
+            objectTracker.Start();
+        };
     }
 
     void Update()

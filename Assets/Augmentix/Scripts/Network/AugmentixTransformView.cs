@@ -35,8 +35,6 @@ namespace Augmentix.Scripts.Network
             m_NetworkPosition = Vector3.zero;
 
             m_NetworkRotation = Quaternion.identity;
-
-            
         }
 
         void OnEnable()

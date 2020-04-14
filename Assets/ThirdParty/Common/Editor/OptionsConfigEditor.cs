@@ -4,7 +4,6 @@ Copyright (c) 2017 PTC Inc. All Rights Reserved.
 Vuforia is a trademark of PTC Inc., registered in the United States and other 
 countries.
 ===============================================================================*/
-#if UNITY_WSA
 using UnityEditor;
 
 [CustomEditor(typeof(OptionsConfig))]
@@ -57,4 +56,3 @@ public class OptionsConfigEditor : Editor
     #endregion // PRIVATE_METHODS
 
 }
-#endif

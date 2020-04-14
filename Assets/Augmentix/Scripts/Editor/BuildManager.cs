@@ -87,8 +87,7 @@ namespace Augmentix.Scripts.Editor
                 Debug.LogError("Please use MRTK Build manager");
                 return;
             }
-
-            BuildTarget currentTarget = BuildTarget.NoTarget;
+            
             if (EditorUserBuildSettings.activeBuildTarget != target)
             {
                 Debug.LogError("Please Switch to Target before build!");
@@ -120,10 +119,6 @@ namespace Augmentix.Scripts.Editor
             else if (type == typeof(ARBuildManager))
             {
                 filename = Application.productName + ".exe";
-            }
-            else if (type == typeof(LeapMotionManager))
-            {
-                filename = "LeapMotionProvider.exe";
             }
 
             BuildPipeline.BuildPlayer(levels, Path.Combine(newManager._buildPath, filename), target, options);
@@ -287,7 +282,7 @@ namespace Augmentix.Scripts.Editor
         public class VRBuildManager : BuildManager
         {
             [MenuItem("BuildManager/Build/VR")]
-            public new static void Build()
+            public static void Build()
             {
                 DoBuild(typeof(VRBuildManager), BuildTarget.Android);
             }
@@ -308,7 +303,7 @@ namespace Augmentix.Scripts.Editor
         public class ARBuildManager : BuildManager
         {
             [MenuItem("BuildManager/Build/AR")]
-            public new static void Build()
+            public static void Build()
             {
                 DoBuild(typeof(ARBuildManager), BuildTarget.WSAPlayer);
             }
@@ -323,27 +318,6 @@ namespace Augmentix.Scripts.Editor
             public static void Setup()
             {
                 GetWindow(typeof(ARBuildManager)).Show();
-            }
-        }
-
-        public class LeapMotionManager : BuildManager
-        {
-            [MenuItem("BuildManager/Build/LeapMotion")]
-            public new static void Build()
-            {
-                DoBuild(typeof(LeapMotionManager), BuildTarget.StandaloneWindows64);
-            }
-
-            [MenuItem("BuildManager/Switch/LeapMotion")]
-            public static void Switch()
-            {
-                DoSwitch(typeof(LeapMotionManager), BuildTarget.StandaloneWindows64);
-            }
-
-            [MenuItem("BuildManager/Setup/LeapMotion")]
-            public static void Setup()
-            {
-                GetWindow(typeof(LeapMotionManager)).Show();
             }
         }
     }

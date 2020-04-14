@@ -59,7 +59,7 @@ public class WarpzoneManager : MonoBehaviour
         _virtualCity = FindObjectOfType<VirtualCity>();
         _deskzone = FindObjectOfType<Deskzone>();
         
-        OnWarpzoneLost += Warpzone => { _virtualCity.transform.position = new Vector3(0,500,0); };
+        OnWarpzoneLost += Warpzone => { _virtualCity.transform.position = new Vector3(0,1000,0); };
     }
 
     public void Update()

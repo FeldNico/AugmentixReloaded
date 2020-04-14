@@ -13,55 +13,27 @@ MonoBehaviour:
   m_Name: VuforiaMixedRealitySceneSystemProfile
   m_EditorClassIdentifier: 
   isCustomProfile: 1
-  useManagerScene: 0
+  useManagerScene: 1
   managerScene:
-    Name: 1-Menu
-    Path: Assets/ThirdParty/Common/SampleResources/Scenes/1-Menu.unity
-    Included: 0
-    BuildIndex: -1
+    Name: AR
+    Path: Assets/Augmentix/Scenes/AR.unity
+    Included: 1
+    BuildIndex: 0
     Tag: Untagged
-    Asset: {fileID: 102900000, guid: 72a81fd0bdedaf0448e6c17d1e8fcb86, type: 3}
+    Asset: {fileID: 102900000, guid: cc92b752adf36a74aa666f937c31b3c6, type: 3}
   useLightingScene: 0
   defaultLightingSceneIndex: 0
   lightingScenes:
   - Name: DefaultLightingScene
-    Path: Assets/ThirdParty/MRTK/MixedRealityToolkit.SDK/StandardAssets/Scenes/DefaultLightingScene.unity
+    Path: Assets/ThirdParty/MRTK/SDK/StandardAssets/Scenes/DefaultLightingScene.unity
     Included: 0
     BuildIndex: -1
     Tag: Untagged
     Asset: {fileID: 102900000, guid: 7e54e36c44f826c438c95da79f8de638, type: 3}
-  contentScenes:
-  - Name: 1-Menu
-    Path: Assets/ThirdParty/Common/SampleResources/Scenes/1-Menu.unity
-    Included: 0
-    BuildIndex: -1
-    Tag: Untagged
-    Asset: {fileID: 102900000, guid: 72a81fd0bdedaf0448e6c17d1e8fcb86, type: 3}
-  - Name: 2-ImageTargets
-    Path: Assets/ThirdParty/Common/SampleResources/Scenes/2-ImageTargets.unity
-    Included: 0
-    BuildIndex: -1
-    Tag: Untagged
-    Asset: {fileID: 102900000, guid: 03ddc4184641b534487cecd6dab620df, type: 3}
-  - Name: 2-VuMarks
-    Path: Assets/ThirdParty/Common/SampleResources/Scenes/2-VuMarks.unity
-    Included: 0
-    BuildIndex: -1
-    Tag: Untagged
-    Asset: {fileID: 102900000, guid: d9b53b25a285640cf8ac170a80603e34, type: 3}
-  - Name: 2-ModelTargets
-    Path: Assets/ThirdParty/Common/SampleResources/Scenes/2-ModelTargets.unity
-    Included: 0
-    BuildIndex: -1
-    Tag: Untagged
-    Asset: {fileID: 102900000, guid: 530386685ba085242832bd5cc78d7222, type: 3}
+  contentScenes: []
   permittedLightingSceneComponentTypes:
   - reference: UnityEngine.Transform, UnityEngine.CoreModule
   - reference: UnityEngine.GameObject, UnityEngine.CoreModule
-  - reference: UnityEngine.Light, UnityEngine.CoreModule
-  - reference: UnityEngine.ReflectionProbe, UnityEngine.CoreModule
-  - reference: UnityEngine.LightProbeGroup, UnityEngine.CoreModule
-  - reference: UnityEngine.LightProbeProxyVolume, UnityEngine.CoreModule
   contentTags: []
   cachedLightingSettings:
   - SceneName: DefaultLightingScene
