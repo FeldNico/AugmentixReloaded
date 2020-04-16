@@ -6,7 +6,10 @@ using Augmentix.Scripts.Network;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.XR.WSA;
+#if UNITY_WSA
 using Vuforia;
+
+#endif
 
 namespace Augmentix.Scripts.AR
 {
@@ -15,12 +18,17 @@ namespace Augmentix.Scripts.AR
         public float PlayerScale;
         public float Scale;
         public Material LineMaterial;
-        public Vector3 MapOffset = new Vector3(1.694f,-0.4f,1.261f);
+        public Vector3 MapOffset = new Vector3(1.694f, -0.4f, 1.261f);
         public GameObject Scaler { private set; get; }
-        public Dictionary<PlayerAvatar,GameObject> AvatarDummies { private set; get; } = new Dictionary<PlayerAvatar, GameObject>();
-        public Dictionary<Warpzone,GameObject> WarpzoneDummies { private set; get; } = new Dictionary<Warpzone, GameObject>();
+
+        public Dictionary<PlayerAvatar, GameObject> AvatarDummies { private set; get; } =
+            new Dictionary<PlayerAvatar, GameObject>();
+
+        public Dictionary<Warpzone, GameObject> WarpzoneDummies { private set; get; } =
+            new Dictionary<Warpzone, GameObject>();
+
         public List<MapTargetDummy> Dummies { private set; get; } = new List<MapTargetDummy>();
-        
+
         private ARTargetManager _targetManager;
         private VirtualCity _virtualCity;
 
@@ -32,14 +40,14 @@ namespace Augmentix.Scripts.AR
             Scaler = new GameObject("Scaler");
             Scaler.transform.parent = transform;
             Scaler.transform.localPosition = MapOffset;
-            Scaler.transform.localScale = new Vector3(Scale,Scale,Scale);
+            Scaler.transform.localScale = new Vector3(Scale, Scale, Scale);
 
             PlayerAvatar.AvatarCreated += (avatar) =>
             {
                 if (avatar.GetComponent<PhotonView>().IsMine)
                     return;
 
-                var dummy = Instantiate(_targetManager.AvatarPrefab,Scaler.transform);
+                var dummy = Instantiate(_targetManager.AvatarPrefab, Scaler.transform);
                 Destroy(dummy.GetComponent<AugmentixTransformView>());
                 Destroy(dummy.GetComponent<PlayerAvatar>());
                 Destroy(dummy.GetComponent<PhotonView>());
@@ -67,6 +75,7 @@ namespace Augmentix.Scripts.AR
             };
 
             StartCoroutine(OnLateStart());
+
             IEnumerator OnLateStart()
             {
                 yield return new WaitForEndOfFrame();
@@ -79,40 +88,42 @@ namespace Augmentix.Scripts.AR
                     dummy.transform.localPosition =
                         warpzone.LocalPosition;
                     dummy.transform.localRotation = Quaternion.identity;
-                    dummy.transform.localScale *= 1f/warpzone.Scale;
+                    dummy.transform.localScale *= 1f / warpzone.Scale;
                 }
             }
         }
 
         public void StopTracking()
         {
+#if UNITY_WSA
             var parent = transform.parent;
             transform.parent = null;
             parent.gameObject.SetActive(false);
             var objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
             objectTracker.Stop();
-            objectTracker.DeactivateDataSet(objectTracker.GetDataSets().First(set => set.Path == "Vuforia/Augmentix_Map.xml"));
+            objectTracker.DeactivateDataSet(objectTracker.GetDataSets()
+                .First(set => set.Path == "Vuforia/Augmentix_Map.xml"));
             objectTracker.Start();
             gameObject.AddComponent<WorldAnchor>();
+#endif
         }
 
         void Update()
         {
-            if (Time.frameCount % 5 == 0)
+            foreach (var dummy in Dummies)
             {
-                foreach (var dummy in Dummies)
+                var target = dummy.Target;
+
+                if (target is PlayerAvatar)
                 {
-                    var target = dummy.Target;
-                
-                    if (target is PlayerAvatar)
-                    {
-                        dummy.transform.localPosition = _virtualCity.transform.InverseTransformPoint(target.transform.position);
-                        dummy.transform.localRotation =
-                            Quaternion.Inverse(_virtualCity.transform.rotation) * target.transform.rotation;
-                    } else if (target is Warpzone)
-                    {
-                        dummy.transform.localPosition = ((Warpzone) target).LocalPosition;
-                    }
+                    dummy.transform.localPosition =
+                        _virtualCity.transform.InverseTransformPoint(target.transform.position);
+                    dummy.transform.localRotation =
+                        Quaternion.Inverse(_virtualCity.transform.rotation) * target.transform.rotation;
+                }
+                else if (target is Warpzone)
+                {
+                    dummy.transform.localPosition = ((Warpzone) target).LocalPosition;
                 }
             }
         }

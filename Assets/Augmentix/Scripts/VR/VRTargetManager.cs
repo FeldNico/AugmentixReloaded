@@ -12,6 +12,7 @@ namespace Augmentix.Scripts.VR
 
         public float TeleportFadeDuration = 0.1f;
         public float MinMoveDistance = 1f;
+        public float PinchStrengh = 0.8f;
 
         public GameObject AvatarPrefab;
 

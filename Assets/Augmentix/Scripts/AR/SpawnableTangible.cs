@@ -18,7 +18,9 @@ public class SpawnableTangible : MonoBehaviour
     {
         foreach (var spawnable in Spawnables)
         {
-            var spawn = Instantiate(spawnable,spawnable.transform.localPosition,spawnable.transform.localRotation, transform);
+            var spawn = Instantiate(spawnable,Vector3.zero, Quaternion.identity, transform);
+            spawn.transform.localPosition = spawnable.transform.localPosition;
+            spawn.transform.localRotation = spawnable.transform.localRotation;
             spawn.transform.localScale = spawnable.transform.localScale * Scale;
             CurrentSpawnable = spawn.AddComponent<Imposter>();
             CurrentSpawnable.Object = spawnable;

@@ -5,6 +5,7 @@ using Augmentix.Scripts;
 using Augmentix.Scripts.AR;
 using ExitGames.Client.Photon;
 using Microsoft.MixedReality.Toolkit.Experimental.UI;
+using Microsoft.MixedReality.Toolkit.Input;
 using Microsoft.MixedReality.Toolkit.UI;
 using Microsoft.MixedReality.Toolkit.Utilities;
 using Photon.Pun;
@@ -27,6 +28,7 @@ public class MapTargetDummy : MonoBehaviour
         _interactionManager = FindObjectOfType<InteractionManager>();
         _map = FindObjectOfType<Map>();
         _sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        _sphere.transform.localScale = Vector3.one *_interactionManager.InteractionSphereScale;
         _sphere.name = "InteractionSphere " + gameObject.name;
         _sphere.GetComponent<SphereCollider>().isTrigger = true;
         var rigidbody = _sphere.AddComponent<Rigidbody>();
@@ -44,10 +46,11 @@ public class MapTargetDummy : MonoBehaviour
             IEnumerator StopMovement()
             {
                 yield return null;
-                GetComponent<Rigidbody>().velocity = Vector3.zero;
-                GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+                _sphere.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                _sphere.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
             }
         });
+        _sphere.AddComponent<NearInteractionGrabbable>();
         var worldConstrain = _sphere.AddComponent<FixedRotationToWorldConstraint>();
         worldConstrain.TargetTransform = _sphere.transform;
         worldConstrain.HandType = ManipulationHandFlags.OneHanded;

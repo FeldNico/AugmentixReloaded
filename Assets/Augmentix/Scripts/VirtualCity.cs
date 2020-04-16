@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Augmentix.Scripts;
+using Augmentix.Scripts.OOI;
 using UnityEngine;
 
 public class VirtualCity : MonoBehaviour
@@ -15,24 +17,60 @@ public class VirtualCity : MonoBehaviour
 
     private void Start()
     {
+#if UNITY_WSA
         if (TargetManager.Instance.Type == TargetManager.PlayerType.Primary)
         {
             var deskzone = FindObjectOfType<Deskzone>();
             deskzone.Inside += () =>
             {
+                foreach (var render in GetComponentsInChildren<Renderer>())
+                {
+                    var ooi = render.GetComponent<OOI>();
+                    if (ooi)
+                    {
+                        var iSphere = ooi.InteractionSphere;
+                        if (iSphere)
+                        {
+                            iSphere.GetComponent<Renderer>().enabled = false;
+                            iSphere.GetComponent<Collider>().enabled = false;
+                        }
+                    }
+                    render.enabled = false;
+                }
+
+                /*
                 foreach (var child in GetComponentsInChildren<Renderer>())
                 {
                     child.enabled = false;
                 }
+                */
             };
             deskzone.Outside += () =>
             {
+                foreach (var render in GetComponentsInChildren<Renderer>())
+                {
+                    var ooi = render.GetComponent<OOI>();
+                    if (ooi)
+                    {
+                        var iSphere = ooi.InteractionSphere;
+                        if (iSphere)
+                        {
+                            iSphere.GetComponent<Renderer>().enabled = true;
+                            iSphere.GetComponent<Collider>().enabled = true;
+                        }
+                    }
+                    render.enabled = true;
+                }
+                
+                /*
                 foreach (var child in GetComponentsInChildren<Renderer>())
                 {
                     child.enabled = true;
                 }
+                */
             };
         }
+#endif
     }
 
     void Update()

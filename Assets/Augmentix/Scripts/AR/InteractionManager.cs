@@ -27,6 +27,8 @@ public class InteractionManager : MonoBehaviour
     private VirtualCity _virtualCity;
     private Camera _mainCamera;
 
+    private string[] _axis = new string[] {"Horizontal","Vertical","Fire1","Fire2","Fire3","Jump","Mouse X","Mouse Y","Mouse ScrollWheel","Horizontal","Vertical","Fire1","Fire2","Fire3","Jump","Submit","Submit","Cancel","AXIS_1","AXIS_2","AXIS_3","AXIS_4","AXIS_5","AXIS_6","AXIS_7","AXIS_8","AXIS_9","AXIS_10","AXIS_11","AXIS_12","AXIS_13","AXIS_14","AXIS_15","AXIS_16","AXIS_17","AXIS_18","AXIS_19","AXIS_20","AXIS_21","AXIS_22","AXIS_23","AXIS_24","AXIS_25","AXIS_26","AXIS_27","AXIS_28","UpDown","UpDown","Oculus_GearVR_LThumbstickX","Oculus_GearVR_LThumbstickY","Oculus_GearVR_RThumbstickX","Oculus_GearVR_RThumbstickY","Oculus_GearVR_DpadX","Oculus_GearVR_DpadY","Oculus_GearVR_LIndexTrigger","Oculus_GearVR_RIndexTrigger","Oculus_CrossPlatform_Button2","Oculus_CrossPlatform_Button4","Oculus_CrossPlatform_PrimaryThumbstick","Oculus_CrossPlatform_SecondaryThumbstick","Oculus_CrossPlatform_PrimaryIndexTrigger","Oculus_CrossPlatform_SecondaryIndexTrigger","Oculus_CrossPlatform_PrimaryHandTrigger","Oculus_CrossPlatform_SecondaryHandTrigger","Oculus_CrossPlatform_PrimaryThumbstickHorizontal","Oculus_CrossPlatform_PrimaryThumbstickVertical","Oculus_CrossPlatform_SecondaryThumbstickHorizontal","Oculus_CrossPlatform_SecondaryThumbstickVertical"};
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -39,6 +41,23 @@ public class InteractionManager : MonoBehaviour
 
     void Update()
     {
+        /*
+        foreach (var key in (KeyCode[]) Enum.GetValues(typeof(KeyCode)))
+        {
+            if (Input.GetKeyDown(key))
+                Debug.Log(key +" pressed");
+        }
+
+        foreach (var axis in _axis)
+        {
+            if (Math.Abs(Input.GetAxis(axis)) > 0.05f)
+                Debug.Log("Axis: "+axis);
+        }
+        */
+        
+
+        //HandleWarpzoneGazing();
+        
         if (PhotonNetwork.IsConnected)
         {
             if (_deskzone.IsInside)
@@ -70,7 +89,7 @@ public class InteractionManager : MonoBehaviour
                     }
                 }
 
-                if (Input.GetKeyUp(KeyCode.U) && warpzone != _warpzoneManager.ActiveWarpzone)
+                if (Input.GetKeyUp(KeyCode.Mouse0) && warpzone != _warpzoneManager.ActiveWarpzone)
                 {
                     if (_warpzoneManager.ActiveWarpzone != null && warpzone != _warpzoneManager.ActiveWarpzone)
                         _warpzoneManager.ActiveWarpzone.SetIndicationMode(WarpzoneManager.IndicatorMode.None);
@@ -127,6 +146,23 @@ public class InteractionManager : MonoBehaviour
                     forwardProject = new Vector3(forwardProject.x,0,forwardProject.z).normalized;
                     rightProject = new Vector3(rightProject.x,0,rightProject.z).normalized;
 
+                    if (Input.GetAxis("Mouse Y") >0.1f)
+                    {
+                        vec -= 0.05f* _warpzoneManager.ScrollSpeed * forwardProject;
+                    } else if (Input.GetAxis("Mouse Y") < -0.1f)
+                    {
+                        vec += 0.05f*_warpzoneManager.ScrollSpeed * forwardProject;
+                    }
+                    
+                    if (Input.GetAxis("Mouse X") < -0.1f)
+                    {
+                        vec += 0.05f* _warpzoneManager.ScrollSpeed * rightProject;
+                    } else if (Input.GetAxis("Mouse X") > 0.1f)
+                    {
+                        vec -= 0.05f*_warpzoneManager.ScrollSpeed * rightProject;
+                    }
+                    
+                    /*
                     if (Input.GetKey(KeyCode.W))
                         vec -= 0.05f* _warpzoneManager.ScrollSpeed * forwardProject;
                     else if (Input.GetKey(KeyCode.X))
@@ -136,6 +172,7 @@ public class InteractionManager : MonoBehaviour
                         vec += 0.05f*_warpzoneManager.ScrollSpeed * rightProject;
                     else if (Input.GetKey(KeyCode.D))
                         vec -=0.05f* _warpzoneManager.ScrollSpeed * rightProject;
+                        */
                     
                     _warpzoneManager.ActiveWarpzone.LocalPosition += vec;
                 }
@@ -148,6 +185,23 @@ public class InteractionManager : MonoBehaviour
                 var forwardProject = new Vector3(camTransform.forward.x, 0, camTransform.forward.z).normalized;
                 var rightProject = new Vector3(camTransform.right.x, 0, camTransform.right.z).normalized;
 
+                if (Input.GetAxis("Mouse Y") > 0.1f)
+                {
+                    vec += 0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * forwardProject;
+                } else if (Input.GetAxis("Mouse Y") < -0.1f)
+                {
+                    vec -=0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * forwardProject;
+                }
+                    
+                if (Input.GetAxis("Mouse X") < -0.1f)
+                {
+                    vec -=0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * rightProject;
+                } else if (Input.GetAxis("Mouse X") > 0.1f)
+                {
+                    vec +=0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * rightProject;
+                }
+                
+                /*
                 if (Input.GetKey(KeyCode.W))
                     vec += 0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * forwardProject;
                 else if (Input.GetKey(KeyCode.X))
@@ -157,6 +211,7 @@ public class InteractionManager : MonoBehaviour
                     vec -=0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * rightProject;
                 else if (Input.GetKey(KeyCode.D))
                     vec +=0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * rightProject;
+                */
 
                 vec = _virtualCity.transform.InverseTransformVector(vec);
                 vec.y = 0;

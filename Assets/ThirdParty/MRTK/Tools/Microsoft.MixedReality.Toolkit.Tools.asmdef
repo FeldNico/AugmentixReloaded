@@ -9,7 +9,6 @@
         "Microsoft.MixedReality.Toolkit.Editor.BuildAndDeploy",
         "Microsoft.MixedReality.Toolkit.SDK"
     ],
-    "optionalUnityReferences": [],
     "includePlatforms": [
         "Editor"
     ],
@@ -18,5 +17,9 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [
+        "UNITY_WSA"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

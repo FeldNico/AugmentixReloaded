@@ -127,6 +127,36 @@ namespace Augmentix.Scripts.Editor
 
         public static void DoSwitch(Type type, BuildTarget target)
         {
+            
+            /*
+            var inputManager = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/InputManager.asset")[0];
+ 
+            SerializedObject obj = new SerializedObject(inputManager);
+ 
+            SerializedProperty axisArray = obj.FindProperty("m_Axes");
+ 
+            if (axisArray.arraySize == 0)
+                Debug.Log("No Axes");
+
+            var output = "new string[] {";
+            
+            for( int i = 0; i < axisArray.arraySize; ++i )
+            {
+                var axis = axisArray.GetArrayElementAtIndex(i);
+ 
+                var name = axis.FindPropertyRelative("m_Name").stringValue;
+
+                output += "\""+name + "\",";
+            }
+
+            output += "}";
+            
+            Debug.Log(output);
+            
+            return;
+            */
+            
+            
             if (EditorUserBuildSettings.activeBuildTarget == target)
                 return;
 

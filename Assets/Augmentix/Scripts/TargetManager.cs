@@ -12,7 +12,7 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace Augmentix.Scripts
 {
-    public abstract class TargetManager : MonoBehaviourPunCallbacks
+    public abstract class TargetManager : MonoBehaviourPunCallbacks, IPunOwnershipCallbacks
     {
         public enum PlayerType
         {
@@ -132,6 +132,55 @@ namespace Augmentix.Scripts
 
                 callback.Invoke();
             }
+        }
+
+
+        public void OnOwnershipRequest(PhotonView targetView, Player requestingPlayer)
+        {
+            var ooi = targetView.GetComponent<OOI.OOI>();
+            if (requestingPlayer.ActorNumber != PhotonNetwork.LocalPlayer.ActorNumber && ooi)
+            {
+                if (Type == PlayerType.Primary)
+                {
+                    if (!ooi.IsBeingManipulated)
+                    {
+                        targetView.TransferOwnership(requestingPlayer);
+                    }
+                    else
+                    {
+                        targetView.RPC("OnTransferDenied",requestingPlayer);
+                    }
+                }
+                else
+                {
+                    if ((string) requestingPlayer.CustomProperties["Class"] == PlayerType.Primary.ToString())
+                    {
+                        #if UNITY_ANDROID
+                        if (ooi.IsBeingManipulated)
+                        {
+                            ooi.OnTransferDenied();
+                        }
+                        #endif
+                        targetView.TransferOwnership(requestingPlayer);
+                    }
+                    else
+                    {
+                        if (!ooi.IsBeingManipulated)
+                        {
+                            targetView.TransferOwnership(requestingPlayer);
+                        }
+                        else
+                        {
+                            targetView.RPC("OnTransferDenied",requestingPlayer);
+                        }
+                    }
+                }
+            }
+        }
+
+        public void OnOwnershipTransfered(PhotonView targetView, Player previousOwner)
+        {
+            
         }
     }
 }

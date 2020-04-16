@@ -22,16 +22,17 @@ public class Imposter : MonoBehaviour
     private ObjectManipulator _manipulator = null;
     private MixedRealityInputSystem _inputSystem = null;
     private Deskzone _deskzone;
+    private VirtualCity _virtualCity;
     private void Awake()
     {
         _inputSystem = FindObjectOfType<MixedRealityToolkit>().GetService<MixedRealityInputSystem>();
         _deskzone = FindObjectOfType<Deskzone>();
+        _virtualCity = FindObjectOfType<VirtualCity>();
         
         var ooi = GetComponent<OOI>();
         if (ooi)
             Destroy(ooi);
         Destroy(GetComponent<AugmentixTransformView>());
-        //Destroy(GetComponent<AbstractInteractable>());
         Destroy(GetComponent<PhotonView>());
         
         _manipulator = gameObject.AddComponent<ObjectManipulator>();
@@ -52,6 +53,7 @@ public class Imposter : MonoBehaviour
         //{
             var obj = PhotonNetwork.Instantiate("OOI"+Path.DirectorySeparatorChar+"Spawnable"+Path.DirectorySeparatorChar+Object.name, transform.position, transform.rotation,
                 (byte) TargetManager.Groups.PLAYERS);
+            obj.transform.parent = _virtualCity.transform;
             obj.transform.localScale = transform.lossyScale;
 
             var pointer = data.Pointer as SpherePointer;
@@ -65,12 +67,6 @@ public class Imposter : MonoBehaviour
                 _manipulator.enabled = false;
                 _manipulator.GetComponent<Collider>().enabled = false;
                 pointer.IsFocusLocked = false;
-                yield return null;
-                var services = FindObjectOfType<MixedRealityToolkit>().GetServices<IMixedRealityService>();
-                foreach (var service in services)
-                {
-                    service.Update();
-                }
                 yield return null;
                 _inputSystem.RaisePointerDown(pointer,inputAction,handedness);
                 _manipulator.enabled = true;

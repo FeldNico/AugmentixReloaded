@@ -166,6 +166,7 @@ MonoBehaviour:
   StaticOOI: 0
   Flags: 15
   Text: jnhgjgifuzgkihgkhjgkfgjzggfkgloiouluil
+  IsBeingManipulated: 0
 --- !u!328 &-967186052930753173
 VideoPlayer:
   m_ObjectHideFlags: 0

@@ -8,7 +8,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions.Comparers;
 using UnityEngine.Video;
-using Vuforia.EditorClasses;
 
 public class InteractionSphere : MonoBehaviour
 {
@@ -149,13 +148,14 @@ public class InteractionSphere : MonoBehaviour
         MenuItems.Clear();
 
         StartCoroutine(StopMovement());
+
         IEnumerator StopMovement()
         {
             yield return null;
             GetComponent<Rigidbody>().velocity = Vector3.zero;
             GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
         }
-        
+
         IsInteractedWith = false;
     }
 
@@ -180,11 +180,12 @@ public class InteractionSphere : MonoBehaviour
                         m.GetColumn(2),
                         m.GetColumn(1)
                     );
-                    var center = rotation * _ooiTransform.TransformVector(_halfXRotation * bounds.center) * scale +
+
+                    var center = rotation * _ooiTransform.TransformPoint(_halfXRotation * bounds.center) * scale +
                                  position;
-                    center.y += (_collider.ClosestPoint(Quaternion.Inverse(rotation) *
-                                                        new Vector3(bounds.center.x, float.MaxValue,
-                                                            bounds.center.z)).y + 0.1f) * scale;
+                    center.y += (_collider.ClosestPoint(
+                        new Vector3(bounds.center.x, float.MaxValue,
+                            bounds.center.z)).y + 0.1f) * scale;
                     transform.position = center;
                 }
 
@@ -193,11 +194,6 @@ public class InteractionSphere : MonoBehaviour
         }
         else
         {
-            /*
-            transform.localScale = new Vector3(_interactionManager.InteractionSphereScale / transform.lossyScale.x,
-                _interactionManager.InteractionSphereScale / transform.lossyScale.y,
-                _interactionManager.InteractionSphereScale / transform.lossyScale.z);
-                */
             var center = _collider.bounds.center;
             transform.position = center + (new Vector3(center.x,
                 _collider.ClosestPoint(new Vector3(center.x, float.MaxValue,

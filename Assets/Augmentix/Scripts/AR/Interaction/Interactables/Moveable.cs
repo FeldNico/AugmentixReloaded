@@ -11,15 +11,6 @@ using UnityEngine.Events;
 [RequireComponent(typeof(PhotonView))]
 public class Moveable : MonoBehaviour, IPunInstantiateMagicCallback
 {
-    void Start()
-    {
-        #if UNITY_WSA
-        
-#elif UNITY_ANDROID
-        gameObject.AddComponent<OVRGrabbable>();
-#endif
-
-    }
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {

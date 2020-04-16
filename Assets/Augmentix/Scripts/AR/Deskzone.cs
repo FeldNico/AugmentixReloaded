@@ -4,12 +4,13 @@ using System.Linq;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.Events;
-using Vuforia;
 
 public class Deskzone : MonoBehaviour
 {
     private Transform _mainCameraTransform;
     private Renderer _renderer;
+    private BoxCollider _collider;
+    private Vector3 _colliderHalfSize;
 
     public UnityAction Inside;
     public UnityAction Outside;
@@ -31,41 +32,17 @@ public class Deskzone : MonoBehaviour
     void Start()
     {
         _renderer = GetComponent<Renderer>();
+        _collider = GetComponent<BoxCollider>();
+        _colliderHalfSize = _collider.size * 0.5f;
         _mainCameraTransform = Camera.main.transform;
         _height = _renderer.bounds.extents.y;
-
-        DataSet deskzonDataset = null;
-        ObjectTracker objectTracker = null;
-        Inside += () =>
-        {
-            if (deskzonDataset == null || objectTracker == null)
-            {
-                objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
-                deskzonDataset = objectTracker.GetDataSets().First(set => set.Path == "Vuforia/Augmentix_Deskzone.xml");
-            }
-            objectTracker.Stop();
-            objectTracker.ActivateDataSet(deskzonDataset);
-            objectTracker.Start();
-        };
-
-        Outside += () =>
-        {
-            if (deskzonDataset == null || objectTracker == null)
-            {
-                objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
-                deskzonDataset = objectTracker.GetDataSets().First(set => set.Path == "Vuforia/Augmentix_Deskzone.xml");
-            }
-            objectTracker.Stop();
-            objectTracker.DeactivateDataSet(deskzonDataset);
-            objectTracker.Start();
-        };
     }
 
     void Update()
     {
         if (PhotonNetwork.IsConnected && Time.frameCount % 10 == 0)
         {
-            if (_renderer.bounds.Contains(_mainCameraTransform.position))
+            if (IsWorldPointInside(_mainCameraTransform.position))
             {
                 if (_inside != 1)
                 {
@@ -82,5 +59,17 @@ public class Deskzone : MonoBehaviour
                 }
             }
         }
+    }
+    
+    public bool IsWorldPointInside (Vector3 point)
+    {
+        point = _collider.transform.InverseTransformPoint( point ) - _collider.center;
+        
+        if( point.x < _colliderHalfSize.x && point.x > -_colliderHalfSize.x && 
+            point.y < _colliderHalfSize.y && point.y > -_colliderHalfSize.y && 
+            point.z < _colliderHalfSize.z && point.z > -_colliderHalfSize.z )
+            return true;
+        else
+            return false;
     }
 }

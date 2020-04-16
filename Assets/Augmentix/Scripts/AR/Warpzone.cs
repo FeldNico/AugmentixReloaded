@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Augmentix.Scripts.AR;
 using Augmentix.Scripts.VR;
+using Microsoft.MixedReality.Toolkit.Input;
 using Microsoft.MixedReality.Toolkit.Utilities;
 using Photon.Pun;
 using UnityEngine;
@@ -18,7 +19,7 @@ using Vuforia;
 
 [RequireComponent(typeof(ImageTargetBehaviour),typeof(DefaultTrackableEventHandler))]
 #endif
-public class Warpzone : MonoBehaviour
+public class Warpzone : MonoBehaviour, IMixedRealityFocusHandler
 {
     public Vector3 LocalPosition
     {
@@ -72,7 +73,7 @@ public class Warpzone : MonoBehaviour
         _dummyTransform.localRotation = Quaternion.identity;
 
         var collider = gameObject.AddComponent<BoxCollider>();
-        collider.size = new Vector3(2f, 0, 2f);
+        collider.size = new Vector3(0.2f, 0.01f, 0.2f);
         collider.isTrigger = true;
         collider.enabled = false;
 
@@ -92,6 +93,8 @@ public class Warpzone : MonoBehaviour
 #endif
 
         gameObject.layer = LayerMask.NameToLayer("WarpzoneRaycast");
+
+        _warpzoneManager.ActiveWarpzone = this;
     }
 
     private void LateUpdate()
@@ -117,6 +120,13 @@ public class Warpzone : MonoBehaviour
                         _virtualCityTransform.InverseTransformPoint(trans.position)) <
                     2 * DisplaySize / transform.localScale.x)
                 {
+                    var ooi = trans.GetComponent<OOI>();
+                    if (ooi)
+                    {
+                        ooi.InteractionSphere.GetComponent<Renderer>().enabled = true;
+                        ooi.InteractionSphere.GetComponent<Collider>().enabled = true;
+                    }
+                    
                     Matrices[trans] = transform.localToWorldMatrix * warpzoneMatrix * Matrix4x4.TRS(
                                           _virtualCityTransform.InverseTransformPoint(trans.position),
                                           Quaternion.Inverse(_virtualCityTransform.rotation) * trans.rotation,
@@ -125,6 +135,15 @@ public class Warpzone : MonoBehaviour
                     for (int i = 0; i < mesh.sharedMesh.subMeshCount; i++)
                     {
                         _commandBuffer.DrawMesh(mesh.sharedMesh, Matrices[trans], materials[i], i, -1);
+                    }
+                }
+                else
+                {
+                    var ooi = trans.GetComponent<OOI>();
+                    if (ooi && !ooi.IsBeingManipulated)
+                    {
+                        ooi.InteractionSphere.GetComponent<Renderer>().enabled = false;
+                        ooi.InteractionSphere.GetComponent<Collider>().enabled = false;
                     }
                 }
             }
@@ -177,5 +196,15 @@ public class Warpzone : MonoBehaviour
                 break;
             }
         }
+    }
+
+    public void OnFocusEnter(FocusEventData eventData)
+    {
+        //throw new NotImplementedException();
+    }
+
+    public void OnFocusExit(FocusEventData eventData)
+    {
+        //throw new NotImplementedException();
     }
 }

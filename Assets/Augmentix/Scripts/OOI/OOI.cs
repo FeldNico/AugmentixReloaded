@@ -45,7 +45,10 @@ namespace Augmentix.Scripts.OOI
         [TextArea(15, 20)] public string Text;
 
         public Collider Collider { private set; get; } = null;
-        private InteractionSphere _interactionSphere;
+
+        public bool IsBeingManipulated = false;
+        
+        public InteractionSphere InteractionSphere { private set; get; }
 
         private void Start()
         {
@@ -53,10 +56,10 @@ namespace Augmentix.Scripts.OOI
 #if UNITY_WSA
             var prefab = FindObjectOfType<InteractionManager>().InteractionSpherePrefab;
                 
-                _interactionSphere =
+                InteractionSphere =
                     Instantiate(prefab, transform.position + new Vector3(0,Collider.bounds.size.y,0),
                         transform.rotation).GetComponent<InteractionSphere>();
-                _interactionSphere.OOI = this;
+                InteractionSphere.OOI = this;
 #endif
 
             if (Flags.HasFlag(InteractionFlag.Manipulate))
@@ -72,6 +75,7 @@ namespace Augmentix.Scripts.OOI
                 });
                 manipulator.OnManipulationEnded.AddListener(data =>
                 {
+                    IsBeingManipulated = false;
                     StartCoroutine(StopMovement());
                     IEnumerator StopMovement()
                     {
@@ -81,7 +85,7 @@ namespace Augmentix.Scripts.OOI
                     }
                 });
 #elif UNITY_ANDROID
-
+                var grabbable = gameObject.AddComponent<CustomGrabbable>();
 #endif
             }
             
@@ -254,5 +258,16 @@ namespace Augmentix.Scripts.OOI
                 yield return new WaitForEndOfFrame();
             }
         }
+
+        [PunRPC]
+        public void OnTransferDenied()
+        {
+            #if UNITY_ANDROID
+            var grabbable = GetComponent<CustomGrabbable>();
+            grabbable.grabbedBy.ForceRelease(grabbable);
+            IsBeingManipulated = false;
+            #endif
+        }
+
     }
 }

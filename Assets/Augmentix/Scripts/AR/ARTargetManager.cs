@@ -10,8 +10,9 @@ using UnityEngine.Events;
 using TMPro;
 using Photon.Pun;
 using UnityEngine.XR.WSA;
-using Vuforia;
+
 #if UNITY_WSA
+using Vuforia;
 using System.Collections;
 using UnityEngine.XR.WSA.Input;
 
@@ -89,7 +90,7 @@ namespace Augmentix.Scripts.AR
                 avatar.transform.parent = Camera.main.transform;
                 avatar.GetComponent<Renderer>().enabled = false;
             };
-            
+            #if UNITY_WSA
             VuforiaARController.Instance.RegisterVuforiaStartedCallback(() =>
                 {
                     var fps = VuforiaRenderer.Instance.GetRecommendedFps(VuforiaRenderer.FpsHint.FAST |
@@ -97,10 +98,14 @@ namespace Augmentix.Scripts.AR
                     Debug.Log("Recommended Fps: "+fps);
                     Application.targetFrameRate = fps;
                 });
+#endif
         }
 
         public void SetupDeskzoneAndConnect()
         {
+#if UNITY_WSA
+            
+
             if (!PhotonNetwork.IsConnected)
             {
                 var target = _deskzone.transform.parent;
@@ -113,6 +118,7 @@ namespace Augmentix.Scripts.AR
                 _deskzone.gameObject.AddComponent<WorldAnchor>();
                 Connect();
             }
+#endif
         }
     }
 }
