@@ -14,6 +14,7 @@ public class WarpzoneManager : MonoBehaviour
     }
     public GameObject WarpzoneGazeIndicator;
     public float ScrollSpeed = 10f;
+    public GameObject ViewConePrefab;
     public List<Warpzone> Warpzones { get; private set; }
     public UnityAction<Warpzone> OnNewWarpzone;
     public UnityAction<Warpzone> OnWarpzoneLost;

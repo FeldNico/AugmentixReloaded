@@ -10,7 +10,6 @@ using UnityEngine.Events;
 using TMPro;
 using Photon.Pun;
 using UnityEngine.XR.WSA;
-
 #if UNITY_WSA
 using Vuforia;
 using System.Collections;
@@ -22,19 +21,14 @@ namespace Augmentix.Scripts.AR
 {
     public class ARTargetManager : TargetManager
     {
-        public int Port = 1337;
         //public ARHands Hands;
         public GameObject AvatarPrefab;
         public GameObject WarpzoneDummyPrefab;
-        [HideInInspector]
-        public bool DoCalibrate = false;
-        [HideInInspector]
-        public Vector3 FirstCalibrationVector, SecondCalibrationVector;
+        [HideInInspector] public bool DoCalibrate = false;
+        [HideInInspector] public Vector3 FirstCalibrationVector, SecondCalibrationVector;
         public TMP_Text DebugText;
 
         private Deskzone _deskzone;
-        private WarpzoneManager _warpzoneManager;
-        private VirtualCity _virtualCity;
 
         new public void Awake()
         {
@@ -46,11 +40,9 @@ namespace Augmentix.Scripts.AR
                 */
             if (DebugText == null)
                 DebugText = FindObjectOfType<TMP_Text>();
-
-            _warpzoneManager = FindObjectOfType<WarpzoneManager>();
-            _virtualCity = FindObjectOfType<VirtualCity>();
-            _deskzone = FindObjectOfType<Deskzone>();
             
+            _deskzone = FindObjectOfType<Deskzone>();
+
             Application.logMessageReceived += (message, trace, type) =>
             {
                 if (!DebugText.text.EndsWith(message + "\n"))
@@ -83,29 +75,42 @@ namespace Augmentix.Scripts.AR
             {
                 if (AvatarPrefab != null)
                     Debug.Log(AvatarPrefab.name);
-                
+
                 var avatar = PhotonNetwork.Instantiate(AvatarPrefab.name, Camera.main.transform.position,
                     Camera.main.transform.rotation);
-                
+
                 avatar.transform.parent = Camera.main.transform;
                 avatar.GetComponent<Renderer>().enabled = false;
             };
-            #if UNITY_WSA
+#if UNITY_WSA
             VuforiaARController.Instance.RegisterVuforiaStartedCallback(() =>
-                {
-                    var fps = VuforiaRenderer.Instance.GetRecommendedFps(VuforiaRenderer.FpsHint.FAST |
-                                                               VuforiaRenderer.FpsHint.NO_VIDEOBACKGROUND);
-                    Debug.Log("Recommended Fps: "+fps);
-                    Application.targetFrameRate = fps;
-                });
+            {
+                var fps = VuforiaRenderer.Instance.GetRecommendedFps(VuforiaRenderer.FpsHint.FAST |
+                                                                     VuforiaRenderer.FpsHint.NO_VIDEOBACKGROUND);
+                Application.targetFrameRate = fps;
+                
+                var objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
+                objectTracker.Stop();
+                objectTracker.DeactivateDataSet(objectTracker.GetDataSets()
+                    .First(set => set.Path == "Vuforia/Augmentix_Deskzone.xml"));
+                objectTracker.Start();
+            });
 #endif
+            /*
+            StartCoroutine(Test());
+            IEnumerator Test()
+            {
+                Connect();
+                yield return new WaitForSeconds(10f);
+                FindObjectsOfType<OOI.OOI>().FirstOrDefault(ooi => ooi.Flags.HasFlag(OOI.OOI.InteractionFlag.Delete)).Interact(OOI.OOI.InteractionFlag.Text);
+            }
+            */
+            
         }
 
         public void SetupDeskzoneAndConnect()
         {
 #if UNITY_WSA
-            
-
             if (!PhotonNetwork.IsConnected)
             {
                 var target = _deskzone.transform.parent;
@@ -113,7 +118,10 @@ namespace Augmentix.Scripts.AR
                 target.gameObject.SetActive(false);
                 var objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
                 objectTracker.Stop();
-                objectTracker.DeactivateDataSet(objectTracker.GetDataSets().First(set => set.Path == "Vuforia/Augmentix_Floor.xml"));
+                objectTracker.DeactivateDataSet(objectTracker.GetDataSets()
+                    .First(set => set.Path == "Vuforia/Augmentix_Floor.xml"));
+                objectTracker.ActivateDataSet(objectTracker.GetDataSets()
+                    .First(set => set.Path == "Vuforia/Augmentix_Deskzone.xml"));
                 objectTracker.Start();
                 _deskzone.gameObject.AddComponent<WorldAnchor>();
                 Connect();

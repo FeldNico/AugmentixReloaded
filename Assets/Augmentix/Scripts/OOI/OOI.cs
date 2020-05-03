@@ -33,7 +33,8 @@ namespace Augmentix.Scripts.OOI
             Text = 2,
             Video = 4,
             Manipulate = 8,
-            Changeable = 16
+            Changeable = 16,
+            Delete = 32
         }
 
         public bool StaticOOI = false;
@@ -50,9 +51,12 @@ namespace Augmentix.Scripts.OOI
         
         public InteractionSphere InteractionSphere { private set; get; }
 
+        private InteractionManager _interactionManager;
+
         private void Start()
         {
             Collider = GetComponent<Collider>();
+            _interactionManager = FindObjectOfType<InteractionManager>();
 #if UNITY_WSA
             var prefab = FindObjectOfType<InteractionManager>().InteractionSpherePrefab;
                 
@@ -60,6 +64,10 @@ namespace Augmentix.Scripts.OOI
                     Instantiate(prefab, transform.position + new Vector3(0,Collider.bounds.size.y,0),
                         transform.rotation).GetComponent<InteractionSphere>();
                 InteractionSphere.OOI = this;
+                InteractionSphere.GetComponent<ObjectManipulator>().OnManipulationStarted.AddListener(eventData =>
+                {
+                    GetComponent<PhotonView>().RequestOwnership();
+                });
 #endif
 
             if (Flags.HasFlag(InteractionFlag.Manipulate))
@@ -87,19 +95,6 @@ namespace Augmentix.Scripts.OOI
 #elif UNITY_ANDROID
                 var grabbable = gameObject.AddComponent<CustomGrabbable>();
 #endif
-            }
-            
-            if (Flags.HasFlag(InteractionFlag.Highlight))
-            {
-                var outline = gameObject.AddComponent<Outline>();
-                outline.OutlineMode = Outline.Mode.OutlineVisible;
-
-                StartCoroutine(nextFrame());
-                IEnumerator nextFrame()
-                {
-                    yield return new WaitForEndOfFrame();
-                    outline.enabled = false;
-                }
             }
         }
 
@@ -129,8 +124,8 @@ namespace Augmentix.Scripts.OOI
                     {
                         outline = gameObject.AddComponent<Outline>();
                         outline.OutlineMode = Outline.Mode.OutlineVisible;
-                    }
-                    outline.enabled = !outline.enabled;
+                    } else 
+                        outline.enabled = !outline.enabled;
                     
                     break;
                 }
@@ -144,6 +139,17 @@ namespace Augmentix.Scripts.OOI
                     ToggleText();
                     break;
                 }
+                case InteractionFlag.Delete:
+                {
+                    StartCoroutine(WaitforOneFrame());
+                    IEnumerator WaitforOneFrame()
+                    {
+                        yield return null;
+                        Destroy(InteractionSphere.gameObject);
+                        PhotonNetwork.Destroy(GetComponent<PhotonView>());
+                    }
+                    break;
+                }
             }
         }
 
@@ -152,17 +158,13 @@ namespace Augmentix.Scripts.OOI
 
         private void ToggleText()
         {
-            
-            
             #if UNITY_WSA
             if (_textObjects.Keys.Count == 0)
             {
                 foreach (var avatar in PlayerAvatar.SecondaryAvatars)
                 {
-                    var text = PhotonNetwork.Instantiate(
-                        "OOI" + Path.DirectorySeparatorChar + "Info" + Path.DirectorySeparatorChar +
-                        FindObjectOfType<InteractionManager>().TextPrefab.name, transform.position,
-                        transform.rotation, (byte) TargetManager.Groups.PLAYERS, new object[] {photonView.ViewID});
+                    var text = PhotonNetwork.Instantiate(Path.Combine("OOI","Info",_interactionManager.TextPrefab.name), transform.position,
+                        transform.rotation, (byte) TargetManager.Groups.PLAYERS, new object[] {avatar.GetComponent<PhotonView>().OwnerActorNr,photonView.ViewID});
                     _textObjects[avatar] = text.GetComponent<OOIInfo>();
                 }
 
@@ -194,14 +196,12 @@ namespace Augmentix.Scripts.OOI
             {
                 foreach (var avatar in PlayerAvatar.SecondaryAvatars)
                 {
-                    var video = PhotonNetwork.Instantiate(
-                        "OOI" + Path.DirectorySeparatorChar + "Info" + Path.DirectorySeparatorChar +
-                        FindObjectOfType<InteractionManager>().VideoPrefab.name, Collider.bounds.center, transform.rotation,
-                        (byte) TargetManager.Groups.PLAYERS, new object[] {photonView.ViewID});
-                    video.transform.parent = transform;
+                    var videoPlayer = GetComponent<VideoPlayer>();
+                    var video = PhotonNetwork.Instantiate(Path.Combine("OOI","Info",_interactionManager.VideoPrefab.name), Collider.bounds.center, transform.rotation,
+                        (byte) TargetManager.Groups.PLAYERS, new object[] {avatar.GetComponent<PhotonView>().OwnerActorNr,photonView.ViewID});
                     var scale = video.transform.localScale;
-                    scale.y *= (1f * GetComponent<VideoPlayer>().height) / GetComponent<VideoPlayer>().width;
-                    transform.localScale = scale;
+                    scale.y *= (scale.y * videoPlayer.height) / videoPlayer.width;
+                    video.transform.localScale = scale;
                     _videoObjects[avatar] = video.GetComponent<OOIInfo>();
                 }
 
@@ -254,7 +254,6 @@ namespace Augmentix.Scripts.OOI
                     objTransform.LookAt(new Vector3(playerPosition.x, newPosition.y, playerPosition.z));
                     objTransform.rotation = objTransform.rotation * rotationOffset;
                 }
-
                 yield return new WaitForEndOfFrame();
             }
         }

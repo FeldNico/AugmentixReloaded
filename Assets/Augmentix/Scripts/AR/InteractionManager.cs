@@ -5,9 +5,14 @@ using Augmentix.Scripts.OOI;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using Augmentix.Scripts;
 using Augmentix.Scripts.AR;
 using Augmentix.Scripts.VR;
+using ExitGames.Client.Photon;
+using Microsoft.MixedReality.Toolkit.Input;
+using Microsoft.MixedReality.Toolkit.Utilities;
 using Photon.Pun;
+using Photon.Realtime;
 using TMPro;
 using UnityEngine;
 
@@ -18,6 +23,8 @@ public class InteractionManager : MonoBehaviour
     public GameObject TextPrefab;
     public GameObject VideoPrefab;
     public GameObject HighlightPrefab;
+    public GameObject DeletePrefab;
+    public GameObject SpawnableButtonPrefab;
 
     public float InteractionSphereScale = 0.03f;
     public float RadianUIRadius = 0.04f;
@@ -26,6 +33,7 @@ public class InteractionManager : MonoBehaviour
     private WarpzoneManager _warpzoneManager;
     private VirtualCity _virtualCity;
     private Camera _mainCamera;
+    private LineRenderer _pointer;
 
     private string[] _axis = new string[] {"Horizontal","Vertical","Fire1","Fire2","Fire3","Jump","Mouse X","Mouse Y","Mouse ScrollWheel","Horizontal","Vertical","Fire1","Fire2","Fire3","Jump","Submit","Submit","Cancel","AXIS_1","AXIS_2","AXIS_3","AXIS_4","AXIS_5","AXIS_6","AXIS_7","AXIS_8","AXIS_9","AXIS_10","AXIS_11","AXIS_12","AXIS_13","AXIS_14","AXIS_15","AXIS_16","AXIS_17","AXIS_18","AXIS_19","AXIS_20","AXIS_21","AXIS_22","AXIS_23","AXIS_24","AXIS_25","AXIS_26","AXIS_27","AXIS_28","UpDown","UpDown","Oculus_GearVR_LThumbstickX","Oculus_GearVR_LThumbstickY","Oculus_GearVR_RThumbstickX","Oculus_GearVR_RThumbstickY","Oculus_GearVR_DpadX","Oculus_GearVR_DpadY","Oculus_GearVR_LIndexTrigger","Oculus_GearVR_RIndexTrigger","Oculus_CrossPlatform_Button2","Oculus_CrossPlatform_Button4","Oculus_CrossPlatform_PrimaryThumbstick","Oculus_CrossPlatform_SecondaryThumbstick","Oculus_CrossPlatform_PrimaryIndexTrigger","Oculus_CrossPlatform_SecondaryIndexTrigger","Oculus_CrossPlatform_PrimaryHandTrigger","Oculus_CrossPlatform_SecondaryHandTrigger","Oculus_CrossPlatform_PrimaryThumbstickHorizontal","Oculus_CrossPlatform_PrimaryThumbstickVertical","Oculus_CrossPlatform_SecondaryThumbstickHorizontal","Oculus_CrossPlatform_SecondaryThumbstickVertical"};
     
@@ -61,7 +69,51 @@ public class InteractionManager : MonoBehaviour
         if (PhotonNetwork.IsConnected)
         {
             if (_deskzone.IsInside)
+            {
+                if (_pointer != null && _pointer.enabled)
+                {
+                    _pointer.enabled = !_pointer.enabled;
+                    PhotonNetwork.RaiseEvent( (byte) TargetManager.EventCode.POINTING, null,
+                        RaiseEventOptions.Default, SendOptions.SendReliable);
+                }
                 HandleWarpzoneGazing();
+            }
+            else
+            {
+                if (Input.GetKey(KeyCode.Mouse0) && HandJointUtils.TryGetJointPose(TrackedHandJoint.IndexTip, Handedness.Right,out MixedRealityPose pose))
+                {
+                    if (_pointer == null)
+                    {
+                        var go = new GameObject("Pointer");
+                        go.transform.parent = transform;
+                        go.transform.localPosition = Vector3.zero;
+                        _pointer = go.AddComponent<LineRenderer>();
+                        _pointer.endWidth = 0.05f;
+                        _pointer.startWidth = 0.05f;
+                    }
+
+                    var startPos = pose.Position;
+                    var endPos = startPos + 50 * pose.Forward;
+
+                    _pointer.SetPosition(0,startPos);
+                    _pointer.SetPosition(1,endPos);
+
+                    PhotonNetwork.RaiseEvent( (byte) TargetManager.EventCode.POINTING, new object[] {PhotonNetwork.LocalPlayer.ActorNumber, startPos, endPos},
+                        RaiseEventOptions.Default, SendOptions.SendReliable);
+                    
+                    _pointer.enabled = true;
+                }
+                else
+                {
+                    if (_pointer != null && _pointer.enabled)
+                    {
+                        _pointer.enabled = !_pointer.enabled;
+                        PhotonNetwork.RaiseEvent( (byte) TargetManager.EventCode.POINTING, new object[] {PhotonNetwork.LocalPlayer.ActorNumber},
+                            RaiseEventOptions.Default, SendOptions.SendReliable);
+                    }
+                }
+            }
+                
             HandleWarpzoneMoving();
         }
     }
@@ -128,7 +180,7 @@ public class InteractionManager : MonoBehaviour
         {
             var vec = new Vector3();
 
-            var camTransform = Camera.main.transform;
+            var camTransform = _mainCamera.transform;
             
             if (_deskzone.IsInside)
             {

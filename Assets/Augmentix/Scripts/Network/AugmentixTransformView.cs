@@ -1,4 +1,5 @@
-﻿using Photon.Pun;
+﻿using Microsoft.MixedReality.Toolkit;
+using Photon.Pun;
 using UnityEngine;
 
 namespace Augmentix.Scripts.Network
@@ -19,7 +20,7 @@ namespace Augmentix.Scripts.Network
 
         public bool m_SynchronizePosition = true;
         public bool m_SynchronizeRotation = true;
-        public bool m_SynchronizeScale = false;
+        public bool m_SynchronizeScale = true;
 
         bool m_firstTake = false;
 
@@ -28,12 +29,10 @@ namespace Augmentix.Scripts.Network
         public void Awake()
         {
             m_PhotonView = GetComponent<PhotonView>();
-
             _virtualCityTransform = FindObjectOfType<VirtualCity>().transform;
-
+            
             m_StoredPosition = _virtualCityTransform.InverseTransformPoint(transform.position) ;
             m_NetworkPosition = Vector3.zero;
-
             m_NetworkRotation = Quaternion.identity;
         }
 
@@ -143,7 +142,11 @@ namespace Augmentix.Scripts.Network
                         t = t.parent;
                     }
                     while (t != null);
+
+                    var parent = transform.parent;
+                    transform.parent = null;
                     transform.localScale = transformedSize;
+                    transform.parent = parent;
                 }
 
                 if (m_firstTake)

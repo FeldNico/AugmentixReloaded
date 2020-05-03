@@ -20,6 +20,7 @@ public class MapTargetDummy : MonoBehaviour
     private Map _map;
     private LineRenderer _lineRenderer;
     private GameObject _sphere;
+    private WarpzoneManager _warpzoneManager;
 
     public bool IsInteractedWith { private set; get; } = false;
 
@@ -27,6 +28,7 @@ public class MapTargetDummy : MonoBehaviour
     {
         _interactionManager = FindObjectOfType<InteractionManager>();
         _map = FindObjectOfType<Map>();
+        _warpzoneManager = FindObjectOfType<WarpzoneManager>();
         _sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         _sphere.transform.localScale = Vector3.one *_interactionManager.InteractionSphereScale;
         _sphere.name = "InteractionSphere " + gameObject.name;
@@ -57,6 +59,10 @@ public class MapTargetDummy : MonoBehaviour
         
         if (Target is Warpzone)
         {
+            manipulator.OnManipulationStarted.AddListener(eventdata =>
+            {
+                _warpzoneManager.ActiveWarpzone = (Warpzone) Target;
+            });
             manipulator.OnManipulationEnded.AddListener(eventData =>
             {
                 var localPos = _map.Scaler.transform.InverseTransformPoint(_sphere.transform.position);
@@ -82,9 +88,11 @@ public class MapTargetDummy : MonoBehaviour
                 var localPos = _map.Scaler.transform.InverseTransformPoint(_sphere.transform.position);
                 localPos.y = 0;
                 _lineRenderer.material.color = Color.blue;
+                var options = new RaiseEventOptions();
+                options.TargetActors = new[] { Target.GetComponent<PhotonView>().OwnerActorNr };
                 PhotonNetwork.RaiseEvent((byte) TargetManager.EventCode.NAVIGATION,
                     localPos,
-                    RaiseEventOptions.Default, SendOptions.SendReliable);
+                    options, SendOptions.SendReliable);
             });
         }
     }

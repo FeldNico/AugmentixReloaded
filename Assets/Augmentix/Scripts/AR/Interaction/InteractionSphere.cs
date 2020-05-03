@@ -68,6 +68,11 @@ public class InteractionSphere : MonoBehaviour
         {
             interactionList.Add(OOI.InteractionFlag.Highlight);
         }
+        
+        if (_ooi.Flags.HasFlag(OOI.InteractionFlag.Delete))
+        {
+            interactionList.Add(OOI.InteractionFlag.Delete);
+        }
 
         foreach (var flag in interactionList)
         {
@@ -110,6 +115,14 @@ public class InteractionSphere : MonoBehaviour
                     item.transform.localScale = transform.lossyScale;
                     break;
                 }
+                case OOI.InteractionFlag.Delete:
+                {
+                    item = Instantiate(_interactionManager.DeletePrefab,
+                        transform.position,
+                        transform.rotation);
+                    item.transform.localScale = transform.lossyScale;
+                    break;
+                }
             }
 
             MenuItems.Add(item, flag);
@@ -137,7 +150,7 @@ public class InteractionSphere : MonoBehaviour
 
         foreach (var key in MenuItems.Keys)
         {
-            if (key.GetComponent<SphereCollider>().bounds.Contains(transform.position))
+            if (key.GetComponent<Collider>().bounds.Contains(transform.position))
             {
                 _ooi.Interact(MenuItems[key]);
             }
@@ -181,11 +194,11 @@ public class InteractionSphere : MonoBehaviour
                         m.GetColumn(1)
                     );
 
-                    var center = rotation * _ooiTransform.TransformPoint(_halfXRotation * bounds.center) * scale +
+                    var center = rotation * bounds.center * scale +
                                  position;
                     center.y += (_collider.ClosestPoint(
                         new Vector3(bounds.center.x, float.MaxValue,
-                            bounds.center.z)).y + 0.1f) * scale;
+                            bounds.center.z)).y * scale) +0.07f ;
                     transform.position = center;
                 }
 
@@ -195,10 +208,10 @@ public class InteractionSphere : MonoBehaviour
         else
         {
             var center = _collider.bounds.center;
-            transform.position = center + (new Vector3(center.x,
+            transform.position = new Vector3(center.x,
                 _collider.ClosestPoint(new Vector3(center.x, float.MaxValue,
                         center.z))
-                    .y + 0.07f, center.z) - center);
+                    .y + 0.07f, center.z);
         }
     }
 #endif

@@ -111,6 +111,7 @@ public class Warpzone : MonoBehaviour, IMixedRealityFocusHandler
             Matrices.Clear();
             foreach (var valueTuple in _virtualCity.RenderList)
             {
+                var renderer = valueTuple.Item2;
                 var trans = valueTuple.Item1;
                 var mesh = valueTuple.Item3;
                 var materials = valueTuple.Item4;

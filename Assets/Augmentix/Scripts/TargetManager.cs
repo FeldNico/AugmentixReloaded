@@ -35,6 +35,7 @@ namespace Augmentix.Scripts
             EXTENDED = 0x44,
             HIGHLIGHT = 0x45,
             NAVIGATION = 0x46,
+            POINTING = 0x47
         }
     
         public static TargetManager Instance { protected set; get; }

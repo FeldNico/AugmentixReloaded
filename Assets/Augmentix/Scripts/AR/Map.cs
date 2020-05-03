@@ -69,6 +69,7 @@ namespace Augmentix.Scripts.AR
                     if (dummy.Target == avatar)
                     {
                         Dummies.Remove(dummy);
+                        Destroy(dummy);
                         return;
                     }
                 }

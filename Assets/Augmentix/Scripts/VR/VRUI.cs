@@ -120,7 +120,7 @@ namespace Augmentix.Scripts.VR
                 }
                 case (byte) TargetManager.EventCode.NAVIGATION:
                 {
-                    if (_navigationDummy != null)
+                    if (_navigationDummy == null)
                     {
                         _navigationDummy = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         _navigationDummy.GetComponent<Renderer>().enabled = false;

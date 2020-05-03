@@ -22,22 +22,40 @@ public class OOIInfo : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
-        _ooi = PhotonView.Find((int) info.photonView.InstantiationData[0]).GetComponent<OOI>();
-        transform.parent = _ooi.transform;
-        switch (Type)
+        var ownerID = (int) info.photonView.InstantiationData[0];
+
+        if (PhotonNetwork.LocalPlayer.ActorNumber == ownerID)
         {
-            case InfoType.Text:
+            var viewID = (int) info.photonView.InstantiationData[1];
+            _ooi = PhotonView.Find(viewID).GetComponent<OOI>();
+            switch (Type)
             {
-                GetComponent<TextMeshPro>().text = _ooi.Text;
-                break;
-            }
-            case InfoType.Video:
-            {
-                var video = _ooi.GetComponent<VideoPlayer>();
-                video.targetMaterialRenderer = GetComponent<Renderer>();
-                video.Play();
-                break;
+                case InfoType.Text:
+                {
+                    GetComponent<TextMeshPro>().text = _ooi.Text;
+                    break;
+                }
+                case InfoType.Video:
+                {
+                    var video = _ooi.GetComponent<VideoPlayer>();
+                    video.targetMaterialRenderer = GetComponent<Renderer>();
+                    video.Play();
+                    break;
+                }
             }
         }
+        else
+        {
+            foreach (var child in GetComponentsInChildren<Renderer>())
+            {
+                child.enabled = false;
+            }
+            foreach (var child in GetComponentsInChildren<Collider>())
+            {
+                child.enabled = false;
+            }
+        }
+        
+        
     }
 }

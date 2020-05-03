@@ -2,12 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using Augmentix.Scripts;
+using ExitGames.Client.Photon;
 using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(PhotonView))]
-public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback
+public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback, IOnEventCallback
 {
     public static List<PlayerAvatar> SecondaryAvatars { private set; get; } = new List<PlayerAvatar>();
     public static PlayerAvatar PrimaryAvatar { private set; get; } = null;
@@ -18,26 +20,55 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback
     
     private Deskzone _deskzone;
     private TargetManager.PlayerType Type;
+    private LineRenderer _pointer;
+    private GameObject _viewCone;
+    private PhotonView _view;
     private void Start()
     {
-        if (GetComponent<PhotonView>().IsMine)
+        _view = GetComponent<PhotonView>();
+        
+        if (_view.IsMine)
             Mine = this;
+
+        if (TargetManager.Instance.Type == TargetManager.PlayerType.Primary)
+        {
+            _deskzone = FindObjectOfType<Deskzone>();
+        }
         
         if ((string) GetComponent<PhotonView>().Owner.CustomProperties["Class"] == TargetManager.PlayerType.Primary.ToString())
         {
             Type = TargetManager.PlayerType.Primary;
             if (TargetManager.Instance.Type == TargetManager.PlayerType.Primary)
             {
-                _deskzone = FindObjectOfType<Deskzone>();
                 _deskzone.Inside += () => { ToggleVisibility(false); };
                 _deskzone.Outside += () => { ToggleVisibility(true); };
             }
-            PrimaryAvatar = this;
         }
         else
         {
             Type = TargetManager.PlayerType.Secondary;
             SecondaryAvatars.Add(this);
+
+            if (TargetManager.Instance.Type == TargetManager.PlayerType.Primary)
+            {
+                var conePrefab = FindObjectOfType<WarpzoneManager>().ViewConePrefab;
+                var cone = Instantiate(conePrefab);
+                cone.transform.parent = transform;
+                cone.transform.localPosition = conePrefab.transform.localPosition;
+                cone.transform.localRotation = conePrefab.transform.localRotation;
+                cone.transform.localScale = conePrefab.transform.localScale;
+                cone.GetComponent<Renderer>().enabled = false;
+
+                _deskzone.Inside += () =>
+                {
+                    cone.GetComponent<Renderer>().enabled = true;
+                };
+                
+                _deskzone.Outside += () =>
+                {
+                    cone.GetComponent<Renderer>().enabled = false;
+                };
+            }
         }
         AvatarCreated?.Invoke(this);
     }
@@ -71,5 +102,53 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback
             if (SecondaryAvatars.Contains(this))
                 SecondaryAvatars.Remove(this);
         }
+    }
+
+    public void OnEvent(EventData photonEvent)
+    {
+        switch (photonEvent.Code)
+        {
+            case (byte) TargetManager.EventCode.POINTING:
+            {
+                var data = (object[]) photonEvent.CustomData;
+                if (_view.OwnerActorNr == (int) data[0])
+                {
+                    if (data.Length > 1)
+                    {
+                        var startPos = (Vector3) data[1];
+                        var endPos = (Vector3) data[2];
+
+                        if (_pointer == null)
+                        {
+                            var go = new GameObject("Pointer");
+                            go.transform.parent = transform;
+                            go.transform.localPosition = Vector3.zero;
+                            _pointer = go.AddComponent<LineRenderer>();
+                            _pointer.endWidth = 0.05f;
+                            _pointer.startWidth = 0.05f;
+                        }
+                        _pointer.SetPosition(0,startPos);
+                        _pointer.SetPosition(1,endPos);
+                        _pointer.enabled = true;
+                    }
+                    else
+                    {
+                        if (_pointer != null)
+                            _pointer.enabled = false;
+                    }
+                }
+                break;
+            }
+        }
+    }
+    
+    public void OnEnable()
+    {
+        PhotonNetwork.AddCallbackTarget(this);
+    }
+
+    public void OnDisable()
+    {
+        PhotonNetwork.RemoveCallbackTarget(this);
     }
 }
