@@ -19,7 +19,7 @@ using Vuforia;
 
 [RequireComponent(typeof(ImageTargetBehaviour),typeof(DefaultTrackableEventHandler))]
 #endif
-public class Warpzone : MonoBehaviour, IMixedRealityFocusHandler
+public class Warpzone : MonoBehaviour
 {
     public Vector3 LocalPosition
     {
@@ -93,8 +93,6 @@ public class Warpzone : MonoBehaviour, IMixedRealityFocusHandler
 #endif
 
         gameObject.layer = LayerMask.NameToLayer("WarpzoneRaycast");
-
-        _warpzoneManager.ActiveWarpzone = this;
     }
 
     private void LateUpdate()
@@ -197,15 +195,5 @@ public class Warpzone : MonoBehaviour, IMixedRealityFocusHandler
                 break;
             }
         }
-    }
-
-    public void OnFocusEnter(FocusEventData eventData)
-    {
-        //throw new NotImplementedException();
-    }
-
-    public void OnFocusExit(FocusEventData eventData)
-    {
-        //throw new NotImplementedException();
     }
 }

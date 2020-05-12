@@ -6867,7 +6867,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5430505540267296049}
-  - component: {fileID: 1492603020941391492}
+  - component: {fileID: 8409747066554449695}
   m_Layer: 0
   m_Name: OOI_Highlight
   m_TagString: Untagged
@@ -6890,8 +6890,8 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &1492603020941391492
-SphereCollider:
+--- !u!65 &8409747066554449695
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -6901,5 +6901,5 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.9
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.8387148, y: 0.66083646, z: 0.7325027}
+  m_Center: {x: -0.004917234, y: 0.108243704, z: 0.01868552}

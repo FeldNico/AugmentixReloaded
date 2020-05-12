@@ -94,7 +94,7 @@ public class VirtualCity : MonoBehaviour
     public void RefreshRenderList()
     {
         _renderList.Clear();
-        foreach (var child in GetComponentsInChildren<Renderer>())
+        foreach (var child in GetComponentsInChildren<Renderer>(true))
         {
             var mesh = child.GetComponent<MeshFilter>();
             if (mesh == null)

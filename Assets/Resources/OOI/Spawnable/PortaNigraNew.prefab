@@ -165,7 +165,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StaticOOI: 0
   Flags: 47
-  Text: grtzgdrthzdfghgjgfjhg
+  Text: "Die Kirche und das Stift lie\xDF Napoleon 1802 aufheben. Bei seinem Besuch
+    in Trier im Oktober 1804 verf\xFCgte er den R\xFCckbau der kirchlichen Anbauten.
+    Von 1804 bis 1809 wurde das mittelalterliche Geb\xE4ude ausgekernt. Die Preu\xDFen
+    vollendeten ab 1815 die Abbrucharbeiten, so dass nun wieder das r\xF6mische Tor
+    zu sehen ist. Lediglich den unteren Teil der mittelalterlichen Apsis lie\xDF
+    man aus denkmalpflegerischen Gr\xFCnden stehen. Nach dem Abschluss der Arbeiten
+    diente das Bauwerk als Triers erstes Antikenmuseum. In den 1870er Jahren riss
+    man die Stadtmauer und fast alle mittelalterlichen Stadttore ab, darunter auch
+    das Simeonstor."
   IsBeingManipulated: 0
 --- !u!328 &-1930418670060146556
 VideoPlayer:
@@ -175,7 +183,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3292062426041143262}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 036ec867bd723ab4a97fb96ce583ab67, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: 14f336a333d113e4ca32e1faf2a25906, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}

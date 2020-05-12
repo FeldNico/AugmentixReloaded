@@ -64,12 +64,9 @@ public class Deskzone : MonoBehaviour
     public bool IsWorldPointInside (Vector3 point)
     {
         point = _collider.transform.InverseTransformPoint( point ) - _collider.center;
-        
-        if( point.x < _colliderHalfSize.x && point.x > -_colliderHalfSize.x && 
-            point.y < _colliderHalfSize.y && point.y > -_colliderHalfSize.y && 
-            point.z < _colliderHalfSize.z && point.z > -_colliderHalfSize.z )
-            return true;
-        else
-            return false;
+
+        return (point.x < _colliderHalfSize.x && point.x > -_colliderHalfSize.x &&
+                point.y < _colliderHalfSize.y && point.y > -_colliderHalfSize.y &&
+                point.z < _colliderHalfSize.z && point.z > -_colliderHalfSize.z);
     }
 }

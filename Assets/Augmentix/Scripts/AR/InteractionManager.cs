@@ -25,6 +25,7 @@ public class InteractionManager : MonoBehaviour
     public GameObject HighlightPrefab;
     public GameObject DeletePrefab;
     public GameObject SpawnableButtonPrefab;
+    public Material PointingMaterial;
 
     public float InteractionSphereScale = 0.03f;
     public float RadianUIRadius = 0.04f;
@@ -80,8 +81,11 @@ public class InteractionManager : MonoBehaviour
             }
             else
             {
-                if (Input.GetKey(KeyCode.Mouse0) && HandJointUtils.TryGetJointPose(TrackedHandJoint.IndexTip, Handedness.Right,out MixedRealityPose pose))
+                if (Input.GetKey(KeyCode.Mouse0) && HandJointUtils.TryGetJointPose(TrackedHandJoint.IndexMiddleJoint, Handedness.Right,out MixedRealityPose pose))
                 {
+                    var startPos = pose.Position;
+                    var endPos = startPos + 50 * pose.Forward;
+                    
                     if (_pointer == null)
                     {
                         var go = new GameObject("Pointer");
@@ -90,15 +94,15 @@ public class InteractionManager : MonoBehaviour
                         _pointer = go.AddComponent<LineRenderer>();
                         _pointer.endWidth = 0.05f;
                         _pointer.startWidth = 0.05f;
+                        _pointer.material = PointingMaterial;
+                        _pointer.SetPosition(0,startPos);
+                        _pointer.SetPosition(1,endPos);
                     }
+                    
+                    _pointer.SetPosition(0,Vector3.Lerp(_pointer.GetPosition(0),startPos,0.05f));
+                    _pointer.SetPosition(1,Vector3.Lerp(_pointer.GetPosition(1),endPos,0.05f));
 
-                    var startPos = pose.Position;
-                    var endPos = startPos + 50 * pose.Forward;
-
-                    _pointer.SetPosition(0,startPos);
-                    _pointer.SetPosition(1,endPos);
-
-                    PhotonNetwork.RaiseEvent( (byte) TargetManager.EventCode.POINTING, new object[] {PhotonNetwork.LocalPlayer.ActorNumber, startPos, endPos},
+                    PhotonNetwork.RaiseEvent( (byte) TargetManager.EventCode.POINTING, new object[] {PhotonNetwork.LocalPlayer.ActorNumber, _virtualCity.transform.InverseTransformPoint(startPos), _virtualCity.transform.InverseTransformPoint(endPos)},
                         RaiseEventOptions.Default, SendOptions.SendReliable);
                     
                     _pointer.enabled = true;
@@ -264,7 +268,6 @@ public class InteractionManager : MonoBehaviour
                 else if (Input.GetKey(KeyCode.D))
                     vec +=0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * rightProject;
                 */
-
                 vec = _virtualCity.transform.InverseTransformVector(vec);
                 vec.y = 0;
                 

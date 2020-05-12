@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Augmentix.Scripts;
+using Augmentix.Scripts.VR;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
@@ -19,6 +20,7 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback, IOnEven
     public static UnityAction<PlayerAvatar> AvatarLost;
     
     private Deskzone _deskzone;
+    private VirtualCity _virtualCity;
     private TargetManager.PlayerType Type;
     private LineRenderer _pointer;
     private GameObject _viewCone;
@@ -26,7 +28,7 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback, IOnEven
     private void Start()
     {
         _view = GetComponent<PhotonView>();
-        
+        _virtualCity = FindObjectOfType<VirtualCity>();
         if (_view.IsMine)
             Mine = this;
 
@@ -58,16 +60,6 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback, IOnEven
                 cone.transform.localRotation = conePrefab.transform.localRotation;
                 cone.transform.localScale = conePrefab.transform.localScale;
                 cone.GetComponent<Renderer>().enabled = false;
-
-                _deskzone.Inside += () =>
-                {
-                    cone.GetComponent<Renderer>().enabled = true;
-                };
-                
-                _deskzone.Outside += () =>
-                {
-                    cone.GetComponent<Renderer>().enabled = false;
-                };
             }
         }
         AvatarCreated?.Invoke(this);
@@ -115,8 +107,8 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback, IOnEven
                 {
                     if (data.Length > 1)
                     {
-                        var startPos = (Vector3) data[1];
-                        var endPos = (Vector3) data[2];
+                        var startPos = _virtualCity.transform.TransformPoint((Vector3) data[1]) ;
+                        var endPos = _virtualCity.transform.TransformPoint((Vector3) data[2]);
 
                         if (_pointer == null)
                         {
@@ -126,9 +118,12 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback, IOnEven
                             _pointer = go.AddComponent<LineRenderer>();
                             _pointer.endWidth = 0.05f;
                             _pointer.startWidth = 0.05f;
+                            _pointer.material = FindObjectOfType<VRUI>().PointingMaterial;
+                            _pointer.SetPosition(0,startPos);
+                            _pointer.SetPosition(1,endPos);
                         }
-                        _pointer.SetPosition(0,startPos);
-                        _pointer.SetPosition(1,endPos);
+                        _pointer.SetPosition(0,Vector3.Lerp(_pointer.GetPosition(0),startPos,0.05f));
+                        _pointer.SetPosition(1,Vector3.Lerp(_pointer.GetPosition(1),endPos,0.05f));
                         _pointer.enabled = true;
                     }
                     else

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Triangulator
 {
-    public static Mesh CreateExtrudedMeshFromPolygon(List<Vector2> polygon, float height)
+    public static Mesh CreateExtrudedMeshFromPolygon(List<Vector3> polygon, float height)
     {
         List<int> triangleList = new List<int>();
 
@@ -13,18 +13,18 @@ public class Triangulator
         List<Vector3> vertListRoof = new List<Vector3>();
         List<Vector3> vertListSide = new List<Vector3>();
 
-        foreach (Vector2 vertex in polygon)
+        foreach (Vector3 vertex in polygon)
         {
-            vertListFloor.Add(new Vector3(vertex.x, 0.01f, vertex.y));
-            vertListRoof.Add(new Vector3(vertex.x, height, vertex.y));
+            vertListFloor.Add(vertex);
+            vertListRoof.Add(new Vector3(vertex.x, vertex.y + height, vertex.z));
         }
         vertListSide.AddRange(vertListFloor);
         vertListSide.AddRange(vertListRoof);
 
         // compute polygon center and add it to verts
-        Vector2 center = FindPolygonCenter(polygon);
-        vertListFloor.Add(new Vector3(center.x, 0.01f, center.y));
-        vertListRoof.Add(new Vector3(center.x, height, center.y));
+        Vector3 center = FindPolygonCenter(polygon);
+        vertListFloor.Add(center);
+        vertListRoof.Add(new Vector3(center.x, center.y + height, center.z));
 
         // add floor triangles
         for (int i = 0; i < vertListFloor.Count; i++)
@@ -38,9 +38,9 @@ public class Triangulator
         int maxCurrGobalVertID = vertListFloor.Count;
         for (int i = 0; i < vertListRoof.Count - 1; i++)
         {
-            triangleList.Add(i                                          + maxCurrGobalVertID);
-            triangleList.Add(vertListRoof.Count - 1                     + maxCurrGobalVertID); // upper center 
-            triangleList.Add((i + 1) % (vertListRoof.Count - 1)         + maxCurrGobalVertID);               
+            triangleList.Add(i + maxCurrGobalVertID);
+            triangleList.Add(vertListRoof.Count - 1 + maxCurrGobalVertID); // upper center 
+            triangleList.Add((i + 1) % (vertListRoof.Count - 1) + maxCurrGobalVertID);
         }
 
         // add side triangles 
@@ -48,18 +48,18 @@ public class Triangulator
         int numOfBaseVert = polygon.Count;
         for (int j = 0; j < numOfBaseVert; ++j)
         {
-            triangleList.Add( j + 0                                     + maxCurrGobalVertID);
-            triangleList.Add((j + 0 + numOfBaseVert)                    + maxCurrGobalVertID);
-            triangleList.Add((j + 1) % numOfBaseVert + numOfBaseVert    + maxCurrGobalVertID);
-                         
-            triangleList.Add( j + 0                                     + maxCurrGobalVertID);
-            triangleList.Add((j + 1) % numOfBaseVert + numOfBaseVert    + maxCurrGobalVertID);
-            triangleList.Add((j + 1) % numOfBaseVert                    + maxCurrGobalVertID);                     
+            triangleList.Add(j + 0 + maxCurrGobalVertID);
+            triangleList.Add((j + 0 + numOfBaseVert) + maxCurrGobalVertID);
+            triangleList.Add((j + 1) % numOfBaseVert + numOfBaseVert + maxCurrGobalVertID);
+
+            triangleList.Add(j + 0 + maxCurrGobalVertID);
+            triangleList.Add((j + 1) % numOfBaseVert + numOfBaseVert + maxCurrGobalVertID);
+            triangleList.Add((j + 1) % numOfBaseVert + maxCurrGobalVertID);
         }
 
         List<Vector3> vertList = new List<Vector3>();
         vertList.AddRange(vertListFloor);
-        vertList.AddRange(vertListRoof);       
+        vertList.AddRange(vertListRoof);
         vertList.AddRange(vertListSide);
 
         //Vector2[] test = UVcalculator.CalculateUVs(vertList.ToArray(), 1f);
@@ -74,9 +74,20 @@ public class Triangulator
         return mesh;
     }
 
-    private static Vector3 FindPolygonCenter(List<Vector2> verts)
+    public static Mesh CreateExtrudedMeshFromPolygon(List<Vector2> polygon, float height)
     {
-        Vector2 center = Vector2.zero;
+        List<Vector3> extendedPolygon = new List<Vector3>();
+        foreach (Vector2 vertex in polygon)
+        {
+            extendedPolygon.Add(new Vector3(vertex.x, 0.01f, vertex.y));
+        }
+
+        return CreateExtrudedMeshFromPolygon(extendedPolygon, height);
+    }
+
+    private static Vector3 FindPolygonCenter(List<Vector3> verts)
+    {
+        Vector3 center = Vector3.zero;
         // Only need to check every other spot since the odd indexed vertices are in the air, but have same XZ as previous
         for (int i = 0; i < verts.Count; ++i)
         {

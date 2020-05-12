@@ -14,6 +14,7 @@ namespace Augmentix.Scripts.VR
     {
         public GameObject IndicationPrefab;
         public float HighlightDistance;
+        public Material PointingMaterial;
 
         private GameObject _currentTarget;
         private GameObject _indicator;

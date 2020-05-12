@@ -7,7 +7,7 @@ using System.Globalization;
 public class PsmNetwork 
 {
     // connection
-    public string osmServerIP = "136.199.52.75";
+    public string osmServerIP = "136.199.52.10";
     public string osmServerPort = "5432";
     private NpgsqlConnection dbcon = null;
 
@@ -17,8 +17,8 @@ public class PsmNetwork
             "Server=" + osmServerIP + ";" +
             "Port=" + osmServerPort + ";" +
             "Database=gis;" +
-            "User ID=postgres;" +
-            "Password=postgres;";
+            "User ID=portaxr_client;" +
+            "Password=BvvkupF6KL;";
 
         dbcon = new NpgsqlConnection(connectionString);
         dbcon.Open();

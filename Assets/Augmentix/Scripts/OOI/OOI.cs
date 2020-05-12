@@ -76,7 +76,7 @@ namespace Augmentix.Scripts.OOI
                 var manipulator = gameObject.AddComponent<ObjectManipulator>();
                 manipulator.ReleaseBehavior = 0;
                 gameObject.AddComponent<NearInteractionGrabbable>();
-                gameObject.AddComponent<MinMaxScaleConstraint>();
+                gameObject.AddComponent<MinMaxScaleConstraint>().ScaleMaximum *= 2;
                 manipulator.OnManipulationStarted.AddListener(data =>
                 {
                     GetComponent<PhotonView>().RequestOwnership();

@@ -1,0 +1,24 @@
+Welcome to the Low Poly Romans Pack! First of all, thanks a lot for purchasing the pack!
+
+You can immediately start with creating your first environment. 
+Open the Prefabs folder, take a look at the variety of assets and then start
+placing them onto a Terrain!
+
+
+In order to have results like in the screenshots, I recommend you to use the Post Processing Stack, which
+is available for free on the Asset Store (you should consider watching a Youtube Tutorial or reading it's documentation
+if you're a beginner)
+
+
+As you can see, the content is not limited to Rome. Most coexisting cultures have been implemented aswell such as 
+the Carthagians, the Greeks, the Persians, the Germanics or the Celts.
+
+ 
+I hope you have fun creating interesting and beautiful scenes, landscapes, cities, and battles.
+
+
+If you should have any questions or requests for future updates, feel free to contact us at halberstram.art@gmail.com
+Furthermore, If you made a scene that you're really proud of, feel free to share it with us as well! 
+
+
+Have fun!

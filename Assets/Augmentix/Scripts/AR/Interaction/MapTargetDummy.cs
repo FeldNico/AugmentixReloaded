@@ -80,7 +80,7 @@ public class MapTargetDummy : MonoBehaviour
             _lineRenderer.enabled = false;
             manipulator.OnManipulationStarted.AddListener(eventData =>
             {
-                IsInteractedWith = true;
+                _lineRenderer.enabled = true;
                 _lineRenderer.material.color = Color.green;
             });
             manipulator.OnManipulationEnded.AddListener(eventData =>
@@ -101,7 +101,6 @@ public class MapTargetDummy : MonoBehaviour
     {
         if (IsInteractedWith && Target is PlayerAvatar)
         {
-            _lineRenderer.enabled = true;
             var localPos = _map.Scaler.transform.InverseTransformPoint(_sphere.transform.position);
             localPos.y = 0;
             _lineRenderer.SetPosition(1, _map.Scaler.transform.TransformPoint(localPos));
