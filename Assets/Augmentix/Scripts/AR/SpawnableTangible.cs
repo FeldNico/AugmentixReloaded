@@ -16,11 +16,13 @@ public class SpawnableTangible : MonoBehaviour
     public float Scale = 0.06f * 0.7f;
 
     public List<GameObject> Spawnables;
-    public Imposter Imposter { private set; get; }
+    [HideInInspector]
+    public Imposter Imposter;
 
     private InteractionManager _interactionManager;
     private GridObjectCollection _collection;
     private Interactable _interactable;
+    private InteractionOrb _interactionOrb;
 
     public void Start()
     {
@@ -41,6 +43,25 @@ public class SpawnableTangible : MonoBehaviour
         }
         else
         {
+            var prefab = FindObjectOfType<InteractionManager>().InteractionOrbPrefab;
+                
+            _interactionOrb =
+                Instantiate(prefab, transform.position + new Vector3(0,GetComponent<Collider>().bounds.size.y,0),
+                    transform.rotation).GetComponent<InteractionOrb>();
+            _interactionOrb.Target = this;
+            
+            GetComponent<DefaultTrackableEventHandler>().OnTargetFound.AddListener(() =>
+            {
+                _interactionOrb.GetComponent<Renderer>().enabled = true;
+                _interactionOrb.GetComponent<Collider>().enabled = true;
+            });
+            GetComponent<DefaultTrackableEventHandler>().OnTargetLost.AddListener(() =>
+            {
+                _interactionOrb.GetComponent<Renderer>().enabled = false;
+                _interactionOrb.GetComponent<Collider>().enabled = false;
+            });
+            
+            /*
             _collection = new GameObject("Collection").AddComponent<GridObjectCollection>();
             _collection.transform.parent = transform;
             _collection.transform.localPosition = Vector3.zero;
@@ -109,6 +130,7 @@ public class SpawnableTangible : MonoBehaviour
 
             _collection.UpdateCollection();
             _collection.gameObject.SetActive(false);
+            */
         }
     }
 }

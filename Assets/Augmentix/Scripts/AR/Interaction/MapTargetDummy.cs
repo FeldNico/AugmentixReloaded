@@ -31,7 +31,7 @@ public class MapTargetDummy : MonoBehaviour
         _warpzoneManager = FindObjectOfType<WarpzoneManager>();
         _sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         _sphere.transform.localScale = Vector3.one *_interactionManager.InteractionSphereScale;
-        _sphere.name = "InteractionSphere " + gameObject.name;
+        _sphere.name = "InteractionOrb " + gameObject.name;
         _sphere.GetComponent<SphereCollider>().isTrigger = true;
         var rigidbody = _sphere.AddComponent<Rigidbody>();
         rigidbody.useGravity = false;

@@ -51,7 +51,7 @@ public class Warpzone : MonoBehaviour
     private Camera _mainCamera;
     private WarpzoneManager _warpzoneManager;
 
-    public bool doRender = false;
+    private bool _doRender = false;
 
     // Start is called before the first frame update
     void Start()
@@ -81,13 +81,13 @@ public class Warpzone : MonoBehaviour
         _eventHandler.OnTargetFound.AddListener(() =>
         {
             Debug.Log("Found Trackable");
-            doRender = true;
+            _doRender = true;
             collider.enabled = true;
         });
         _eventHandler.OnTargetLost.AddListener(() =>
         {
             Debug.Log("Lost Trackable");
-            doRender = false;
+            _doRender = false;
             collider.enabled = false;
         });
 #endif
@@ -99,7 +99,7 @@ public class Warpzone : MonoBehaviour
     {
         _mainCamera.RemoveAllCommandBuffers();
 
-        if (doRender && PhotonNetwork.IsConnected)
+        if (_doRender && PhotonNetwork.IsConnected)
         {
 
             var warpzoneMatrix = Matrix4x4.TRS(_dummyTransform.localPosition,
@@ -122,8 +122,8 @@ public class Warpzone : MonoBehaviour
                     var ooi = trans.GetComponent<OOI>();
                     if (ooi)
                     {
-                        ooi.InteractionSphere.GetComponent<Renderer>().enabled = true;
-                        ooi.InteractionSphere.GetComponent<Collider>().enabled = true;
+                        ooi.InteractionOrb.GetComponent<Renderer>().enabled = true;
+                        ooi.InteractionOrb.GetComponent<Collider>().enabled = true;
                     }
                     
                     Matrices[trans] = transform.localToWorldMatrix * warpzoneMatrix * Matrix4x4.TRS(
@@ -141,8 +141,8 @@ public class Warpzone : MonoBehaviour
                     var ooi = trans.GetComponent<OOI>();
                     if (ooi && !ooi.IsBeingManipulated)
                     {
-                        ooi.InteractionSphere.GetComponent<Renderer>().enabled = false;
-                        ooi.InteractionSphere.GetComponent<Collider>().enabled = false;
+                        ooi.InteractionOrb.GetComponent<Renderer>().enabled = false;
+                        ooi.InteractionOrb.GetComponent<Collider>().enabled = false;
                     }
                 }
             }

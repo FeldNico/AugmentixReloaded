@@ -199,22 +199,7 @@ namespace Augmentix.Scripts.Editor
             {
                 if (!searchRequest.Result.Select(info => info.name).Contains(package))
                     Client.Add(package);
-            }/*
-            if (searchRequest.Result.Select(info => info.name).Contains("com.ptc.vuforia.engine"))
-            {
-                if (!newManager._usesVuforia)
-                {
-                    Client.Remove("com.ptc.vuforia.engine");
-                }
             }
-            else
-            {
-                if (newManager._usesVuforia)
-                {
-                    Client.Add("com.ptc.vuforia.engine");
-                }
-            }
-            */
 
             if (newManager._usesVR)
             {
@@ -228,38 +213,6 @@ namespace Augmentix.Scripts.Editor
                 Thread.Sleep(10);
                 XRSettings.enabled = false;
             }
-
-            /*
-            if (newManager._usesVR)
-            {
-                if (type == typeof(ARBuildManager))
-                {
-                    if (searchRequest.Result.Select(info => info.name).Contains("com.unity.xr.oculus"))
-                        Client.Remove("com.unity.xr.oculus");
-                    if (!searchRequest.Result.Select(info => info.name).Contains("com.unity.xr.windowsmr"))
-                        Client.Add("com.unity.xr.windowsmr");
-                    if (!searchRequest.Result.Select(info => info.name).Contains("com.unity.xr.windowsmr"))
-                        Client.Add("com.unity.xr.windowsmr.metro");
-                } else if (type == typeof(VRBuildManager))
-                {
-                    if (!searchRequest.Result.Select(info => info.name).Contains("com.unity.xr.oculus"))
-                        Client.Add("com.unity.xr.oculus");
-                    if (searchRequest.Result.Select(info => info.name).Contains("com.unity.xr.windowsmr"))
-                        Client.Remove("com.unity.xr.windowsmr");
-                    if (searchRequest.Result.Select(info => info.name).Contains("com.unity.xr.windowsmr"))
-                        Client.Remove("com.unity.xr.windowsmr.metro");
-                }
-            }
-            else
-            {
-                if (searchRequest.Result.Select(info => info.name).Contains("com.unity.xr.oculus"))
-                    Client.Remove("com.unity.xr.oculus");
-                if (searchRequest.Result.Select(info => info.name).Contains("com.unity.xr.windowsmr"))
-                    Client.Remove("com.unity.xr.windowsmr");
-                if (searchRequest.Result.Select(info => info.name).Contains("com.unity.xr.windowsmr.metro"))
-                    Client.Remove("com.unity.xr.windowsmr.metro");
-            }
-            */
 
             EditorBuildSettings.scenes =
                 newManager._scenePaths.Select(s => new EditorBuildSettingsScene(s, true)).ToArray();

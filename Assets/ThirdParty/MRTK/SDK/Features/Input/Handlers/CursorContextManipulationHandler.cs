@@ -10,7 +10,7 @@ namespace Microsoft.MixedReality.Toolkit.UI
     /// This script provides cursor context for the manipulation handler
     /// </summary>
     [AddComponentMenu("Scripts/MRTK/SDK/CursorContextManipulationHandler")]
-    //[RequireComponent(typeof(ManipulationHandler))]
+    [RequireComponent(typeof(ManipulationHandler))]
     public class CursorContextManipulationHandler : MonoBehaviour
     {
         private ManipulationHandler manipulationHandler;

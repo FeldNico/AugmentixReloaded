@@ -49,9 +49,9 @@ public class Imposter : MonoBehaviour
 
     void OnManipulation(ManipulationEventData data)
     {
-        //if (!_deskzone.IsInside)
-        //{
-            var obj = PhotonNetwork.Instantiate("OOI"+Path.DirectorySeparatorChar+"Spawnable"+Path.DirectorySeparatorChar+Object.name, transform.position, transform.rotation,
+        if (FindObjectOfType<WarpzoneManager>().ActiveWarpzone != null)
+        {
+            var obj = PhotonNetwork.Instantiate(Path.Combine("OOI","Spawnable",Object.name), transform.position, transform.rotation,
                 (byte) TargetManager.Groups.PLAYERS);
             obj.transform.parent = _virtualCity.transform;
             obj.transform.localScale = transform.lossyScale;
@@ -72,6 +72,6 @@ public class Imposter : MonoBehaviour
                 _manipulator.enabled = true;
                 _manipulator.GetComponent<Collider>().enabled = true;
             }
-        //}
+        }
     }
 }

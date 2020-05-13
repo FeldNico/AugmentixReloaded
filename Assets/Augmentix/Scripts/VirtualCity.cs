@@ -28,7 +28,7 @@ public class VirtualCity : MonoBehaviour
                     var ooi = render.GetComponent<OOI>();
                     if (ooi)
                     {
-                        var iSphere = ooi.InteractionSphere;
+                        var iSphere = ooi.InteractionOrb;
                         if (iSphere)
                         {
                             iSphere.GetComponent<Renderer>().enabled = false;
@@ -37,13 +37,6 @@ public class VirtualCity : MonoBehaviour
                     }
                     render.enabled = false;
                 }
-
-                /*
-                foreach (var child in GetComponentsInChildren<Renderer>())
-                {
-                    child.enabled = false;
-                }
-                */
             };
             deskzone.Outside += () =>
             {
@@ -52,7 +45,7 @@ public class VirtualCity : MonoBehaviour
                     var ooi = render.GetComponent<OOI>();
                     if (ooi)
                     {
-                        var iSphere = ooi.InteractionSphere;
+                        var iSphere = ooi.InteractionOrb;
                         if (iSphere)
                         {
                             iSphere.GetComponent<Renderer>().enabled = true;
@@ -61,13 +54,6 @@ public class VirtualCity : MonoBehaviour
                     }
                     render.enabled = true;
                 }
-                
-                /*
-                foreach (var child in GetComponentsInChildren<Renderer>())
-                {
-                    child.enabled = true;
-                }
-                */
             };
         }
 #endif

@@ -49,7 +49,7 @@ namespace Augmentix.Scripts.OOI
 
         public bool IsBeingManipulated = false;
         
-        public InteractionSphere InteractionSphere { private set; get; }
+        public InteractionOrb InteractionOrb { private set; get; }
 
         private InteractionManager _interactionManager;
 
@@ -58,13 +58,13 @@ namespace Augmentix.Scripts.OOI
             Collider = GetComponent<Collider>();
             _interactionManager = FindObjectOfType<InteractionManager>();
 #if UNITY_WSA
-            var prefab = FindObjectOfType<InteractionManager>().InteractionSpherePrefab;
+            var prefab = FindObjectOfType<InteractionManager>().InteractionOrbPrefab;
                 
-                InteractionSphere =
+                InteractionOrb =
                     Instantiate(prefab, transform.position + new Vector3(0,Collider.bounds.size.y,0),
-                        transform.rotation).GetComponent<InteractionSphere>();
-                InteractionSphere.OOI = this;
-                InteractionSphere.GetComponent<ObjectManipulator>().OnManipulationStarted.AddListener(eventData =>
+                        transform.rotation).GetComponent<InteractionOrb>();
+                InteractionOrb.Target = this;
+                InteractionOrb.GetComponent<ObjectManipulator>().OnManipulationStarted.AddListener(eventData =>
                 {
                     GetComponent<PhotonView>().RequestOwnership();
                 });
@@ -73,6 +73,13 @@ namespace Augmentix.Scripts.OOI
             if (Flags.HasFlag(InteractionFlag.Manipulate))
             {
 #if UNITY_WSA
+                var rigidbody = GetComponent<Rigidbody>();
+                if (!rigidbody)
+                {
+                    rigidbody = gameObject.AddComponent<Rigidbody>();
+                }
+                rigidbody.useGravity = false;
+
                 var manipulator = gameObject.AddComponent<ObjectManipulator>();
                 manipulator.ReleaseBehavior = 0;
                 gameObject.AddComponent<NearInteractionGrabbable>();
@@ -145,7 +152,7 @@ namespace Augmentix.Scripts.OOI
                     IEnumerator WaitforOneFrame()
                     {
                         yield return null;
-                        Destroy(InteractionSphere.gameObject);
+                        Destroy(InteractionOrb.gameObject);
                         PhotonNetwork.Destroy(GetComponent<PhotonView>());
                     }
                     break;
@@ -163,7 +170,7 @@ namespace Augmentix.Scripts.OOI
             {
                 foreach (var avatar in PlayerAvatar.SecondaryAvatars)
                 {
-                    var text = PhotonNetwork.Instantiate(Path.Combine("OOI","Info",_interactionManager.TextPrefab.name), transform.position,
+                    var text = PhotonNetwork.Instantiate(Path.Combine("Target","Info",_interactionManager.TextPrefab.name), transform.position,
                         transform.rotation, (byte) TargetManager.Groups.PLAYERS, new object[] {avatar.GetComponent<PhotonView>().OwnerActorNr,photonView.ViewID});
                     _textObjects[avatar] = text.GetComponent<OOIInfo>();
                 }
@@ -197,7 +204,7 @@ namespace Augmentix.Scripts.OOI
                 foreach (var avatar in PlayerAvatar.SecondaryAvatars)
                 {
                     var videoPlayer = GetComponent<VideoPlayer>();
-                    var video = PhotonNetwork.Instantiate(Path.Combine("OOI","Info",_interactionManager.VideoPrefab.name), Collider.bounds.center, transform.rotation,
+                    var video = PhotonNetwork.Instantiate(Path.Combine("Target","Info",_interactionManager.VideoPrefab.name), Collider.bounds.center, transform.rotation,
                         (byte) TargetManager.Groups.PLAYERS, new object[] {avatar.GetComponent<PhotonView>().OwnerActorNr,photonView.ViewID});
                     var scale = video.transform.localScale;
                     scale.y *= (scale.y * videoPlayer.height) / videoPlayer.width;

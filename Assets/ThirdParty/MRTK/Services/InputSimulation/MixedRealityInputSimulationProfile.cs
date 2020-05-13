@@ -51,12 +51,27 @@ namespace Microsoft.MixedReality.Toolkit.Input
         /// </summary>
         public string MouseScroll => mouseScroll;
         [SerializeField]
+        [Tooltip("Button pressed to interact with objects")]
+        [FormerlySerializedAs("Interaction Button")]
+        private KeyBinding interactionButton = KeyBinding.FromMouseButton(KeyBinding.MouseButton.Left);
+        /// <summary>
+        /// Button pressed to interact with objects
+        /// </summary>
+        public KeyBinding InteractionButton => interactionButton;
+        [SerializeField]
         [Tooltip("Maximum time interval for double press")]
         private float doublePressTime = 0.4f;
         /// <summary>
         /// Maximum time interval for double press
         /// </summary>
         public float DoublePressTime => doublePressTime;
+        [SerializeField]
+        [Tooltip("Enable hands free input")]
+        private bool isHandsFreeInputEnabled = true;
+        /// <summary>
+        /// Enable hands free input
+        /// </summary>
+        public bool IsHandsFreeInputEnabled => isHandsFreeInputEnabled;
 
         [Header("Camera Control")]
         [SerializeField]

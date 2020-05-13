@@ -21,11 +21,8 @@ namespace Augmentix.Scripts.AR
 {
     public class ARTargetManager : TargetManager
     {
-        //public ARHands Hands;
         public GameObject AvatarPrefab;
         public GameObject WarpzoneDummyPrefab;
-        [HideInInspector] public bool DoCalibrate = false;
-        [HideInInspector] public Vector3 FirstCalibrationVector, SecondCalibrationVector;
         public TMP_Text DebugText;
 
         private Deskzone _deskzone;
@@ -34,13 +31,10 @@ namespace Augmentix.Scripts.AR
         {
             if (AvatarPrefab == null)
                 AvatarPrefab = Resources.Load<GameObject>("Primary_Avatar");
-            /*
-            if (Hands == null)
-                Hands = FindObjectOfType<ARHands>();
-                */
+
             if (DebugText == null)
                 DebugText = FindObjectOfType<TMP_Text>();
-            
+
             _deskzone = FindObjectOfType<Deskzone>();
 
             Application.logMessageReceived += (message, trace, type) =>
@@ -73,8 +67,6 @@ namespace Augmentix.Scripts.AR
             base.Start();
             OnConnection += () =>
             {
-                if (AvatarPrefab != null)
-                    Debug.Log(AvatarPrefab.name);
 
                 var avatar = PhotonNetwork.Instantiate(AvatarPrefab.name, Camera.main.transform.position,
                     Camera.main.transform.rotation);
@@ -88,7 +80,7 @@ namespace Augmentix.Scripts.AR
                 var fps = VuforiaRenderer.Instance.GetRecommendedFps(VuforiaRenderer.FpsHint.FAST |
                                                                      VuforiaRenderer.FpsHint.NO_VIDEOBACKGROUND);
                 Application.targetFrameRate = fps;
-                
+
                 var objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
                 objectTracker.Stop();
                 objectTracker.DeactivateDataSet(objectTracker.GetDataSets()
@@ -96,16 +88,6 @@ namespace Augmentix.Scripts.AR
                 objectTracker.Start();
             });
 #endif
-            /*
-            StartCoroutine(Test());
-            IEnumerator Test()
-            {
-                Connect();
-                yield return new WaitForSeconds(10f);
-                FindObjectsOfType<OOI.OOI>().FirstOrDefault(ooi => ooi.Flags.HasFlag(OOI.OOI.InteractionFlag.Delete)).Interact(OOI.OOI.InteractionFlag.Text);
-            }
-            */
-            
         }
 
         public void SetupDeskzoneAndConnect()

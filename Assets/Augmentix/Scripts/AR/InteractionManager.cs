@@ -19,7 +19,7 @@ using UnityEngine;
 
 public class InteractionManager : MonoBehaviour
 {
-    public GameObject InteractionSpherePrefab;
+    public GameObject InteractionOrbPrefab;
     public GameObject TextPrefab;
     public GameObject VideoPrefab;
     public GameObject HighlightPrefab;
@@ -50,23 +50,7 @@ public class InteractionManager : MonoBehaviour
 
     void Update()
     {
-        /*
-        foreach (var key in (KeyCode[]) Enum.GetValues(typeof(KeyCode)))
-        {
-            if (Input.GetKeyDown(key))
-                Debug.Log(key +" pressed");
-        }
 
-        foreach (var axis in _axis)
-        {
-            if (Math.Abs(Input.GetAxis(axis)) > 0.05f)
-                Debug.Log("Axis: "+axis);
-        }
-        */
-        
-
-        //HandleWarpzoneGazing();
-        
         if (PhotonNetwork.IsConnected)
         {
             if (_deskzone.IsInside)
@@ -217,19 +201,7 @@ public class InteractionManager : MonoBehaviour
                     {
                         vec -= 0.05f*_warpzoneManager.ScrollSpeed * rightProject;
                     }
-                    
-                    /*
-                    if (Input.GetKey(KeyCode.W))
-                        vec -= 0.05f* _warpzoneManager.ScrollSpeed * forwardProject;
-                    else if (Input.GetKey(KeyCode.X))
-                        vec += 0.05f*_warpzoneManager.ScrollSpeed * forwardProject;
 
-                    if (Input.GetKey(KeyCode.A))
-                        vec += 0.05f*_warpzoneManager.ScrollSpeed * rightProject;
-                    else if (Input.GetKey(KeyCode.D))
-                        vec -=0.05f* _warpzoneManager.ScrollSpeed * rightProject;
-                        */
-                    
                     _warpzoneManager.ActiveWarpzone.LocalPosition += vec;
                 }
                 
@@ -257,17 +229,6 @@ public class InteractionManager : MonoBehaviour
                     vec +=0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * rightProject;
                 }
                 
-                /*
-                if (Input.GetKey(KeyCode.W))
-                    vec += 0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * forwardProject;
-                else if (Input.GetKey(KeyCode.X))
-                    vec -=0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * forwardProject;
-
-                if (Input.GetKey(KeyCode.A))
-                    vec -=0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * rightProject;
-                else if (Input.GetKey(KeyCode.D))
-                    vec +=0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * rightProject;
-                */
                 vec = _virtualCity.transform.InverseTransformVector(vec);
                 vec.y = 0;
                 
