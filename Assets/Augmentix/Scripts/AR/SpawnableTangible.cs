@@ -13,6 +13,8 @@ using UnityEngine.Video;
 
 public class SpawnableTangible : MonoBehaviour
 {
+    #if UNITY_WSA
+    
     public float Scale = 0.06f * 0.7f;
 
     public List<GameObject> Spawnables;
@@ -133,4 +135,5 @@ public class SpawnableTangible : MonoBehaviour
             */
         }
     }
+#endif
 }
