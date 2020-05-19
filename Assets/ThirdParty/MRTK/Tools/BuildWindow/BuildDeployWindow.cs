@@ -147,7 +147,7 @@ namespace Microsoft.MixedReality.Toolkit.Build.Editor
 
         private static bool ShouldBuildAppxBeEnabled => ShouldBuildSLNBeEnabled && !string.IsNullOrEmpty(BuildDeployPreferences.BuildDirectory);
 
-        private static bool DevicePortalConnectionEnabled => (portalConnections.Connections.Count > 1 || IsHoloLensConnectedUsb) &&
+        private static bool DevicePortalConnectionEnabled => (portalConnections.Connections.Count >= 1 || IsHoloLensConnectedUsb) &&
                                                              !string.IsNullOrEmpty(BuildDeployPreferences.BuildDirectory);
 
         private static bool CanInstall
