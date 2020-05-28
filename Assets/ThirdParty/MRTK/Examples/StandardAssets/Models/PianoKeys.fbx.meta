@@ -1,72 +1,14 @@
 fileFormatVersion: 2
-guid: bb0ccc5c35ed851498eb51db45d1a738
+guid: 864526dee2cbab84b921c317acb3654e
 ModelImporter:
-  serializedVersion: 23
-  fileIDToRecycleName:
-    100000: PianoKey-A
-    100002: PianoKey-B
-    100004: PianoKey-C
-    100006: PianoKey-D
-    100008: PianoKey-E
-    100010: PianoKey-F
-    100012: PianoKey-G
-    100014: PianoKeyBlack
-    100016: //RootNode
-    100018: Velvet
-    400000: PianoKey-A
-    400002: PianoKey-B
-    400004: PianoKey-C
-    400006: PianoKey-D
-    400008: PianoKey-E
-    400010: PianoKey-F
-    400012: PianoKey-G
-    400014: PianoKeyBlack
-    400016: //RootNode
-    400018: Velvet
-    2100000: PianoOctave
-    2100002: No Name
-    2300000: PianoKey-A
-    2300002: PianoKey-B
-    2300004: PianoKey-C
-    2300006: PianoKey-D
-    2300008: PianoKey-E
-    2300010: PianoKey-F
-    2300012: PianoKey-G
-    2300014: PianoKeyBlack
-    2300016: Velvet
-    3300000: PianoKey-A
-    3300002: PianoKey-B
-    3300004: PianoKey-C
-    3300006: PianoKey-D
-    3300008: PianoKey-E
-    3300010: PianoKey-F
-    3300012: PianoKey-G
-    3300014: PianoKeyBlack
-    3300016: Velvet
-    4300000: PianoKeyBlack
-    4300002: PianoKey-C
-    4300004: PianoKey-D
-    4300006: PianoKey-E
-    4300008: PianoKey-F
-    4300010: PianoKey-G
-    4300012: PianoKey-A
-    4300014: PianoKey-B
-    4300016: Velvet
-    7400000: Take 001
-    9500000: //RootNode
-  externalObjects:
+  serializedVersion: 19300
+  internalIDToNameTable:
   - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: No Name
-    second: {fileID: 2100000, guid: c4a1b7475a654dd0acaa0cfdfba2e20c, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: PianoOctave
-    second: {fileID: 2100000, guid: 814f847a105eb454d8c8bc27047dcb9c, type: 2}
+      74: 1827226128182048838
+    second: Take 001
+  externalObjects: {}
   materials:
-    importMaterials: 1
+    materialImportMode: 1
     materialName: 0
     materialSearch: 1
     materialLocation: 1
@@ -92,32 +34,34 @@ ModelImporter:
     extraExposedTransformPaths: []
     extraUserProperties: []
     clipAnimations: []
-    isReadable: 1
+    isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 0.1
+    globalScale: 1
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
-    importVisibility: 0
-    importBlendShapes: 0
-    importCameras: 0
-    importLights: 0
+    sortHierarchyByName: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
     preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
-    useFileScale: 0
-    previousCalculatedGlobalScale: 0.01
-    hasPreviousCalculatedGlobalScale: 1
+    useFileScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -126,10 +70,10 @@ ModelImporter:
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
-  importAnimation: 0
-  copyAvatar: 0
+  referencedClips: []
+  importAnimation: 1
   humanDescription:
-    serializedVersion: 2
+    serializedVersion: 3
     human: []
     skeleton: []
     armTwist: 0.5
@@ -139,13 +83,16 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
-    hasExtraRoot: 1
+    hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
   humanoidOversampling: 1
+  avatarSetup: 0
   additionalBone: 0
   userData: 
   assetBundleName: 

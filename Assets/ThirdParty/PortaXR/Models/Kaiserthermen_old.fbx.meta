@@ -1,14 +1,9 @@
 fileFormatVersion: 2
-guid: 7856bc7b820648a4fb14520baa4ca6be
+guid: 14f37e7b2e7a4974780c825d9e2dd52e
 ModelImporter:
   serializedVersion: 19300
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: SVGMat.003
-    second: {fileID: 2100000, guid: 835cb4a58f172d7478801db95e510f56, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 1
     materialName: 0

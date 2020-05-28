@@ -24,4 +24,6 @@
   <assembly fullname="Microsoft.MixedReality.Toolkit.Services.SceneSystem" preserve="all"/>
   <assembly fullname="Microsoft.MixedReality.Toolkit.Services.SpatialAwarenessSystem" preserve="all"/>
   <assembly fullname="Microsoft.MixedReality.Toolkit.Services.TeleportSystem" preserve="all"/>
+  <assembly fullname="ExitGames.Client.Photon" preserve="all"/>
+  <assembly fullname="System.Net.Sockets.Socket" preserve="all"/>
 </linker>
