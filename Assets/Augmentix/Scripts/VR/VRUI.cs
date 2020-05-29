@@ -36,7 +36,7 @@ namespace Augmentix.Scripts.VR
                     if (!outline)
                     {
                         outline = Target.AddComponent<Outline>();
-                        outline.OutlineMode = Outline.Mode.OutlineVisible;
+                        outline.OutlineMode = Outline.Mode.OutlineAll;
                     }
                     outline.enabled = true;
                 }
@@ -62,7 +62,7 @@ namespace Augmentix.Scripts.VR
                     if (!outline)
                     {
                         outline = _currentTarget.AddComponent<Outline>();
-                        outline.OutlineMode = Outline.Mode.OutlineVisible;
+                        outline.OutlineMode = Outline.Mode.OutlineAll;
                     }
                     outline.enabled = true;
                 }

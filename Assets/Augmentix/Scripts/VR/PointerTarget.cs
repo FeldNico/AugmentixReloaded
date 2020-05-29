@@ -5,7 +5,7 @@ using Augmentix.Scripts;
 using Augmentix.Scripts.VR;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 public class PointerTarget : MonoBehaviour
 {
@@ -16,30 +16,31 @@ public class PointerTarget : MonoBehaviour
 
     public Vector3 TeleportTarget;
 
+    private OVRPlayerController _player;
+    private VirtualCity _virtualCity;
     private Button _button;
     public void Awake()
     {
         _button = GetComponent<Button>();
-        
-        /*
+        _player = FindObjectOfType<OVRPlayerController>();
+        _virtualCity = FindObjectOfType<VirtualCity>();
         OnRelease += pos =>
         {
             if (!TeleportTarget.Equals(Vector3.zero))
             {
-                var fadeDuraction = ((StandaloneTargetManager) TargetManager.Instance).TeleportFadeDuration;
-                
-                SteamVR_Fade.Start( Color.clear, 0 );
-                SteamVR_Fade.Start( Color.black, fadeDuraction );
-                FindObjectOfType<Player>().transform.position = TeleportTarget;
-
-                StartCoroutine(WaitForFade());
-                
-                IEnumerator WaitForFade()
+                StartCoroutine(Teleport());
+                IEnumerator Teleport()
                 {
-                    yield return new WaitForSeconds(fadeDuraction);
-                    SteamVR_Fade.Start( Color.clear, fadeDuraction );
+                    _player.enabled = false;
+                    yield return null;
+                    var target = _virtualCity.transform.TransformPoint(TeleportTarget) ;
+                    target.y = _player.transform.position.y;
+                    _player.transform.position = target;
+                    yield return null;
+                    _player.enabled = true;
                 }
-
+                
+                
             }
         };
 
@@ -81,7 +82,5 @@ public class PointerTarget : MonoBehaviour
                 _button.colors = colors;
             };
         }
-        */
-        
     }
 }

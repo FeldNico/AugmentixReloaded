@@ -72,14 +72,13 @@ namespace Augmentix.Scripts.OOI
 
             if (Flags.HasFlag(InteractionFlag.Manipulate))
             {
-#if UNITY_WSA
                 var rigidbody = GetComponent<Rigidbody>();
                 if (!rigidbody)
                 {
                     rigidbody = gameObject.AddComponent<Rigidbody>();
                 }
                 rigidbody.useGravity = false;
-
+#if UNITY_WSA
                 var manipulator = gameObject.AddComponent<ObjectManipulator>();
                 manipulator.ReleaseBehavior = 0;
                 gameObject.AddComponent<NearInteractionGrabbable>();
@@ -130,7 +129,7 @@ namespace Augmentix.Scripts.OOI
                     if (!outline)
                     {
                         outline = gameObject.AddComponent<Outline>();
-                        outline.OutlineMode = Outline.Mode.OutlineVisible;
+                        outline.OutlineMode = Outline.Mode.OutlineAll;
                     } else 
                         outline.enabled = !outline.enabled;
                     

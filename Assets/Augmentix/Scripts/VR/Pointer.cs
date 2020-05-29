@@ -11,12 +11,16 @@ public class Pointer : MonoBehaviour
     public PointerTarget CurrentPointerTarget { private set; get; }
 
     private LineRenderer lineRenderer;
+    private VRMap _vrmap;
     private float MaxLength = 5f;
     // Start is called before the first frame update
     private void Start()
     {
         lineRenderer = GetComponent<LineRenderer>();
-        
+
+        _vrmap = FindObjectOfType<VRMap>();
+        _vrmap.gameObject.SetActive(false);
+
         /*
         OnClick.AddOnStateDownListener((action, source) =>
         {
@@ -43,6 +47,26 @@ public class Pointer : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        if (OVRInput.GetDown(OVRInput.RawButton.X))
+        {
+            _vrmap.gameObject.SetActive(true);
+        }
+
+        if (OVRInput.GetUp(OVRInput.RawButton.X))
+        {
+            _vrmap.gameObject.SetActive(false);
+        }
+        
+        if (OVRInput.GetUp(OVRInput.Button.SecondaryIndexTrigger))
+        {
+            if (CurrentPointerTarget == null)
+                return;
+
+            var pos = CurrentPointerTarget.transform.InverseTransformPoint(Dot.transform.position);
+            
+            CurrentPointerTarget.OnRelease?.Invoke(new Vector2(pos.x,pos.z));
+        }
+        
         UpdateLine();
     }
 

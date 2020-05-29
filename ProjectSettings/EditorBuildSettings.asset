@@ -1,11 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!1045 &1
-EditorBuildSettings:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Scenes:
-  - enabled: 1
-    path: Assets/Augmentix/Scenes/AR.unity
-    guid: cc92b752adf36a74aa666f937c31b3c6
-  m_configObjects: {}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a2947438bb3972ffe22889325ef2560a06a0e4c8b66607793dfb5bf5c650e7d3
+size 258
