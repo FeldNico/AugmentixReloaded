@@ -120,7 +120,7 @@ namespace Augmentix.Scripts.OOI
                     
                     if (_prevHighlightTarget != gameObject)
                     {
-                        if (_prevHighlightTarget != null)
+                        if (_prevHighlightTarget != null && _prevHighlightTarget.GetComponent<Outline>() != null)
                             _prevHighlightTarget.GetComponent<Outline>().enabled = false;
                         _prevHighlightTarget = gameObject;
                     }
@@ -151,7 +151,6 @@ namespace Augmentix.Scripts.OOI
                     IEnumerator WaitforOneFrame()
                     {
                         yield return null;
-                        Destroy(InteractionOrb.gameObject);
                         PhotonNetwork.Destroy(GetComponent<PhotonView>());
                     }
                     break;
@@ -169,7 +168,7 @@ namespace Augmentix.Scripts.OOI
             {
                 foreach (var avatar in PlayerAvatar.SecondaryAvatars)
                 {
-                    var text = PhotonNetwork.Instantiate(Path.Combine("Target","Info",_interactionManager.TextPrefab.name), transform.position,
+                    var text = PhotonNetwork.Instantiate(Path.Combine("OOI","Info",_interactionManager.TextPrefab.name), transform.position,
                         transform.rotation, (byte) TargetManager.Groups.PLAYERS, new object[] {avatar.GetComponent<PhotonView>().OwnerActorNr,photonView.ViewID});
                     _textObjects[avatar] = text.GetComponent<OOIInfo>();
                 }
@@ -203,7 +202,7 @@ namespace Augmentix.Scripts.OOI
                 foreach (var avatar in PlayerAvatar.SecondaryAvatars)
                 {
                     var videoPlayer = GetComponent<VideoPlayer>();
-                    var video = PhotonNetwork.Instantiate(Path.Combine("Target","Info",_interactionManager.VideoPrefab.name), Collider.bounds.center, transform.rotation,
+                    var video = PhotonNetwork.Instantiate(Path.Combine("OOI","Info",_interactionManager.VideoPrefab.name), Collider.bounds.center, transform.rotation,
                         (byte) TargetManager.Groups.PLAYERS, new object[] {avatar.GetComponent<PhotonView>().OwnerActorNr,photonView.ViewID});
                     var scale = video.transform.localScale;
                     scale.y *= (scale.y * videoPlayer.height) / videoPlayer.width;
@@ -274,5 +273,11 @@ namespace Augmentix.Scripts.OOI
             #endif
         }
 
+        #if UNITY_WSA
+        private void OnDestroy()
+        {
+            Destroy(InteractionOrb);
+        }
+        #endif
     }
 }

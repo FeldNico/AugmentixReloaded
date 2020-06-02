@@ -9,6 +9,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using TMPro;
 using Photon.Pun;
+using Photon.Voice.PUN;
+using Photon.Voice.Unity;
 using UnityEngine.XR.WSA;
 #if UNITY_WSA
 using Vuforia;

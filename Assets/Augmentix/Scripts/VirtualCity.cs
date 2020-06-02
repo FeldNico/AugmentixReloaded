@@ -87,7 +87,7 @@ public class VirtualCity : MonoBehaviour
                 continue;
 
             _renderList.Add((child.transform, child, child.GetComponent<MeshFilter>(), child.materials,
-                child.GetComponent<PlayerAvatar>() == null ? 1f : 10f));
+                child.GetComponent<PlayerAvatar>() == null ? 1f : 3f));
         }
     }
     

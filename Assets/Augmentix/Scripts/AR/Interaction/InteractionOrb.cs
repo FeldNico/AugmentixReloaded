@@ -263,5 +263,13 @@ public class InteractionOrb : MonoBehaviour
                     .y + 0.1f, center.z);
         }
     }
+
+    private void OnDestroy()
+    {
+        foreach (var key in MenuItems.Keys)
+        {
+            Destroy(key);
+        }
+    }
 #endif
 }

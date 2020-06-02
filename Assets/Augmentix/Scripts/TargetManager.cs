@@ -5,6 +5,8 @@ using System.Linq;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Voice.PUN;
+using Photon.Voice.Unity;
 using UnityEngine;
 using UnityEngine.Events;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
@@ -68,7 +70,7 @@ namespace Augmentix.Scripts
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
             PhotonNetwork.GameVersion = gameVersion;
-            
+
         }
 
         public void Connect()

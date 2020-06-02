@@ -6,6 +6,7 @@ using Augmentix.Scripts.VR;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Voice.Unity;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -68,7 +69,15 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback, IOnEven
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
         if (!info.photonView.IsMine)
+        {
             transform.parent = FindObjectOfType<VirtualCity>().transform;
+            if (TargetManager.Instance.Type == TargetManager.PlayerType.Primary && _deskzone.IsInside)
+                ToogleVisibilityRPC(false);
+        }
+        else
+        {
+            FindObjectOfType<Recorder>().StartRecording();
+        }
     }
 
     public void ToggleVisibility(bool isVisible)
