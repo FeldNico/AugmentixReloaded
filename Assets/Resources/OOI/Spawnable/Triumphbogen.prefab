@@ -101,7 +101,7 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
-  OwnershipTransfer: 0
+  OwnershipTransfer: 1
   ObservedComponents:
   - {fileID: 6206475315937718183}
   viewIdField: 0
@@ -136,7 +136,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6484989247861382271}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 994d819d024f25d48829552e935518c0, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: 4e9bc9e5329c7e646af9ce949c770b78, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
