@@ -24,7 +24,7 @@ public class OOIInfo : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     {
         var ownerID = (int) info.photonView.InstantiationData[0];
 
-        if (PhotonNetwork.LocalPlayer.ActorNumber == ownerID)
+        if (PhotonNetwork.LocalPlayer.ActorNumber == ownerID || TargetManager.Instance.Type == TargetManager.PlayerType.Primary)
         {
             var viewID = (int) info.photonView.InstantiationData[1];
             _ooi = PhotonView.Find(viewID).GetComponent<OOI>();
@@ -46,11 +46,11 @@ public class OOIInfo : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
         }
         else
         {
-            foreach (var child in GetComponentsInChildren<Renderer>())
+            foreach (var child in GetComponentsInChildren<Renderer>(true))
             {
                 child.enabled = false;
             }
-            foreach (var child in GetComponentsInChildren<Collider>())
+            foreach (var child in GetComponentsInChildren<Collider>(true))
             {
                 child.enabled = false;
             }

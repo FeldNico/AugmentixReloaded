@@ -30,7 +30,10 @@ namespace Augmentix.Scripts.VR
                     PhotonNetwork.Instantiate(AvatarPrefab != null ? AvatarPrefab.name : "Secondary_Avatar",
                         Camera.main.transform.position, Camera.main.transform.rotation);
                 avatar.transform.parent = Camera.main.transform;
-                avatar.GetComponent<Renderer>().enabled = false;
+                foreach (var child in avatar.GetComponentsInChildren<Renderer>(true))
+                {
+                    child.enabled = false;
+                }
             };
             Connect();
 

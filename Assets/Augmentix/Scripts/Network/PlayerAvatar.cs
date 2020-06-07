@@ -88,7 +88,10 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback, IOnEven
     [PunRPC]
     private void ToogleVisibilityRPC(bool isVisible)
     {
-        GetComponent<Renderer>().enabled = isVisible;
+        foreach (var child in GetComponentsInChildren<Renderer>(true))
+        {
+            child.enabled = isVisible;
+        }
     }
 
     private void OnDestroy()

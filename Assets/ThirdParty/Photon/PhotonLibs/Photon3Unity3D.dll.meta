@@ -144,7 +144,7 @@ PluginImporter:
         DontProcess: false
         PlaceholderPath: 
         SDK: AnySDK
-        ScriptingBackend: AnyScriptingBackend
+        ScriptingBackend: Il2Cpp
   - first:
       XboxOne: XboxOne
     second:

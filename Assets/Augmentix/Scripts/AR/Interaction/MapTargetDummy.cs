@@ -19,6 +19,7 @@ public class MapTargetDummy : MonoBehaviour
     private InteractionManager _interactionManager;
     private Map _map;
     private LineRenderer _lineRenderer;
+    private bool _renderLine;
     private GameObject _sphere;
     private WarpzoneManager _warpzoneManager;
 
@@ -77,10 +78,22 @@ public class MapTargetDummy : MonoBehaviour
             _lineRenderer.material.color = Color.blue;
             _lineRenderer.startWidth = 0.01f;
             _lineRenderer.endWidth = 0.01f;
-            _lineRenderer.enabled = false;
+            _renderLine = false;
+            _lineRenderer.enabled = _renderLine;
+            var map = FindObjectOfType<Map>().GetComponentInParent<DefaultTrackableEventHandler>();
+            map.OnTargetFound.AddListener(() =>
+            {
+                StartCoroutine(UpdateLineRenderer());
+                IEnumerator UpdateLineRenderer()
+                {
+                    yield return null;
+                    _lineRenderer.enabled = _renderLine;
+                }
+            });
             manipulator.OnManipulationStarted.AddListener(eventData =>
             {
-                _lineRenderer.enabled = true;
+                _renderLine = true;
+                _lineRenderer.enabled = _renderLine;
                 _lineRenderer.material.color = Color.green;
             });
             manipulator.OnManipulationEnded.AddListener(eventData =>
@@ -99,24 +112,29 @@ public class MapTargetDummy : MonoBehaviour
 
     private void Update()
     {
-        if (IsInteractedWith && Target is PlayerAvatar)
+        if (Target is PlayerAvatar)
         {
-            var localPos = _map.Scaler.transform.InverseTransformPoint(_sphere.transform.position);
-            localPos.y = 0;
-            _lineRenderer.SetPosition(1, _map.Scaler.transform.TransformPoint(localPos));
+            if (IsInteractedWith)
+            {
+                var localPos = _map.Scaler.transform.InverseTransformPoint(_sphere.transform.position);
+                localPos.y = 0;
+                _lineRenderer.SetPosition(1, _map.Scaler.transform.TransformPoint(localPos));
+            }
+            if (_lineRenderer.enabled)
+            {
+                _lineRenderer.SetPosition(0, transform.position);
+                if (!IsInteractedWith && Vector3.Distance(_lineRenderer.GetPosition(0), _lineRenderer.GetPosition(1)) < 0.02f)
+                {
+                    _renderLine = false;
+                    _lineRenderer.enabled = _renderLine;
+                }
+            }
         }
         
         if (!IsInteractedWith)
         {
             _sphere.transform.position =
                 transform.position + _map.transform.up * (Target is Warpzone ? 0.07f : 0.035f);
-        }
-        
-        if (_lineRenderer && _lineRenderer.enabled)
-        {
-            _lineRenderer.SetPosition(0, transform.position);
-            if (Vector3.Distance(_lineRenderer.GetPosition(0), _lineRenderer.GetPosition(1)) < 0.02f)
-                _lineRenderer.enabled = false;
         }
     }
 

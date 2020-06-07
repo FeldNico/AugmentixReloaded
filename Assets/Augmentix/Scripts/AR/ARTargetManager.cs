@@ -74,7 +74,10 @@ namespace Augmentix.Scripts.AR
                     Camera.main.transform.rotation);
 
                 avatar.transform.parent = Camera.main.transform;
-                avatar.GetComponent<Renderer>().enabled = false;
+                foreach (var child in avatar.GetComponentsInChildren<Renderer>(true))
+                {
+                    child.enabled = false;
+                }
             };
 #if UNITY_WSA
             VuforiaARController.Instance.RegisterVuforiaStartedCallback(() =>

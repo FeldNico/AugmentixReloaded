@@ -85,7 +85,7 @@ namespace Augmentix.Scripts.OOI
     void Awake() {
 
       // Cache renderers
-      renderers = GetComponentsInChildren<Renderer>();
+      renderers = GetComponentsInChildren<Renderer>(true);
 
       // Instantiate outline materials
       outlineMaskMaterial = Instantiate(Resources.Load<Material>(@"Materials/OutlineMask"));

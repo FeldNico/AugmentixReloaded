@@ -166,7 +166,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StaticOOI: 0
   Flags: 47
-  Text: jnhgjgifuzgkihgkhjgkfgjzggfkgloiouluil
+  Text: "Die griechische Vasenmalerei ist der \xFCbergeordnete Begriff f\xFCr die
+    meist mit brennbaren Erdfarben aufgetragene Dekoration griechischer Keramik.
+    Sie umfasst die gemalten Gef\xE4\xDFverzierungen unterschiedlichster Zeitstufen
+    ab der vorgriechischen minoischen Kultur bis in den Hellenismus, also von etwa
+    2500 v. Chr. bis in das letzte vorchristliche Jahrhundert."
   IsBeingManipulated: 0
 --- !u!328 &-967186052930753173
 VideoPlayer:

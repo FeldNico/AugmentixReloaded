@@ -23,7 +23,7 @@ public class VirtualCity : MonoBehaviour
             var deskzone = FindObjectOfType<Deskzone>();
             deskzone.Inside += () =>
             {
-                foreach (var render in GetComponentsInChildren<Renderer>())
+                foreach (var render in GetComponentsInChildren<Renderer>(true))
                 {
                     var ooi = render.GetComponent<OOI>();
                     if (ooi)
@@ -40,7 +40,7 @@ public class VirtualCity : MonoBehaviour
             };
             deskzone.Outside += () =>
             {
-                foreach (var render in GetComponentsInChildren<Renderer>())
+                foreach (var render in GetComponentsInChildren<Renderer>(true))
                 {
                     var ooi = render.GetComponent<OOI>();
                     if (ooi)
@@ -87,7 +87,7 @@ public class VirtualCity : MonoBehaviour
                 continue;
 
             _renderList.Add((child.transform, child, child.GetComponent<MeshFilter>(), child.materials,
-                child.GetComponent<PlayerAvatar>() == null ? 1f : 3f));
+                child.transform.parent == null || child.transform.parent.GetComponent<PlayerAvatar>() == null ? 1f : 30f));
         }
     }
     

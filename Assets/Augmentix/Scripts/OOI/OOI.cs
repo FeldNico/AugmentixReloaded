@@ -52,11 +52,13 @@ namespace Augmentix.Scripts.OOI
         public InteractionOrb InteractionOrb { private set; get; }
 
         private InteractionManager _interactionManager;
+        private VirtualCity _virtualCity;
 
         private void Start()
         {
             Collider = GetComponent<Collider>();
             _interactionManager = FindObjectOfType<InteractionManager>();
+            _virtualCity = FindObjectOfType<VirtualCity>();
 #if UNITY_WSA
             var prefab = FindObjectOfType<InteractionManager>().InteractionOrbPrefab;
                 
@@ -171,8 +173,9 @@ namespace Augmentix.Scripts.OOI
                     var text = PhotonNetwork.Instantiate(Path.Combine("OOI","Info",_interactionManager.TextPrefab.name), transform.position,
                         transform.rotation, (byte) TargetManager.Groups.PLAYERS, new object[] {avatar.GetComponent<PhotonView>().OwnerActorNr,photonView.ViewID});
                     _textObjects[avatar] = text.GetComponent<OOIInfo>();
+                    text.transform.parent = _virtualCity.transform;
                 }
-
+    
                 _moveText = StartCoroutine(MoveObject(_textObjects, Quaternion.identity,
                     new Vector3(0, -0.2f, 0)));
             }
@@ -208,6 +211,7 @@ namespace Augmentix.Scripts.OOI
                     scale.y *= (scale.y * videoPlayer.height) / videoPlayer.width;
                     video.transform.localScale = scale;
                     _videoObjects[avatar] = video.GetComponent<OOIInfo>();
+                    video.transform.parent = _virtualCity.transform;
                 }
 
                 _moveVideo = StartCoroutine(MoveObject(_videoObjects, Quaternion.identity, 
