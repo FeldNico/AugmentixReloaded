@@ -77,6 +77,11 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback, IOnEven
         else
         {
             FindObjectOfType<Recorder>().StartRecording();
+
+            Debug.Log("Instantiate Right");
+            PhotonNetwork.Instantiate("Hand_R", Vector3.zero, Quaternion.identity);
+            Debug.Log("Instantiate Left");
+            PhotonNetwork.Instantiate("Hand_L", Vector3.zero, Quaternion.identity);
         }
     }
 

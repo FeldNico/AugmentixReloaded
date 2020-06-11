@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <QCARConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="qcar_config.xsd">
   <Tracking>
+    <ImageTarget name="pickup" size="0.060000 0.060000" />
+    <ImageTarget name="pickup-old" size="0.060000 0.060000" />
+    <ImageTarget name="3" size="0.060000 0.060000" />
+    <ImageTarget name="2" size="0.060000 0.060000" />
+    <ImageTarget name="1" size="0.060000 0.060000" />
     <ImageTarget name="tangible3" size="0.060000 0.060000" />
     <ImageTarget name="tangible2" size="0.060000 0.060000" />
     <ImageTarget name="tangible1" size="0.060000 0.060000" />
-    <ImageTarget name="pickup" size="0.060000 0.060000" />
   </Tracking>
 </QCARConfig>

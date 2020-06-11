@@ -247,7 +247,7 @@ public class InteractionOrb : MonoBehaviour
                                  position;
                     center.y += (_collider.ClosestPoint(
                         new Vector3(_collider.bounds.center.x, float.MaxValue,
-                            _collider.bounds.center.z)).y * scale) + 0.07f;
+                            _collider.bounds.center.z)).y * (scale/_targetTransform.lossyScale.y)) + 0.07f;
                     transform.position = center;
                 }
 

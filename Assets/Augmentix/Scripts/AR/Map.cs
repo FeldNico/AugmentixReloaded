@@ -94,26 +94,17 @@ namespace Augmentix.Scripts.AR
             }
         }
 
-        public void StopTracking()
-        {
-#if UNITY_WSA
-            var parent = transform.parent;
-            transform.parent = null;
-            parent.gameObject.SetActive(false);
-            var objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
-            objectTracker.Stop();
-            objectTracker.DeactivateDataSet(objectTracker.GetDataSets()
-                .First(set => set.Path == "Vuforia/Augmentix_Map.xml"));
-            objectTracker.Start();
-            gameObject.AddComponent<WorldAnchor>();
-#endif
-        }
-
         void Update()
         {
-            foreach (var dummy in Dummies)
+            foreach (var dummy in new List<MapTargetDummy>(Dummies))
             {
                 var target = dummy.Target;
+
+                if (target == null)
+                {
+                    Dummies.Remove(dummy);
+                    Destroy(dummy.gameObject);
+                }
 
                 if (target is PlayerAvatar)
                 {

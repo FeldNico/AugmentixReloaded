@@ -38,8 +38,10 @@ public class ONSPAudioSource : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void OnBeforeSceneLoadRuntimeMethod()
     {
+	    #if UNITY_ANDROID || UNITY_EDITOR
         OSP_SetGlobalVoiceLimit(ONSPSettings.Instance.voiceLimit);
-    }
+		#endif
+	}
 
     // Import functions
     public const string strONSPS = "AudioPluginOculusSpatializer";

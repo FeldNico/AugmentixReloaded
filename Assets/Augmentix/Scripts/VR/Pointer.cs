@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -11,15 +12,12 @@ public class Pointer : MonoBehaviour
     public PointerTarget CurrentPointerTarget { private set; get; }
 
     private LineRenderer lineRenderer;
-    private VRMap _vrmap;
+    private GameObject _vrmap;
     private float MaxLength = 5f;
     // Start is called before the first frame update
     private void Start()
     {
         lineRenderer = GetComponent<LineRenderer>();
-
-        _vrmap = FindObjectOfType<VRMap>();
-        _vrmap.gameObject.SetActive(false);
 
         /*
         OnClick.AddOnStateDownListener((action, source) =>
@@ -49,12 +47,20 @@ public class Pointer : MonoBehaviour
     {
         if (OVRInput.GetDown(OVRInput.RawButton.X))
         {
-            _vrmap.gameObject.SetActive(true);
+            _vrmap = PhotonNetwork.Instantiate("MapCanvas", Vector3.zero, Quaternion.identity);
+            var rectTransform = _vrmap.GetComponent<RectTransform>();
+            rectTransform.parent = GameObject.Find("LeftHandAnchor").transform;
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.zero;
+            rectTransform.pivot = new Vector2(0.5f,0.5f);
+            rectTransform.localPosition = new Vector3(0,0.051f,0.409f);
+            rectTransform.localRotation = Quaternion.Euler(60.508f,-3.861f,356.04f);
+            rectTransform.localScale = new Vector3(0.05f,0.05f,0.05f);
         }
 
         if (OVRInput.GetUp(OVRInput.RawButton.X))
         {
-            _vrmap.gameObject.SetActive(false);
+            PhotonNetwork.Destroy(_vrmap);
         }
         
         if (OVRInput.GetUp(OVRInput.Button.SecondaryIndexTrigger))
@@ -73,8 +79,7 @@ public class Pointer : MonoBehaviour
     private void UpdateLine()
     {
         RaycastHit hit;
-        var ray = new Ray(transform.position,transform.forward);
-        Physics.Raycast(ray, out hit, MaxLength);
+        Physics.Raycast(transform.position,transform.forward, out hit, MaxLength,LayerMask.GetMask("UI"));
 
         if (hit.collider != null)
         {

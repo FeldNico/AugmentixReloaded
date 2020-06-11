@@ -13,11 +13,11 @@ using UnityEngine.Video;
 
 public class SpawnableTangible : MonoBehaviour
 {
-    #if UNITY_WSA
-    
     public float Scale = 0.06f * 0.7f;
 
     public List<GameObject> Spawnables;
+    
+    #if UNITY_WSA
     [HideInInspector]
     public Imposter Imposter;
 

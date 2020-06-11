@@ -114,6 +114,9 @@ public class Warpzone : MonoBehaviour
                 var mesh = valueTuple.Item3;
                 var materials = valueTuple.Item4;
                 var scale = valueTuple.Item5;
+                
+                if (renderer == null)
+                    continue;
 
                 if (Vector3.Distance(_dummyTransform.localPosition,
                         _virtualCityTransform.InverseTransformPoint(trans.position)) <

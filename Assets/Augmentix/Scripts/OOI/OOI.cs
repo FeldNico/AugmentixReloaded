@@ -24,7 +24,7 @@ using Vuforia;
 namespace Augmentix.Scripts.OOI
 {
     [RequireComponent(typeof(PhotonView))]
-    public class OOI : MonoBehaviourPunCallbacks
+    public class OOI : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     {
         [Flags]
         public enum InteractionFlag
@@ -101,7 +101,7 @@ namespace Augmentix.Scripts.OOI
                     }
                 });
 #elif UNITY_ANDROID
-                var grabbable = gameObject.AddComponent<CustomGrabbable>();
+                gameObject.AddComponent<CustomGrabbable>();
 #endif
             }
         }
@@ -149,12 +149,7 @@ namespace Augmentix.Scripts.OOI
                 }
                 case InteractionFlag.Delete:
                 {
-                    StartCoroutine(WaitforOneFrame());
-                    IEnumerator WaitforOneFrame()
-                    {
-                        yield return null;
-                        PhotonNetwork.Destroy(GetComponent<PhotonView>());
-                    }
+                    PhotonNetwork.Destroy(GetComponent<PhotonView>());
                     break;
                 }
             }
@@ -278,10 +273,16 @@ namespace Augmentix.Scripts.OOI
         }
 
         #if UNITY_WSA
-        private void OnDestroy()
+        void OnDestroy()
         {
-            Destroy(InteractionOrb);
+            if (InteractionOrb)
+                Destroy(InteractionOrb.gameObject);
         }
         #endif
+        public void OnPhotonInstantiate(PhotonMessageInfo info)
+        {
+            if (!GetComponent<PhotonView>().IsMine)
+                Start();
+        }
     }
 }

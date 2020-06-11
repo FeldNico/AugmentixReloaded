@@ -56,6 +56,8 @@ namespace Augmentix.Scripts
             if (Instance == null)
                 Instance = this;
 
+            Debug.unityLogger.logEnabled = false;
+
             PhotonNetwork.AutomaticallySyncScene = false;
         }
 

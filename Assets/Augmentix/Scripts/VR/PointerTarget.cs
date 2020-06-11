@@ -15,7 +15,8 @@ public class PointerTarget : MonoBehaviour
     public UnityAction<Vector2> OnRelease;
 
     public Vector3 TeleportTarget;
-
+    
+    #if UNITY_ANDROID
     private OVRPlayerController _player;
     private VirtualCity _virtualCity;
     private Button _button;
@@ -83,4 +84,5 @@ public class PointerTarget : MonoBehaviour
             };
         }
     }
+    #endif
 }

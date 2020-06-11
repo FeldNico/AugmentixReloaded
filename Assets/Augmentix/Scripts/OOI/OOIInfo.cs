@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Augmentix.Scripts;
 using Augmentix.Scripts.OOI;
@@ -19,6 +20,7 @@ public class OOIInfo : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     public InfoType Type;
 
     private OOI _ooi;
+    private VideoPlayer _videoPlayer;
     
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
@@ -37,9 +39,9 @@ public class OOIInfo : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
                 }
                 case InfoType.Video:
                 {
-                    var video = _ooi.GetComponent<VideoPlayer>();
-                    video.targetMaterialRenderer = GetComponent<Renderer>();
-                    video.Play();
+                    _videoPlayer = _ooi.GetComponent<VideoPlayer>();
+                    _videoPlayer.targetMaterialRenderer = GetComponent<Renderer>();
+                    _videoPlayer.Play();
                     break;
                 }
             }
@@ -55,7 +57,13 @@ public class OOIInfo : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
                 child.enabled = false;
             }
         }
-        
-        
+    }
+
+    private void OnDestroy()
+    {
+        if (Type == InfoType.Video && _videoPlayer != null)
+        {
+            _videoPlayer.Stop();
+        }
     }
 }
