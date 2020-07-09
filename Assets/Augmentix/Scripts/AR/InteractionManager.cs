@@ -65,7 +65,7 @@ public class InteractionManager : MonoBehaviour
             }
             else
             {
-                if (Input.GetKey(KeyCode.Mouse0) && HandJointUtils.TryGetJointPose(TrackedHandJoint.IndexMiddleJoint, Handedness.Right,out MixedRealityPose pose))
+                if (!_deskzone.IsInside && Input.GetKey(KeyCode.Mouse0) && HandJointUtils.TryGetJointPose(TrackedHandJoint.IndexMiddleJoint, Handedness.Right,out MixedRealityPose pose))
                 {
                     var startPos = pose.Position;
                     var endPos = startPos + 50 * pose.Forward;

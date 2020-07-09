@@ -27,6 +27,7 @@ public class MapTargetDummy : MonoBehaviour
 
     void Start()
     {
+        #if UNITY_WSA
         _interactionManager = FindObjectOfType<InteractionManager>();
         _map = FindObjectOfType<Map>();
         _warpzoneManager = FindObjectOfType<WarpzoneManager>();
@@ -108,6 +109,7 @@ public class MapTargetDummy : MonoBehaviour
                     options, SendOptions.SendReliable);
             });
         }
+        #endif
     }
 
     private void Update()
