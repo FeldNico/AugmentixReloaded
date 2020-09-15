@@ -229,7 +229,7 @@ public class InteractionOrb : MonoBehaviour
 
         if (_target is OOI && ((OOI) _target).StaticOOI)
         {
-            if (_warpzoneManager.ActiveWarpzone != null)
+            if (_warpzoneManager.ActiveWarpzone != null && _warpzoneManager.ActiveWarpzone.IsRendering)
             {
                 var warpzone = _warpzoneManager.ActiveWarpzone;
                 if (warpzone.Matrices.ContainsKey(_targetTransform))
@@ -252,6 +252,10 @@ public class InteractionOrb : MonoBehaviour
                 }
 
                 transform.localScale = Vector3.one * _interactionManager.InteractionSphereScale;
+            }
+            else
+            {
+                transform.localScale = Vector3.zero;
             }
         }
         else

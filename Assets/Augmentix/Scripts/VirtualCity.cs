@@ -42,17 +42,21 @@ public class VirtualCity : MonoBehaviour
             {
                 foreach (var render in GetComponentsInChildren<Renderer>(true))
                 {
-                    var ooi = render.GetComponent<OOI>();
-                    if (ooi)
+                    if (!render.gameObject.CompareTag("DontRender"))
                     {
-                        var iSphere = ooi.InteractionOrb;
-                        if (iSphere)
+                        var ooi = render.GetComponent<OOI>();
+                        if (ooi)
                         {
-                            iSphere.GetComponent<Renderer>().enabled = true;
-                            iSphere.GetComponent<Collider>().enabled = true;
+                            var iSphere = ooi.InteractionOrb;
+                            if (iSphere)
+                            {
+                                iSphere.GetComponent<Renderer>().enabled = true;
+                                iSphere.GetComponent<Collider>().enabled = true;
+                            }
                         }
+                    
+                        render.enabled = true;
                     }
-                    render.enabled = true;
                 }
             };
         }

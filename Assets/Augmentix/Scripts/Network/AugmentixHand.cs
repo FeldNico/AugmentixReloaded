@@ -12,10 +12,12 @@ public class AugmentixHand : MonoBehaviour, IPunInstantiateMagicCallback
     public bool IsRight;
     private PhotonView _view;
     private Transform _transform;
-
+    private Deskzone _deskzone;
+    
     void Start()
     {
         _view = GetComponent<PhotonView>();
+        _deskzone = FindObjectOfType<Deskzone>();
         _transform = transform;
         Debug.Log("Init "+(IsRight ? "Right" : "Left"));
 #if UNITY_ANDROID
@@ -42,7 +44,7 @@ public class AugmentixHand : MonoBehaviour, IPunInstantiateMagicCallback
     {
         if (_view.IsMine)
         {
-            if (HandJointUtils.TryGetJointPose(TrackedHandJoint.Wrist, IsRight? Handedness.Right : Handedness.Left, out MixedRealityPose pose))
+            if (!_deskzone.IsInside && HandJointUtils.TryGetJointPose(TrackedHandJoint.Wrist, IsRight? Handedness.Right : Handedness.Left, out MixedRealityPose pose))
             {
                 _transform.localScale = Vector3.one;
                 _transform.position = pose.Position;

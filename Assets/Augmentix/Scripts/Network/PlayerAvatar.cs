@@ -93,10 +93,7 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback, IOnEven
     [PunRPC]
     private void ToggleVisibilityRPC(bool isVisible)
     {
-        foreach (var child in GetComponentsInChildren<Renderer>(true))
-        {
-            child.enabled = isVisible;
-        }
+        transform.Find("Mesh").GetComponent<MeshRenderer>().enabled = isVisible;
     }
 
     private void OnDestroy()

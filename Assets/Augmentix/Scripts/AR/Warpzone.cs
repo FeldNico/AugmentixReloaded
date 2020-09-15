@@ -51,7 +51,7 @@ public class Warpzone : MonoBehaviour
     private Camera _mainCamera;
     private WarpzoneManager _warpzoneManager;
 
-    private bool _doRender = false;
+    public bool IsRendering { private set; get; } = false;
 
     // Start is called before the first frame update
     void Start()
@@ -81,13 +81,13 @@ public class Warpzone : MonoBehaviour
         _eventHandler.OnTargetFound.AddListener(() =>
         {
             Debug.Log("Found Trackable");
-            _doRender = true;
+            IsRendering = true;
             collider.enabled = true;
         });
         _eventHandler.OnTargetLost.AddListener(() =>
         {
             Debug.Log("Lost Trackable");
-            _doRender = false;
+            IsRendering = false;
             collider.enabled = false;
         });
 #endif
@@ -99,7 +99,7 @@ public class Warpzone : MonoBehaviour
     {
         _mainCamera.RemoveAllCommandBuffers();
 
-        if (_doRender && PhotonNetwork.IsConnected)
+        if (IsRendering && PhotonNetwork.IsConnected)
         {
 
             var warpzoneMatrix = Matrix4x4.TRS(_dummyTransform.localPosition,
