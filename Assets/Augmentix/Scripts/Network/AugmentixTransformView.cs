@@ -17,9 +17,7 @@ namespace Augmentix.Scripts.Network
         private Vector3 m_StoredPosition;
 
         private Quaternion m_NetworkRotation;
-
-        public bool m_SynchronizePosition = true;
-        public bool m_SynchronizeRotation = true;
+        
         public bool m_SynchronizeScale = true;
 
         bool m_firstTake = false;
@@ -54,21 +52,15 @@ namespace Augmentix.Scripts.Network
         {
             if (stream.IsWriting)
             {
-                if (this.m_SynchronizePosition)
-                {
-                    var newPosition = _virtualCityTransform.InverseTransformPoint(transform.position);
+                var newPosition = _virtualCityTransform.InverseTransformPoint(transform.position);
                     
-                    this.m_Direction = newPosition - this.m_StoredPosition;
-                    this.m_StoredPosition = newPosition;
+                this.m_Direction = newPosition - this.m_StoredPosition;
+                this.m_StoredPosition = newPosition;
 
-                    stream.SendNext(newPosition);
-                    stream.SendNext(this.m_Direction);
-                }
+                stream.SendNext(newPosition);
+                stream.SendNext(this.m_Direction);
 
-                if (this.m_SynchronizeRotation)
-                {
-                    stream.SendNext(Quaternion.Inverse(_virtualCityTransform.rotation) *  transform.rotation);
-                }
+                stream.SendNext(Quaternion.Inverse(_virtualCityTransform.rotation) *  transform.rotation);
 
                 if (this.m_SynchronizeScale)
                 {
@@ -92,39 +84,31 @@ namespace Augmentix.Scripts.Network
             else
             {
                 
-                if (this.m_SynchronizePosition)
+                this.m_NetworkPosition = (Vector3)stream.ReceiveNext();
+                this.m_Direction = (Vector3)stream.ReceiveNext();
+
+                if (m_firstTake)
                 {
-                    this.m_NetworkPosition = (Vector3)stream.ReceiveNext();
-                    this.m_Direction = (Vector3)stream.ReceiveNext();
-
-                    if (m_firstTake)
-                    {
-                        transform.position = _virtualCityTransform.TransformPoint(this.m_NetworkPosition);
-                        this.m_Distance = 0f;
-                    }
-                    else
-                    {
-                        float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTime));
-                        this.m_NetworkPosition += this.m_Direction * lag;
-                        this.m_Distance = Vector3.Distance(transform.position, this._virtualCityTransform.TransformPoint(m_NetworkPosition));
-                    }
-
-                   
+                    transform.position = _virtualCityTransform.TransformPoint(this.m_NetworkPosition);
+                    this.m_Distance = 0f;
+                }
+                else
+                {
+                    float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTime));
+                    this.m_NetworkPosition += this.m_Direction * lag;
+                    this.m_Distance = Vector3.Distance(transform.position, this._virtualCityTransform.TransformPoint(m_NetworkPosition));
                 }
 
-                if (this.m_SynchronizeRotation)
-                {
-                    this.m_NetworkRotation =  (Quaternion)stream.ReceiveNext();
+                this.m_NetworkRotation =  (Quaternion)stream.ReceiveNext();
 
-                    if (m_firstTake)
-                    {
-                        this.m_Angle = 0f;
-                        transform.localRotation = _virtualCityTransform.rotation *this.m_NetworkRotation;
-                    }
-                    else
-                    {
-                        this.m_Angle = Quaternion.Angle(transform.rotation, _virtualCityTransform.rotation * this.m_NetworkRotation);
-                    }
+                if (m_firstTake)
+                {
+                    this.m_Angle = 0f;
+                    transform.localRotation = _virtualCityTransform.rotation *this.m_NetworkRotation;
+                }
+                else
+                {
+                    this.m_Angle = Quaternion.Angle(transform.rotation, _virtualCityTransform.rotation * this.m_NetworkRotation);
                 }
 
                 if (this.m_SynchronizeScale)

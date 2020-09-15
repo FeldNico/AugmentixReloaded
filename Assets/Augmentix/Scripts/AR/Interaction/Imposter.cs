@@ -21,12 +21,10 @@ public class Imposter : MonoBehaviour
 
     private ObjectManipulator _manipulator = null;
     private MixedRealityInputSystem _inputSystem = null;
-    private Deskzone _deskzone;
     private VirtualCity _virtualCity;
     private void Awake()
     {
         _inputSystem = FindObjectOfType<MixedRealityToolkit>().GetService<MixedRealityInputSystem>();
-        _deskzone = FindObjectOfType<Deskzone>();
         _virtualCity = FindObjectOfType<VirtualCity>();
         
         var ooi = GetComponent<OOI>();

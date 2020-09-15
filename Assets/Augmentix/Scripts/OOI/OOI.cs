@@ -33,8 +33,7 @@ namespace Augmentix.Scripts.OOI
             Text = 2,
             Video = 4,
             Manipulate = 8,
-            Changeable = 16,
-            Delete = 32
+            Delete = 16
         }
 
         public bool StaticOOI = false;

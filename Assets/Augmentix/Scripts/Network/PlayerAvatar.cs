@@ -72,7 +72,7 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback, IOnEven
         {
             transform.parent = FindObjectOfType<VirtualCity>().transform;
             if (TargetManager.Instance.Type == TargetManager.PlayerType.Primary && _deskzone.IsInside)
-                ToogleVisibilityRPC(false);
+                ToggleVisibilityRPC(false);
         }
         else
         {
@@ -87,11 +87,11 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback, IOnEven
 
     public void ToggleVisibility(bool isVisible)
     {
-        GetComponent<PhotonView>().RPC("ToogleVisibilityRPC",RpcTarget.Others,isVisible);
+        GetComponent<PhotonView>().RPC("ToggleVisibilityRPC",RpcTarget.Others,isVisible);
     }
     
     [PunRPC]
-    private void ToogleVisibilityRPC(bool isVisible)
+    private void ToggleVisibilityRPC(bool isVisible)
     {
         foreach (var child in GetComponentsInChildren<Renderer>(true))
         {

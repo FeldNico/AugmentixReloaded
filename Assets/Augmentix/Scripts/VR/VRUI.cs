@@ -20,8 +20,6 @@ namespace Augmentix.Scripts.VR
         private GameObject _indicator;
         private Coroutine _indicatorRotate;
         
-        
-        
         public void ToggleHighlightTarget(GameObject Target,bool highlight)
         {
             if (_currentTarget != null && _currentTarget != Target)
