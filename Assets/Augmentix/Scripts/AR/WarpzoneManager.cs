@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Augmentix.Scripts.AR;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -54,6 +55,12 @@ public class WarpzoneManager : MonoBehaviour
         _deskzone = FindObjectOfType<Deskzone>();
         
         OnWarpzoneLost += Warpzone => { _virtualCity.transform.position = new Vector3(0,1000,0); };
+
+        ARTargetManager.Instance.OnConnection += () =>
+        {
+            if (Warpzones.Count == 1)
+                ActiveWarpzone = Warpzones[0];
+        };
     }
 
     public void Update()

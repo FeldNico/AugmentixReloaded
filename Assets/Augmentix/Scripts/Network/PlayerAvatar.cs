@@ -19,6 +19,9 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback, IOnEven
 
     public static UnityAction<PlayerAvatar> AvatarCreated;
     public static UnityAction<PlayerAvatar> AvatarLost;
+
+    public AugmentixHand RightHand;
+    public AugmentixHand LeftHand;
     
     private Deskzone _deskzone;
     private VirtualCity _virtualCity;
@@ -68,32 +71,72 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback, IOnEven
 
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
+        if (_view == null)
+            _view = GetComponent<PhotonView>();
+
         if (!info.photonView.IsMine)
         {
             transform.parent = FindObjectOfType<VirtualCity>().transform;
-            if (TargetManager.Instance.Type == TargetManager.PlayerType.Primary && _deskzone.IsInside)
-                ToggleVisibilityRPC(false);
+
+            if (info.photonView.InstantiationData != null && info.photonView.InstantiationData.Length != 0)
+            {
+                StartCoroutine(Wait());
+                IEnumerator Wait()
+                {
+                    yield return new WaitForSeconds(0.5f);
+                    ToggleVisibilityRPC((bool) info.photonView.InstantiationData[0]);
+                }
+            }
         }
         else
         {
             FindObjectOfType<Recorder>().StartRecording();
 
             Debug.Log("Instantiate Right");
-            PhotonNetwork.Instantiate("Hand_R", Vector3.zero, Quaternion.identity);
+            RightHand = PhotonNetwork.Instantiate("Hand_R", Vector3.zero, Quaternion.identity,0,new object[]{info.photonView.ViewID}).GetComponent<AugmentixHand>();
             Debug.Log("Instantiate Left");
-            PhotonNetwork.Instantiate("Hand_L", Vector3.zero, Quaternion.identity);
+            LeftHand = PhotonNetwork.Instantiate("Hand_L", Vector3.zero, Quaternion.identity,0,new object[]{info.photonView.ViewID}).GetComponent<AugmentixHand>();
+
+            if (TargetManager.Instance.Type == TargetManager.PlayerType.Primary)
+            {
+                if (_deskzone == null)
+                    _deskzone = FindObjectOfType<Deskzone>();
+                if (_deskzone.IsInside)
+                {
+                    StartCoroutine(Wait());
+                    IEnumerator Wait()
+                    {
+                        yield return null;
+                        ToggleVisibility(false);
+                    }
+                }
+            }
         }
     }
 
     public void ToggleVisibility(bool isVisible)
     {
-        GetComponent<PhotonView>().RPC("ToggleVisibilityRPC",RpcTarget.Others,isVisible);
+        _view.RPC("ToggleVisibilityRPC",RpcTarget.Others,isVisible);
     }
     
     [PunRPC]
     private void ToggleVisibilityRPC(bool isVisible)
     {
         transform.Find("Mesh").GetComponent<MeshRenderer>().enabled = isVisible;
+        if (RightHand != null)
+        {
+            foreach (var child in RightHand.GetComponentsInChildren<Renderer>())
+            {
+                child.enabled = isVisible;
+            }
+        }
+        if (LeftHand != null)
+        {
+            foreach (var child in LeftHand.GetComponentsInChildren<Renderer>())
+            {
+                child.enabled = isVisible;
+            }
+        }
     }
 
     private void OnDestroy()

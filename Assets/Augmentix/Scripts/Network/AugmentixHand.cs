@@ -59,6 +59,12 @@ public class AugmentixHand : MonoBehaviour, IPunInstantiateMagicCallback
 #endif
     public void OnPhotonInstantiate(PhotonMessageInfo info)
     {
+        var avatar = PhotonView.Find((int) info.photonView.InstantiationData[0]).GetComponent<PlayerAvatar>();
+        if (IsRight)
+            avatar.RightHand = this;
+        else
+            avatar.LeftHand = this;
+
         _view = GetComponent<PhotonView>();
         _transform = transform;
         if (_view.IsMine)

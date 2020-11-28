@@ -130,8 +130,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e770414b327608f4cadcc6d7d7a71d2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
   m_SynchronizeScale: 1
 --- !u!65 &8987676553991000242
 BoxCollider:

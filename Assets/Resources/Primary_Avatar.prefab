@@ -71,8 +71,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e770414b327608f4cadcc6d7d7a71d2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
   m_SynchronizeScale: 1
 --- !u!114 &4805802173258035406
 MonoBehaviour:
@@ -86,6 +84,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 565c9b95133557e4c977f3b391a613e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  RightHand: {fileID: 0}
+  LeftHand: {fileID: 0}
 --- !u!82 &3081687529822664797
 AudioSource:
   m_ObjectHideFlags: 0

@@ -69,9 +69,8 @@ namespace Augmentix.Scripts.AR
             base.Start();
             OnConnection += () =>
             {
-
                 var avatar = PhotonNetwork.Instantiate(AvatarPrefab.name, Camera.main.transform.position,
-                    Camera.main.transform.rotation);
+                    Camera.main.transform.rotation,0,new object[]{_deskzone.IsWorldPointInside(Camera.main.transform.position)});
 
                 avatar.transform.parent = Camera.main.transform;
                 foreach (var child in avatar.GetComponentsInChildren<Renderer>(true))
@@ -93,6 +92,9 @@ namespace Augmentix.Scripts.AR
                 objectTracker.Start();
             });
 #endif
+            #if UNITY_EDITOR
+            SetupDeskzoneAndConnect();
+            #endif
         }
 
         public void SetupDeskzoneAndConnect()
@@ -104,12 +106,15 @@ namespace Augmentix.Scripts.AR
                 _deskzone.transform.parent = null;
                 target.gameObject.SetActive(false);
                 var objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
-                objectTracker.Stop();
-                objectTracker.DeactivateDataSet(objectTracker.GetDataSets()
-                    .First(set => set.Path == "Vuforia/Augmentix_Floor.xml"));
-                objectTracker.ActivateDataSet(objectTracker.GetDataSets()
-                    .First(set => set.Path == "Vuforia/Augmentix_Deskzone.xml"));
-                objectTracker.Start();
+                if (objectTracker != null)
+                {
+                    objectTracker.Stop();
+                    objectTracker.DeactivateDataSet(objectTracker.GetDataSets()
+                        .First(set => set.Path == "Vuforia/Augmentix_Floor.xml"));
+                    objectTracker.ActivateDataSet(objectTracker.GetDataSets()
+                        .First(set => set.Path == "Vuforia/Augmentix_Deskzone.xml"));
+                    objectTracker.Start();
+                }
                 _deskzone.gameObject.AddComponent<WorldAnchor>();
                 Connect();
             }
