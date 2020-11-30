@@ -97,6 +97,7 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback, IOnEven
             Debug.Log("Instantiate Left");
             LeftHand = PhotonNetwork.Instantiate("Hand_L", Vector3.zero, Quaternion.identity,0,new object[]{info.photonView.ViewID}).GetComponent<AugmentixHand>();
 
+            /*
             if (TargetManager.Instance.Type == TargetManager.PlayerType.Primary)
             {
                 if (_deskzone == null)
@@ -111,6 +112,7 @@ public class PlayerAvatar : MonoBehaviour, IPunInstantiateMagicCallback, IOnEven
                     }
                 }
             }
+            */
         }
     }
 

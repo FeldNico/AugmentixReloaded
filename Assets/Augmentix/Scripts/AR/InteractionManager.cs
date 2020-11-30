@@ -212,18 +212,18 @@ public class InteractionManager : MonoBehaviour
 
                 if (Input.GetAxis("Mouse Y") > 0.1f)
                 {
-                    vec += 0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * forwardProject;
+                    vec += 0.02f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * forwardProject;
                 } else if (Input.GetAxis("Mouse Y") < -0.1f)
                 {
-                    vec -=0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * forwardProject;
+                    vec -=0.02f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * forwardProject;
                 }
                     
                 if (Input.GetAxis("Mouse X") < -0.1f)
                 {
-                    vec -=0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * rightProject;
+                    vec -=0.02f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * rightProject;
                 } else if (Input.GetAxis("Mouse X") > 0.1f)
                 {
-                    vec +=0.05f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * rightProject;
+                    vec +=0.02f * _warpzoneManager.ScrollSpeed * _virtualCity.transform.localScale.x * rightProject;
                 }
                 
                 vec = _virtualCity.transform.InverseTransformVector(vec);
