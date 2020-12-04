@@ -19,6 +19,7 @@ public class MapTargetDummy : MonoBehaviour
     private InteractionManager _interactionManager;
     private Map _map;
     private LineRenderer _lineRenderer;
+    private MeshRenderer _orbMeshRenderer;
     private bool _renderLine;
     private GameObject _sphere;
     private WarpzoneManager _warpzoneManager;
@@ -35,6 +36,7 @@ public class MapTargetDummy : MonoBehaviour
         _sphere.transform.localScale = Vector3.one *_interactionManager.InteractionSphereScale;
         _sphere.name = "InteractionOrb " + gameObject.name;
         _sphere.GetComponent<SphereCollider>().isTrigger = true;
+        _orbMeshRenderer = _sphere.GetComponent<MeshRenderer>();
         var rigidbody = _sphere.AddComponent<Rigidbody>();
         rigidbody.useGravity = false;
         
@@ -121,6 +123,11 @@ public class MapTargetDummy : MonoBehaviour
                 var localPos = _map.Scaler.transform.InverseTransformPoint(_sphere.transform.position);
                 localPos.y = 0;
                 _lineRenderer.SetPosition(1, _map.Scaler.transform.TransformPoint(localPos));
+                _orbMeshRenderer.material.color = Color.blue;
+            }
+            else
+            {
+                _orbMeshRenderer.material.color = Color.yellow;
             }
             if (_lineRenderer.enabled)
             {
@@ -131,6 +138,14 @@ public class MapTargetDummy : MonoBehaviour
                     _lineRenderer.enabled = _renderLine;
                 }
             }
+        }
+
+        if (Target is Warpzone)
+        {
+            if (IsInteractedWith)
+                _orbMeshRenderer.material.color = Color.blue;
+            else
+                _orbMeshRenderer.material.color = Color.cyan;
         }
         
         if (!IsInteractedWith)

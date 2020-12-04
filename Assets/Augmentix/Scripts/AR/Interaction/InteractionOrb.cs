@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Augmentix.Scripts.Network;
 using Augmentix.Scripts.OOI;
 using Microsoft.MixedReality.Toolkit.Experimental.UI;
@@ -22,6 +23,7 @@ public class InteractionOrb : MonoBehaviour
     private Collider _collider;
     private Vector3 _offset;
     private MeshFilter _mesh;
+    private Renderer _renderer;
 
     private MonoBehaviour _target;
     private WarpzoneManager _warpzoneManager;
@@ -47,6 +49,7 @@ public class InteractionOrb : MonoBehaviour
         _warpzoneManager = FindObjectOfType<WarpzoneManager>();
         _interactionManager = FindObjectOfType<InteractionManager>();
         _manipulator = GetComponent<ObjectManipulator>();
+        _renderer = GetComponent<Renderer>();
 
         _manipulator.OnManipulationStarted.AddListener(OnManipulationStart);
         _manipulator.OnManipulationEnded.AddListener(OnManipulationEnd);
@@ -224,6 +227,16 @@ public class InteractionOrb : MonoBehaviour
     private Quaternion _halfXRotation = Quaternion.AngleAxis(0, Vector3.up);
     void Update()
     {
+        if (IsInteractedWith)
+        {
+            if (MenuItems.Keys.Count > 0 && MenuItems.Keys.Any(o => o.GetComponentInChildren<Collider>().bounds.Contains(transform.position)))
+                _renderer.material.color = Color.green;
+            else
+                _renderer.material.color = Color.blue;
+        }
+        else
+            _renderer.material.color = Color.white;
+
         if (Target == null || !_collider.enabled || IsInteractedWith)
             return;
 
